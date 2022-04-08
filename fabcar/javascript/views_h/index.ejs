@@ -1,0 +1,310 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+  /* Bordered form */
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+  }
+  .container-login {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #f2f2f2;
+    padding: 30px;
+  }
+
+  .wrap-login {
+    width: 450px;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 10px;
+    padding: 77px 55px 33px 55px;
+    box-shadow: 0 5px 10px 0 #888888;
+  }
+
+  .form-login {
+    width: 100%;
+    border: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .login-form-tittle {
+    display: flex;
+    font-weight: bold;
+    font-size: 30px;
+    color: #333333;
+    line-height: 1.2;
+    justify-content: center;
+    padding: 0px 0px 30px;
+  }
+
+  .wrap-input {
+    width: 100%;
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin-bottom: 37px;
+  }
+
+  .form-input {
+    font-size: 16px;
+    color: #555555;
+    line-height: 1.2;
+    display: block;
+    width: 100%;
+    height: 45px;
+    background: transparent;
+    padding: 0 5px;
+    border: none;
+    outline: none;
+  }
+
+  .focus-input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .focus-input::before {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 2px;
+    /* width: 100%; */
+    background: #6a7dfe;
+    background-image: -moz-linear-gradient(left, #21d4fd, #b721ff);  
+    background-image: linear-gradient(left, #21d4fd, #b721ff);
+
+    transition: all 0.4s;
+  }
+
+  .focus-input::after {
+    content: attr(data-placeholder);
+    font-size: 16px;
+    color: #999999;
+    line-height: 1.2;
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 16px;
+    left: 0;
+    padding-left: 8px;
+    transition: all 0.4s;
+  }
+
+  .form-input:focus + .focus-input::before {
+    width: 100%;
+  }
+
+  .form-input:focus + .focus-input::after {
+    top: -15px;
+  }
+
+  .has-val.form-input + .focus-input::before {
+    width: 100%;
+  }
+
+  .has-val.form-input + .focus-input::after {
+    top: -15px;
+  }
+
+
+  .btn {
+    display: flex;
+    justify-content: center;
+    border: none;
+    text-transform: uppercase;
+    border-radius: 30px;
+    background-color: #2fc5fe;
+    padding: 18px;
+    margin-bottom: 20px;
+    outline: none;
+    /* text-transform: uppercase; */
+    font-size: 20px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    opacity: 0.8;
+  }
+
+  span.psw {
+    text-align: center;
+    padding-top: 60px;
+    color: #555555;
+  }
+
+  span.psw a {
+    color: black;
+    text-decoration: none;
+  }
+/* form {
+  border: 3px solid #f1f1f1;
+} */
+
+/* Full-width inputs */
+/* input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+} */
+
+/* Set a style for all buttons */
+/* button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Add a hover effect for buttons */
+
+/* Extra style for the cancel button (red) */
+/* .cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the avatar image inside this container */
+/* .imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+} */
+
+/* Avatar image */
+/* img.avatar {
+  width: 40%;
+  border-radius: 50%;
+} */ 
+
+/* Add padding to containers */
+/* .container {
+  padding: 16px;
+} */
+
+/* The "Forgot password" text */
+
+
+/* Change styles for span and cancel button on extra small screens */
+/* @media screen and (max-width: 300px) {
+  span.psw {
+    display: block;
+    float: none;
+  }
+  .cancelbtn {
+    width: 100%;
+  }
+} */
+</style>
+<body onload="init()">
+  <div class="container-login">
+    <div class="wrap-login">
+      <form class="form-login" action="action_page.php" method="post">
+        <span class="login-form-tittle">Welcome</span>
+        <div class="wrap-input">
+          <input id="id_user" type="text" class="form-input" name="uname" required>
+          <span class="focus-input" data-placeholder="Username"></span>
+        </div>
+        <div class="wrap-input">
+          <input id="pw_user" type="password" class="form-input" name="password" required>
+          <span class="focus-input" data-placeholder="Password"></span>
+        </div>
+        <button class="btn" type="button" onclick="login()">Login</button>
+        <label>
+          <input class="" type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+        <span class="psw">Forgot <a href="#">password?</a></span>
+      </form>
+    </div>
+  </div>
+</body>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script type="text/javascript" src="./jquery-3.6.0.js"></script>
+<!--script src="/socket.io/socket.io.js"></script-->
+<script type="text/javascript">
+  var id = document.getElementById('id_user');
+  var password = document.getElementById('pw_user');
+
+  const END_POINT = 'http://localhost:8082';
+  var socket= io();
+  socket.on('getId', (data)=>{
+      console.log(data);
+  })
+  
+  function init(){
+      var log_init = '<%-data%>';
+      console.log(log_init + ' initial');
+      localStorage.clear();
+      $('.form-input').each(function(){
+        if ($(this).val() !== '') {
+          $(this).val('');
+        }
+      });
+  }
+
+  async function login(){
+      
+      console.log(id.value + ' '+ password.value);
+      //socket.emit("sendMess", {'sender': 'sender', 'receiver': 'receiver', 'message': 'message'});
+      
+      var data_post = {
+        'id': id.value,
+        'pw': password.value
+    }
+    //const xhttp = new XMLHttpRequest();
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(data_post),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+    }
+    var res = await fetch("/login", options);
+    var json_res = await res.json();
+    console.log(json_res);
+    if(json_res.result=='OK')
+    {
+      sessionStorage.setItem('login_data', JSON.stringify({'id': id.value, 'isLogin': true, 
+      'my_username': json_res.username, 'accessToken': json_res.accessToken, 'refreshToken': json_res.refreshToken}));
+      window.location.href='/chat?userID='+id.value;
+    }
+    else if(json_res.result == 'NG')
+    {
+      alert('login failed');
+    }
+  }
+  $('.form-input').each(function(){
+      $(this).on('blur input', function(){
+        if ($(this).val().trim() != ''){
+          $(this).addClass('has-val');
+        } else {
+          $(this).removeClass('has-val');
+        }
+      })
+    })
+</script>

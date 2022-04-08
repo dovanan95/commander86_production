@@ -1,0 +1,152 @@
+<html>
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+        
+        /* The Modal (background) */
+        .modal {
+          display: none; /* Hidden by default */
+          position: fixed; /* Stay in place */
+          z-index: 1; /* Sit on top */
+          padding-top: 100px; /* Location of the box */
+          left: 0;
+          top: 0;
+          width: 100%; /* Full width */
+          height: 100%; /* Full height */
+          overflow: auto; /* Enable scroll if needed */
+          background-color: rgb(0,0,0); /* Fallback color */
+          background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        
+        /* Modal Content */
+        .modal-content {
+          background-color: #fefefe;
+          margin: auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 50%;
+        }
+        
+        /* The Close Button */
+        .close {
+          color: #aaaaaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        #content{
+            width: 70% ;
+            height: 30% ;
+            box-sizing: border-box;
+        }
+        </style>
+    <h1>PROFILE</h1>
+    <%- include('./header')%>
+    <body onload="loadUI()">
+        <div>
+            <p id="name">name:</p>
+            <p id="ID">ID:</p>
+            <p id="position">Position:</p>
+            <p id="dept">Depatment:</p>
+            <p id="cert">Certification:</p>
+            <p id="Phone">Phone:</p>
+        </div>  
+        <div>
+            <button id="chat_button" onclick="connect()">Contact</button>
+        </div>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p id="to_user">Message:</p>
+                <div>
+                    <textarea id="content" name="content" placeholder="Write Message.." ></textarea>
+                </div>
+                <br/>
+                <div>
+                    <button onclick="sendMess()" id="button_send_mess" 
+                        style="  background-color: #04AA6D;
+                        color: white;
+                        padding: 12px 20px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;">SEND</button>
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script>
+    var response_init = '<%-data%>';
+    var id = document.getElementById('ID');
+    var username = document.getElementById('name');
+    var position = document.getElementById('position');
+    var dept = document.getElementById('dept');
+    var Phone = document.getElementById('Phone');
+    var cert = document.getElementById("cert");
+    var content = document.getElementById('content');
+
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+
+    var socket=io();
+
+    var response_json = JSON.parse(response_init);
+    function loadUI()
+    {   console.log(response_init);
+        id.innerHTML='ID: '+response_json.userID;
+        username.innerHTML='name: '+ response_json.name;
+        position.innerHTML='Position: '+ response_json.position;
+        dept.innerHTML= 'Department: '+ response_json.dept;
+        Phone.innerHTML= 'Phone: '+ response_json.Phone;
+        cert.innerHTML='Certification: '+ response_json.certification;
+    }
+    function connect()
+    {
+        var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+        sessionStorage.setItem('current_partner_id',response_json.userID);
+
+        var to_user = document.getElementById('to_user');
+        to_user.innerHTML='To: '+response_json.name; 
+        modal.style.display = "block";
+    }
+    function sendMess()
+    {
+        console.log(content.value);
+        socket.emit('connected', myID);
+        socket.emit("sendMess", {'sender': myID, 'sender_name': my_name,
+             'receiver': response_json.userID, 'message': content.value});
+        content.value='';
+        alert('Message sent');
+    }
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

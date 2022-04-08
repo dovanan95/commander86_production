@@ -1,0 +1,116 @@
+<h1>HOME</h1>
+<%- include('./header')%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"-->
+<link rel="stylesheet" href="./font-awesome.min.css">
+<style>
+body {
+  font-family: Arial;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+.example input[type=text] {
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid grey;
+  float: left;
+  width: 80%;
+  background: #f1f1f1;
+}
+
+.example button {
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196F3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  cursor: pointer;
+}
+
+.example button:hover {
+  background: #0b7dda;
+}
+
+.example::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+</head>
+<body onload="checkLogin()">
+
+<h2 style="margin:left; padding-left: 10px;">Search Button</h2>
+
+<div class="div1">
+    <p style="margin:left; padding-left: 10px;">Search ID:</p>
+    <div class="example" style="margin:left;max-width:500px; padding-left: 10px;">
+        <input type="text" id="input_ID" placeholder="Search.." name="search2">
+        <button type="button" onclick="search()">SEND</button>
+    </div>
+</div>
+<div class="div2" style="margin:left; padding-left: 10px;">
+    <p id="exist">Find by ID</p>
+</div>
+
+
+</body>
+</html> 
+<script>
+    var id = document.getElementById("input_ID");
+    var infor = document.getElementById('exist');
+
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+
+    function checkLogin(){
+       var check = sessionStorage.getItem('login_data');
+       sessionStorage.removeItem('current_partner_id');
+  
+       var check_json = JSON.parse(check);
+       if(check_json ==null || check_json.isLogin != true)
+       {
+           window.location.href='/';
+       }
+    }
+    async function search()
+    {
+      if(myID==id.value)
+      {
+        alert('this is your ID');
+      } 
+      else
+      {
+        var res = await fetch('/searchUserByID?id='+id.value);
+        var res_json = await res.json();
+        console.log(res_json);
+        if(res_json.data == 'no_data')
+        {
+          infor.innerHTML='no information';
+        }
+        else if(res_json.data != 'no_data')
+        {
+          infor.innerHTML='user: ';
+          var node=document.createElement('a');
+          var text_node = document.createTextNode(res_json.data['name']);
+          node.appendChild(text_node);
+          node.href="/user_information?id_user="+res_json.data['userID']
+          +"&username="+res_json.data['name'] + "&Phone="+ res_json.data['Phone']
+          +"&position="+res_json.data['position']+"&dept="+res_json.data['dept']
+          +"&certification="+res_json.data['certification'];
+          infor.appendChild(node);
+        }
+      }
+        
+    }
+</script>

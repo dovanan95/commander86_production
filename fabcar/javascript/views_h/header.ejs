@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;200&display=swap" rel="stylesheet"> 
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    min-height: 100vh;
+    width: 100%;
+    /* display: flex; */
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 6%;
+    background: #11101d;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s ease;
+  }
+
+  .sidebar.active {
+    width: 20%;
+    padding: 6px 14px;
+  }
+
+  .sidebar .logo-content {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin: 15px 0;
+    align-items: center;
+    transition: all 0.4s ease;
+  }
+
+  .sidebar.active .logo-content {
+    justify-content: space-between;
+  }
+
+  .sidebar .logo-content span{
+    display: none;
+    transition: all 0.7s ease;
+    color: #fff;
+    font-size: 25px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .sidebar.active .logo-content span{
+    display: block;
+  }
+
+  .sidebar #menu-btn{
+    font-size: 30px;
+    color: #fff;
+    right: 0;
+  }
+
+  .sidebar ul {
+    margin-top: 20px;
+    padding: 6px 14px;
+  }
+
+  .sidebar.active ul {
+    padding: 0;
+  }
+
+  .sidebar ul li {
+    list-style: none;
+    color: #fff;
+    width: 100%;
+    margin: 0px 5px 0 0;
+    line-height: 50px;
+    position: relative;
+    /* display: flex; */
+  }
+
+  .sidebar ul li input {
+    position: absolute;
+    width: 0;
+    border-radius: 12px;
+    min-height: 50px;
+    top: 0;
+    left: 0;
+    outline: none;
+    border: none;
+    background: #1d1b31;
+    padding-left: 50px;
+    font-size: 18px;
+    color: #fff; 
+    transition: all 0.3s ease-in-out;
+    /* opacity: 0;
+    visibility: hidden;  */
+  }
+
+  .sidebar.active ul li input{
+    width: 100%;
+    /* opacity: 1;
+    visibility: visible; */
+  }
+
+  .sidebar ul li .bx-search-alt-2 {
+    position: absolute;
+    z-index: 99;
+    color: #fff;
+    top: 0;
+    transition: all 0.4s ease;
+    font-size: 22px;
+  }
+
+  .sidebar ul li i.bx-search-alt-2:hover {
+    background-color: #fff;
+    color: #1d1b31;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .sidebar.active ul li i.bx-search-alt-2:hover {
+    pointer-events: none;
+    cursor: none;
+  }
+
+  .a {
+    display: inline-block;
+    max-height: 50px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar ul li a {
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+  }
+
+  /* .sidebar ul li a:hover {
+    background-color: #fff;
+    color: #1d1b31;
+  } */
+
+  .sidebar ul li i{
+    border-radius: 12px;
+    min-width: 50px;
+    min-height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .sidebar ul li a:hover {
+    color: #11101d;
+    background-color: #fff;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+  }
+
+  .sidebar.active .link-items {
+    opacity: 1;
+    display: block;
+    min-width: 100%;
+    transform: translateX(0px);
+  }
+
+  .sidebar .link-items {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 0.4s ease-in-out;
+  }
+
+  .logout-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+  }
+
+  .logout-form a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #1d1b31;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    margin: 6px 14px;
+  }
+
+  .logout-form i {
+    
+    min-width: 50px;
+    min-height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .logout-form span {
+    opacity: 0;
+    width: 0%;
+    transition: width 0.4s;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .sidebar.active .logout-form span {
+    opacity: 1;
+    width: 100%;
+  }
+
+  #exist {
+    display: none;
+  }
+
+  #exist.actice-search {
+    display: block;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo-content">
+    <span>Vien10</span> 
+    <i class='bx bx-menu' id="menu-btn"></i>
+  </div>
+  <ul>
+    <li id="search-bar">
+      <div class="a">
+        <i class='bx bx-search-alt-2'></i>
+        <input type="text" id="input_ID" placeholder="Search...">
+        <span id="exist"></span>
+      </div>
+      <!-- <a href="/home">
+        <i class='bx bx-search-alt-2'></i>
+        <span class="link-items">Search</span>
+      </a> -->
+    </li>
+    <li>
+      <a href="/chat">
+        <i class='bx bx-chat'></i>
+        <span class="link-items">Messages</span>
+      </a>
+    </li>
+  </ul>
+  <div class="logout-form">
+    <a href="./">
+      <i class='bx bx-log-out-circle logout-icon'></i>
+      <span class="logout-text">Logout</span>
+    </a>
+  </div>
+  </div>
+</div>
+
+</body>
+</html>

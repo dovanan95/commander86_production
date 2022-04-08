@@ -1,0 +1,515 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {box-sizing: border-box}
+body {font-family: "Lato", sans-serif;}
+
+/* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 25%;
+  height: 700px;
+  overflow: auto;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  padding: 22px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  float: left;
+  padding: 0px 12px;
+  border: 1px solid #ccc;
+  width: 75%;
+  border-left: none;
+  height: 700px;
+
+
+}
+
+.input_form{
+    position: absolute;
+    position: sticky;
+    bottom: 50;
+    top: 430px;;
+}
+
+.input_mess{
+    float: right;
+    width: 50%;
+    height: 50px;
+    margin-top: auto;
+}
+.send_button{
+    margin-top: auto;
+    float: right;
+    height: 50px;
+}
+
+hr.solid {
+  border-top: 3px solid #bbb;
+}
+
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.msger-inputarea {
+  display:flex;
+  padding: 10px;
+  border-top: var(--border);
+  background: #eee;
+}
+.msger-inputarea * {
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  font-size: 1em;
+}
+.msger-input {
+  width: 100%;
+  background: #ddd;
+  display: block;
+}
+.msger-send-btn {
+  margin-left: 10px;
+  background: rgb(0, 196, 65);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.23s;
+}
+.msger-send-btn:hover {
+  background: rgb(0, 180, 50);
+}
+
+#mess_container {
+    height: 90%;
+    overflow: auto;
+}
+.netstat{
+    color:green;
+}
+.block_func_btn{
+    position: relative;
+    display: inline-block;
+}
+.block_func_btn:hover .dropdown-button{
+    display: block;
+}
+.dropdown-button{
+    display: none;
+    position: absolute;
+    right: 0;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+</style>
+<html>
+    <body onload="checkLogin()">
+        <h1>COMMAND</h1>
+        <%- include('./header')%>
+        <div style="background-color: honeydew; height: 30px;;">
+            <button style="float:right; height: 30px;">CALL</button>
+        </div>
+        <div>
+            <div class="tab" id='hist_tab'>
+                <!--button class="tablinks" >Chat History</button-->
+            </div>
+            <div class="tabcontent">
+                <div id='mess_container' >
+                    <div id="message_bubble">
+                      <h3>Message</h3>
+                      <!--p>Chat Content</p-->
+                    </div>
+                </div>
+                <div class="msger-inputarea">  
+                    <input id='inputMess'  class="msger-input" placeholder="Input Message Here"/>
+                    <button type="button" class="msger-send-btn">FILE</button>
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">SEND</button>
+                    
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script type="text/javascript" src="./jquery-3.6.0.js"></script>
+<script>
+    const END_POINT = 'http://localhost:8082';
+    var socket=io();
+    
+    const left_tab = document.getElementById('hist_tab');
+    const message_zone = document.getElementById('message_bubble');
+    const messContent = document.getElementById('inputMess');
+    const messContainer = document.getElementById('mess_container');
+    var tab_partner_prefix = 'partner_list.';
+    var network_status='offline';
+
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+
+    socket.emit('connected', myID);
+
+    socket.on('online_list', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        sessionStorage.setItem('online_partner', JSON.stringify({'live':data}));
+    });
+    socket.on('online_status', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var tablinks = document.getElementsByClassName('tablinks');
+        for(var i=0;i<tablinks.length;i++)
+        {
+            var id_sender = tablinks[i].getAttribute('id_sender');
+            if(id_sender==data.userID && data.isOnline==true)
+            {
+                tablinks[i].children[0].children[1].innerHTML='online';
+                tablinks[i].children[0].children[1].style.color='green';
+            } 
+            else if(id_sender==data.userID && data.isOnline==false)
+            {
+                tablinks[i].children[0].children[1].innerHTML='offline';
+                tablinks[i].children[0].children[1].style.color='red';
+            }
+        }
+    })
+
+    socket.on('incoming_mess', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        if(data.docType=='private_message')
+        {
+            if(data.sender == current_partner)
+            {
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message)
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                messContainer.scrollTop = messContainer.scrollHeight;
+
+                reloadLeftTab(tab_partner_prefix+ data.sender);
+            }
+            else if(data.sender != current_partner)
+            {   
+                var flag =0;
+                for(var k in response_init)
+                {
+                    if(data.sender==response_init[k]['userID'])
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    var tab_partner_el = 
+                    `
+                        <button class="tablinks" docType=${data.docType} id="${tab_partner_prefix+data.sender}"
+                        onclick=choosePartner_2(this) id_sender="${data.sender}">
+                            <div style="float:left;">
+                                    <div>${data.sender_name}</div>
+                                    <div style="color:green;">online</div>
+                                </div>
+                            <div style="float:right;">new message</div>
+                        </button>
+                        <hr class="solid">
+                    `
+                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                        partner_tab.children[1].innerHTML='new message';
+                    }
+                    
+                    reloadLeftTab(tab_partner_prefix+ data.sender);
+                }
+                
+            }
+            
+        }
+        
+    })
+    messContent.addEventListener('keyup', function(event){
+        if(event.keyCode===13)
+        {
+            document.getElementById('button_send_mess').click();
+        } 
+    })
+
+    function myMessage(id_block, my_name, content)
+    {
+        var mess_block = `
+                            <div class="container darker" id=${id_block}>
+                                <div style="float:left;">
+                                    <h3>${my_name}</h3>
+                                    <p>${content}</p>
+                                </div>
+                                <div class="block_func_btn" style="float:right;">
+                                    <button >...</button>
+                                    <div class="dropdown-button">
+                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
+                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        return mess_block;
+    }
+    function prtnerMessage(id_block, sender_name, content)
+    {
+        var mess_block = `
+                            <div class="container" id=${id_block}>
+                                <div style="float:left;">
+                                    <h3 style="color:red;">${sender_name}</h3>
+                                    <p style="color:red;">${content}</p>
+                                </div>
+                                <div class="block_func_btn" style="float:right;">
+                                    <button>...</button>
+                                    <div class="dropdown-button">
+                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
+                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        return mess_block
+    }
+
+    async function verifyMessBlock(obj)
+    {
+        var parentObj = obj.parentElement.parentNode.parentNode;
+        var id_block = parentObj.getAttribute('id');
+        console.log(id_block);
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString()}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        var res_block_verify = await fetch('/verifyMessBlockchain', options);
+        var res_block_verify_json = await res_block_verify.json();
+        console.log(res_block_verify_json);
+        if(res_block_verify_json.data=="error")
+        {
+            alert("du lieu da bi thay doi");
+        }
+        else
+        {
+            var id_block = res_block_verify_json.messID;
+            var mess_block = document.getElementById(id_block);
+            mess_block.children[0].children[1].innerHTML=res_block_verify_json.content;
+        }
+        
+
+    }
+    function viewDetailBlock(obj)
+    {
+        console.log(obj.tagName);
+    }
+
+    function reloadLeftTab(id){
+        
+        var childLeftButton = left_tab.children;
+        var index; var tab;
+        for(let i=0; i<childLeftButton.length; i++)
+        {
+            var childItem = childLeftButton[i];
+            if(childItem.id==id)
+            {
+                index = i;
+                tab=childItem.outerHTML+ `<hr class="solid">`;
+            }
+        }
+        left_tab.removeChild(left_tab.children[index+1]);
+        left_tab.removeChild(document.getElementById(id));
+        left_tab.insertAdjacentHTML('afterbegin', tab);
+    }
+        
+
+    function checkLogin(){
+       var check = sessionStorage.getItem('login_data');
+       sessionStorage.removeItem('current_partner_id');
+
+       var check_json = JSON.parse(check);
+       if(check_json ==null || check_json.isLogin != true)
+       {
+           window.location.href='/';
+       }
+       else
+       {
+            fetchData();
+       }
+    }
+    var response_init;
+    async function fetchData(){
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'id': myID}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        var response_init_load = await fetch("/load_chat_history", options);
+        response_init = await response_init_load.json(); //console.log('response_init', response_init);
+        for(var i in response_init)
+        {
+            console.log(response_init[i]);
+            var tab_partner_el = 
+            `
+                <button class="tablinks" docType=${response_init[i].docType} id="${tab_partner_prefix+response_init[i].userID}"
+                onclick=choosePartner_2(this) id_sender="${response_init[i].userID}">
+                    <div style="float:left;">
+                        <div>${response_init[i].username}</div>
+                        <div style="color:red;">${network_status}</div>
+                    </div>
+                    <div style="float:right;">o</div>
+                
+                </button>
+                <hr class="solid">
+            `
+            left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
+        }
+
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var online_partner = sessionStorage.getItem('online_partner');
+        if(online_partner)
+        {
+            var online_prt_json = JSON.parse(online_partner);
+            console.log(online_prt_json['live']);
+            var tablinks = document.getElementsByClassName('tablinks');
+            for(var i=0;i<tablinks.length;i++)
+            {
+                for(var j=0;j<online_prt_json['live'].length;j++)
+                {
+                    let id_sender = tablinks[i].getAttribute('id_sender');
+                    let id_prt = online_prt_json['live'][j]['userID'];
+                    if(id_sender==id_prt)
+                    {
+                        tablinks[i].children[0].children[1].innerHTML='online';
+                        tablinks[i].children[0].children[1].style.color='green';
+                    }
+                }
+            }
+        }
+        else if(!online_partner)
+        {
+            console.log('ng');
+        }
+    }
+    async function getBlockByID(partner_id, docType){
+        //code call API get to /chat_peer
+        var block;
+        if(docType=='private_message')
+        {
+            //code
+            var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+            var getPrivMessBlock = await fetch('/chat_peer', options);
+            block = await getPrivMessBlock.json();
+        }
+        return(block);
+    }
+    async function choosePartner_2(obj){
+        console.log(obj.getAttribute('id_sender'));
+        console.log(obj.children[0].children[1].innerHTML);
+        obj.children[1].innerHTML='o';
+        message_zone.innerHTML=``;
+        var id_partner = obj.getAttribute('id_sender');
+        var docType = obj.getAttribute('docType');
+        sessionStorage.setItem('current_partner_id', id_partner);
+        //callAPI(id)
+        if(docType=='private_message')
+        {
+            var block_ = await getBlockByID(id_partner, docType); //API call result
+            block =block_.reverse(); 
+            for(var i in block)
+            {
+                var mess_block;
+                if(block[i].Record.sender==id_partner)
+                {
+                    mess_block_t = prtnerMessage(block[i].Record.messID, block[i].Record.sender_name, block[i].Record.content);
+                }
+                else if(block[i].Record.sender != id_partner)
+                {
+                    mess_block_t = myMessage(block[i].Record.messID, my_name, block[i].Record.content);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+            }
+        }
+
+        messContainer.scrollTop = messContainer.scrollHeight;
+        
+    }
+
+    function sendMess()
+    {
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+        var docType = partner_element.getAttribute('docType');
+        if(current_partner != null)
+        {
+            if(docType=='private_message')
+            {
+                var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+                console.log(messID);
+                mess_block_t = myMessage(messID, my_name, messContent.value);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                messContainer.scrollTop = messContainer.scrollHeight;
+                socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
+                'receiver': current_partner, 'message': messContent.value});
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+ current_partner);
+            }
+            
+        }    
+    }
+</script>

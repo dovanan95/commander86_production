@@ -1,0 +1,313 @@
+<html>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .profile-container{
+            width: 94%;
+            float: right;
+            transition: all 0.4s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .profile-container.scaledown {
+            width: 80%;
+        }
+
+        .profile-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 400px;
+            padding: 0 20px 40px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.075);
+            border-radius: 6px;
+        }
+
+        .profile-wrapper .avatar{
+            width: 150px;
+            height: 150px;
+            position: relative;
+            border-radius: 50%;
+            margin: auto;
+            /* border-image-slice: 100px; */
+        }
+
+        .profile-wrapper .avatar img {
+            border: 10px solid #f0f0f0;
+            border-radius: 50%;
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            top: -60px;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .profile-info p {
+            border-bottom: 2px solid #f2f2f2;
+            padding-bottom: 6px;
+
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        #chat_button {
+            display: flex;
+            justify-content: center;
+            border: none;
+            text-transform: uppercase;
+            border-radius: 30px;
+            background-color: #2fc5fe;
+            padding: 18px;
+            margin-top: 20px;
+            outline: none;
+            /* text-transform: uppercase; */
+            font-size: 20px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #chat_button:hover {
+            opacity: 0.7;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        /* Modal Content */
+        .modal-content {
+          background-color: #fefefe;
+          margin: auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 50%;
+        }
+        
+        /* The Close Button */
+        .close {
+          color: #aaaaaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        #content{
+            width: 70% ;
+            height: 30% ;
+            box-sizing: border-box;
+        } 
+        </style>
+    <%- include('./header')%>
+    <body onload="loadUI()">
+        <div class="profile-container">
+            <div class="profile-wrapper">
+                <div class="avatar">
+                    <img src="http://assets.stickpng.com/images/585e4bf3cb11b227491c339a.png" alt="">
+                </div>
+                <div class="profile-info">
+                    <p id="name">Name:</p>
+                    
+                    <p id="ID">ID:</p>
+                    
+                    <p id="position">Position:</p>
+                    
+                    <p id="dept">Depatment:</p>
+                    
+                    <p id="cert">Certification:</p>
+                    
+                    <p id="Phone">Phone:</p>
+                </div>  
+                <div>
+                    <button id="chat_button" onclick="connect()">Contact</button>
+                </div>
+        
+                <!-- The Modal -->
+                <div id="myModal" class="modal">
+        
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p id="to_user">Message:</p>
+                        <div>
+                            <textarea id="content" name="content" placeholder="Write Message.." ></textarea>
+                        </div>
+                        <br/>
+                        <div>
+                            <button onclick="sendMess()" id="button_send_mess" 
+                                style="  background-color: #04AA6D;
+                                color: white;
+                                padding: 12px 20px;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;">SEND</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script src="./jquery-3.6.0.js"></script>
+<script>
+    //var response_init = '<%-data%>';
+    var response_init = window.opener.user_obj;
+    var id = document.getElementById('ID');
+    var username = document.getElementById('name');
+    var position = document.getElementById('position');
+    var dept = document.getElementById('dept');
+    var Phone = document.getElementById('Phone');
+    var cert = document.getElementById("cert");
+    var content = document.getElementById('content');
+
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+
+    var socket=io();
+
+    //var response_json = JSON.parse(response_init);
+    var response_json = response_init;
+    function loadUI()
+    {   console.log(response_init);
+        id.innerHTML='ID: '+response_json.userID;
+        username.innerHTML='Name: '+ response_json.name;
+        position.innerHTML='Position: '+ response_json.position;
+        dept.innerHTML= 'Department: '+ response_json.dept;
+        Phone.innerHTML= 'Phone: '+ response_json.Phone;
+        cert.innerHTML='Certification: '+ response_json.certification;
+    }
+    function connect()
+    {
+        var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+        sessionStorage.setItem('current_partner_id',response_json.userID);
+
+        var to_user = document.getElementById('to_user');
+        to_user.innerHTML='To: '+response_json.name; 
+        modal.style.display = "block";
+    }
+    function sendMess()
+    {
+        console.log(content.value);
+        socket.emit('connected', myID);
+        var current_partner = response_json.userID;
+        var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+        socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
+             'receiver': response_json.userID, 'message': content.value});
+        content.value='';
+        alert('Message sent');
+    }
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    $(document).on('click', '#menu-btn' , function(){
+      if ($('.sidebar').hasClass('active')){
+          $('.sidebar').removeClass('active');
+          $('.profile-container').removeClass('scaledown');
+      } else {
+          $('.sidebar').addClass('active');
+          $('.profile-container').addClass('scaledown');
+      }
+    })
+
+    var idSearch = document.getElementById("input_ID");
+    var infor = document.getElementById('exist');
+
+    idSearch.addEventListener("keyup", function(e){
+        if (e.keyCode === 13){
+        search();
+        }
+    })
+    async function search()
+    {
+        if(myID==idSearch.value) {
+            console.log('This is your id');
+        } 
+        else {
+            const options = {
+                method: 'GET',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var res = await fetch('/searchUserByID?id='+idSearch.value, options);
+            var res_json = await res.json();
+            console.log(res_json);
+            if(res_json.data == 'no_data') {
+                infor.innerHTML='no information';
+            }else if(res_json.data != 'no_data'){
+            // $('span#exist').addClass('')
+            // infor.innerHTML='user: ';
+            // var node=document.createElement('a');
+            // var text_node = document.createTextNode(res_json.data['name']);
+            // node.appendChild(text_node);
+                var searchUrl="/user_information?id_user="+res_json.data['userID']
+                +"&username="+res_json.data['name'] + "&Phone="+ res_json.data['Phone']
+                +"&position="+res_json.data['position']+"&dept="+res_json.data['dept']
+                +"&certification="+res_json.data['certification'];
+                window.location.href = searchUrl;
+            // infor.appendChild(node);
+            }
+        }
+    }
+
+  $(document).on('click', '.bx-search-alt-2' , function(){
+      if (!$('.sidebar').hasClass('active')){
+        $('.sidebar').addClass('active');
+        $('.profile-container').addClass('scaledown');
+      }
+    })
+</script>

@@ -1,0 +1,821 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {box-sizing: border-box}
+body {font-family: "Lato", sans-serif;}
+
+.chat-container {
+    display: flex;
+    width: 94%;
+    float: right;
+    transition: all 0.4s ease;
+    min-height: 100vh;
+}
+
+.chat-container.scaledown {
+    width: 80%;
+}
+
+/* Style the tab */
+.tab {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  /* min-height: 100vh; */
+  background-color: rgba(121, 199, 197, 0.2);
+  border-right: 1px solid rgba(121, 199, 197, 0.2);
+}
+
+.tablinks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0 20px 22px;
+    font-family: 'Poppins', sans-serif;
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
+    margin: 0;
+    border: 0px rgb(121, 199, 197);
+    position: relative;
+}
+
+.tablinks:hover {
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid rgb(121, 199, 197);
+}
+
+.tablinks .acc{
+    text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.tablinks .status-offline {
+    color: red;
+}
+
+.dots-offline {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    margin-right: 15px;
+}
+
+
+.tablinks .status-online {
+    color: red;
+}
+
+.dots-online {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    margin-right: 15px;
+}
+
+/* Style the tab content */
+.chat-box {
+    display: flex;
+    width: 75%;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+}
+
+.chat-box .top-bar {
+    width: 100%;
+    max-height: 9vh;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+    align-items: center;
+}
+
+.chat-box .top-bar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-box .top-bar .user-info .avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgb(47, 197, 254); 
+    position: relative;
+}
+
+.chat-box .top-bar .user-info .avatar p {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    position: absolute;
+    /* left: 50%; */
+    text-align: center;
+    color: white;
+    font-weight: 400;
+}
+
+.chat-box .top-bar .user-info .name-chat {
+    letter-spacing: 1px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+
+.chat-box .top-bar button {
+    outline: none;
+    border: none;
+}
+
+.chat-box .top-bar i.bxs-phone-call {
+    color: rgb(47, 197, 254);
+    font-size: 30px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#chat-content {
+    min-width: 100%;
+    height: 82vh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-color: #f9fbff;
+    padding: 20px;
+}
+
+.incoming {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+    width: 50%;
+}
+
+.incoming .bubble {
+    padding: 10px 10px 10px 12px;
+    background:  #777777;
+    border-radius: 0px 12px 12px 12px;
+    color: white;
+    font-size: 19px;
+    margin-right: 5px;
+}
+
+.outgoing {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
+.outgoing .bubble {
+    padding: 10px 10px 10px 12px;
+    background:  #79C7C5;
+    border-radius: 12px 0px 12px 12px;
+    color: white;
+    font-size: 19px;
+    margin-left: 5px;
+}
+
+.block_func_btn {
+    position: relative;
+    display: inline-block;
+}
+
+.expand-func-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+.expand-func-icon:hover {
+    background-color: #C7C9CC;
+}
+
+.expand-func-icon .dots {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #777777;
+}
+
+.incoming .block_func_btn .dropdown-button {
+    min-width: 110px;
+    min-height: 60px;
+    position: absolute;
+    left: 20%;
+    top: 25px;
+    padding: 8px 11px;
+    background-color: #C7C9CC;
+    border-radius: 0px 8px 10px 8px;
+    display: none;
+}
+
+.incoming.active-dropdown .block_func_btn .dropdown-button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    z-index: 99;
+}
+
+.block_func_btn .dropdown-button button {
+    outline: none;
+    border: none;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    font-weight: 400;
+}
+
+
+.block_func_btn .dropdown-button button:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.outgoing .block_func_btn .dropdown-button {
+    min-width: 110px;
+    min-height: 60px;
+    position: absolute; /*neu muon dung hover thi phair an cai nay di*/
+    right: 20%;
+    top: 25px;
+    padding: 8px 11px;
+    background-color: #C7C9CC;
+    border-radius: 10px 0px 10px 10px;
+    display: none;
+}
+
+.outgoing.active-dropdown .block_func_btn .dropdown-button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    z-index: 99;
+}
+
+/* .input_form{
+    position: absolute;
+    position: sticky;
+    bottom: 50;
+    top: 430px;
+} */
+
+/* .input_mess{
+    float: right;
+    width: 50%;
+    height: 50px;
+    margin-top: auto;
+} */
+/* .send_button{
+    margin-top: auto;
+    float: right;
+    height: 50px;
+} */
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+
+.msger-inputarea {
+    border-top: 1px solid #f2f2f2;
+  display:flex;
+  padding: 10px;
+  background: #fff;
+  max-height: 9vh;
+}
+
+.msger-input {
+    border: none;
+    outline: none;
+    margin: 0px 10px 0px 10px;
+  width: 100%;
+  background: #fff;
+  display: block;
+  padding-top: 10px;
+  font-size: 18px;
+  font-family: 'Poppins', sans-serif;
+}
+.msger-send-btn {
+    border:none;
+    outline: none;
+  margin-left: 10px;
+  background: #fff;
+  color: #79C7C5;
+  cursor: pointer;
+  transition: background 0.23s;
+}
+
+.msger-send-btn i {
+    padding: 5px;
+    font-size: 30px;
+}
+
+.msger-send-btn:hover {
+  background: #C7C9CC;
+}
+
+.netstat{
+    color:green;
+}
+
+
+</style>
+<html>
+    <body onload="checkLogin()">
+        <%- include('./header')%>
+        <div class="chat-container">
+            <div class="tab" id='hist_tab'>
+                <!--button class="tablinks" >Chat History</button-->
+            </div>
+            <div class="chat-box">
+                <div class="top-bar" >
+                    <!-- <div id="message_bubble">
+                        <h3>Message</h3>
+                        p>Chat Content</p
+                    </div> -->
+                    <div class="user-info">
+                        <div class="avatar"><p>H</p></div>
+                        <div class="name-chat"></div>
+                    </div>
+                    <button><i class='bx bxs-phone-call'></i></button>
+                </div>
+                <div id="chat-content">
+                    <!-- contentchat -->
+                </div>
+                <div class="msger-inputarea">  
+                    <input id='inputMess'  class="msger-input" placeholder="Type a message..."/>
+                    <button type="button" class="msger-send-btn"><i class='bx bx-file'></i></button>
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn"><i class='bx bxs-send' ></i></button> 
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script type="text/javascript" src="./jquery-3.6.0.js"></script>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script>
+    const END_POINT = 'http://localhost:8082';
+    var socket=io();
+    
+    const left_tab = document.getElementById('hist_tab');
+    var message_zone = document.getElementById('chat-content');
+    const messContent = document.getElementById('inputMess');
+    // const messContainer = document.getElementById('mess_container');
+    var tab_partner_prefix = 'partner_list.';
+    var network_status='offline';
+
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = JSON.parse(myID_json)['id'];
+        var my_name = JSON.parse(myID_json)['my_username'];
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+
+    socket.emit('connected', myID);
+
+    socket.on('online_list', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        sessionStorage.setItem('online_partner', JSON.stringify({'live':data}));
+    });
+    socket.on('online_status', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var tablinks = document.getElementsByClassName('tablinks');
+        for(var i=0;i<tablinks.length;i++)
+        {
+            var id_sender = tablinks[i].getAttribute('id_sender');
+            if(id_sender==data.userID && data.isOnline==true)
+            {
+                tablinks[i].children[0].children[1].innerHTML='online';
+                tablinks[i].children[0].children[1].style.color='green';
+                tablinks[i].children[1].style.backgroundColor='green';
+            } 
+            else if(id_sender==data.userID && data.isOnline==false)
+            {
+                tablinks[i].children[0].children[1].innerHTML='offline';
+                tablinks[i].children[0].children[1].style.color='red';
+                tablinks[i].children[1].style.backgroundColor='red';
+            }
+        }
+    })
+
+    socket.on('incoming_mess', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        if(data.docType=='private_message')
+        {
+            if(data.sender == current_partner)
+            {
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message)
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                // messContainer.scrollTop = messContainer.scrollHeight;
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.sender);
+            }
+            else if(data.sender != current_partner)
+            {   
+                var flag =0;
+                for(var k in response_init)
+                {
+                    if(data.sender==response_init[k]['userID'])
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
+                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                        console.log(partner_tab);
+                        partner_tab.children[1].innerHTML='new message';
+                    }
+                    reloadLeftTab(tab_partner_prefix+ data.sender);
+                }
+                
+            }
+            
+        }
+        
+    })
+    messContent.addEventListener('keyup', function(event){
+        if(event.keyCode===13)
+        {
+            document.getElementById('button_send_mess').click();
+        } 
+    })
+
+    function myMessage(id_block, my_name, content)
+    {
+        var mess_block = `
+                            <div class="outgoing" id=${id_block}>
+                                <div class="bubble">
+                                    ${content}
+                                </div>
+                                <div class="block_func_btn">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
+                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        return mess_block;
+    }
+    function prtnerMessage(id_block, sender_name, content)
+    {
+        var mess_block = `
+                            <div class="incoming " id=${id_block}>
+                                <div class="bubble">
+                                    ${content}
+                                </div>
+                                <div class="block_func_btn" style="float:right;">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
+                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        return mess_block
+    }
+    function private_message_left_tab(docType, id, name)
+    {
+        var left_private_block =
+        `
+            <div class="tablinks" docType=${docType} id="${tab_partner_prefix+id}"
+                onclick=choosePartner_2(this) id_sender="${id}">
+                <div class="acc-status">
+                    <div class="acc">${name}</div>
+                    <div class="status-online">${network_status}</div>
+                </div>
+                <div class="dots-online"></div>
+            </div>
+            <hr class="solid">
+        `
+        return left_private_block
+    }
+
+    async function verifyMessBlock(obj)
+    {
+    
+        var parentObj = obj.parentElement.parentNode.parentNode;
+        console.log(parentObj);
+        var id_block = parentObj.getAttribute('id');
+        console.log(id_block);
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString()}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        var res_block_verify = await fetch('/verifyMessBlockchain', options);
+        var res_block_verify_json = await res_block_verify.json();
+        console.log(res_block_verify_json.data);
+        if(res_block_verify_json.data=="error")
+        {
+            alert("du lieu da bi thay doi");
+        }
+        else
+        {
+            var id_block = res_block_verify_json.messID;
+            console.log
+            var mess_block = document.getElementById(id_block);
+            // console.log(mess_block);
+            mess_block.children[0].innerHTML=res_block_verify_json.content;
+        }
+        
+
+    }
+    function viewDetailBlock(obj)
+    {
+        console.log(obj.tagName);
+    }
+
+    function reloadLeftTab(id){
+        
+        var childLeftButton = left_tab.children;
+        var index; var tab;
+        for(let i=0; i<childLeftButton.length; i++)
+        {
+            var childItem = childLeftButton[i];
+            if(childItem.id==id)
+            {
+                index = i;
+                tab=childItem.outerHTML+ `<hr class="solid">`;
+            }
+        }
+        left_tab.removeChild(left_tab.children[index+1]);
+        left_tab.removeChild(document.getElementById(id));
+        left_tab.insertAdjacentHTML('afterbegin', tab);
+    }
+        
+
+    function checkLogin(){
+       var check = sessionStorage.getItem('login_data');
+       sessionStorage.removeItem('current_partner_id');
+
+       var check_json = JSON.parse(check);
+       if(check_json ==null || check_json.isLogin != true)
+       {
+           window.location.href='/';
+       }
+       else
+       {
+            fetchData();
+       }
+    }
+    var response_init;
+    async function fetchData(){
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'id': myID}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        }
+        var response_init_load = await fetch("/load_chat_history", options);
+        response_init = await response_init_load.json(); //console.log('response_init', response_init);
+        for(var i in response_init)
+        {
+            console.log(response_init[i]);
+            var tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username)
+            left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
+        }
+
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var online_partner = sessionStorage.getItem('online_partner');
+        if(online_partner)
+        {
+            var online_prt_json = JSON.parse(online_partner);
+            console.log(online_prt_json['live']);
+            var tablinks = document.getElementsByClassName('tablinks');
+            for(var i=0;i<tablinks.length;i++)
+            {
+                for(var j=0;j<online_prt_json['live'].length;j++)
+                {
+                    let id_sender = tablinks[i].getAttribute('id_sender');
+                    let id_prt = online_prt_json['live'][j]['userID'];
+                    if(id_sender==id_prt)
+                    {
+                        console.log(tablinks[i].children[0].children[1]);
+                        tablinks[i].children[0].children[1].innerHTML='online';
+                        tablinks[i].children[0].children[1].style.color='green';
+                        tablinks[i].children[1].style.backgroundColor='green';
+                    }
+                }
+            }
+        }
+        else if(!online_partner)
+        {
+            console.log('ng');
+        }
+    }
+    async function getBlockByID(partner_id, docType){
+        //code call API get to /chat_peer
+        var block;
+        if(docType=='private_message')
+        {
+            //code
+            var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var getPrivMessBlock = await fetch('/chat_peer', options);
+            block = await getPrivMessBlock.json();
+        }
+        return(block);
+    }
+    async function choosePartner_2(obj){
+        // debugger;
+        console.log(obj.getAttribute('id_sender'));
+        console.log(obj.children[0].children[1].innerHTML);
+        obj.children[1].innerHTML='';
+        message_zone.innerHTML=``;
+        var id_partner = obj.getAttribute('id_sender');
+        var docType = obj.getAttribute('docType');
+        sessionStorage.setItem('current_partner_id', id_partner);
+        //callAPI(id)
+        if(docType=='private_message')
+        {
+            var block_ = await getBlockByID(id_partner, docType); //API call result
+            block =block_.reverse(); 
+            for(var i in block)
+            {
+                var mess_block;
+                if(block[i].Record.sender==id_partner)
+                {
+                    mess_block_t = prtnerMessage(block[i].Record.messID, block[i].Record.sender_name, block[i].Record.content);
+                }
+                else if(block[i].Record.sender != id_partner)
+                {
+                    mess_block_t = myMessage(block[i].Record.messID, my_name, block[i].Record.content);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+            }
+        }
+
+        message_zone.scrollTop = message_zone.scrollHeight;
+        
+    }
+
+    function sendMess()
+    {
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+        var docType = partner_element.getAttribute('docType');
+        if(current_partner != null)
+        {
+            if(docType=='private_message')
+            {
+                var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+                console.log(messID);
+                mess_block_t = myMessage(messID, my_name, messContent.value);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
+                'receiver': current_partner, 'message': messContent.value});
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+ current_partner);
+            }
+        }    
+    }
+
+    // ------------------ //
+    var id = document.getElementById("input_ID");
+    var infor = document.getElementById('exist');
+
+    id.addEventListener("keyup", function(e){
+        if (e.keyCode === 13){
+        search();
+        }
+    })
+    var user_obj;
+    async function search()
+    {
+        if(myID==id.value) {
+        alert('this is your ID');
+        } 
+        else
+        {
+            const options = {
+                method: 'GET',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var res = await fetch('/searchUserByID?id='+id.value, options);
+            var res_json = await res.json();
+            console.log(res_json);
+            if(res_json.data == 'no_data')
+            {
+                infor.innerHTML='no information';
+            }
+            else if(res_json.data != 'no_data')
+                {
+                // $('span#exist').addClass('')
+                // infor.innerHTML='user: ';
+                // var node=document.createElement('a');
+                // var text_node = document.createTextNode(res_json.data['name']);
+                // node.appendChild(text_node); 
+                //    var searchUrl="/user_information?id_user="+res_json.data['userID']
+                //   +"&username="+res_json.data['name'] + "&Phone="+ res_json.data['Phone']
+                //    +"&position="+res_json.data['position']+"&dept="+res_json.data['dept']
+                //    +"&certification="+res_json.data['certification'];
+                //    window.location.href = searchUrl;
+                // infor.appendChild(node);
+                    var searchUrl = "/user_information";
+                    user_obj = 
+                    {
+                        'userID': res_json.data['userID'],
+                        'name': res_json.data['name'], 
+                        'Phone': res_json.data['Phone'],
+                        'position':res_json.data['position'],
+                        'dept':res_json.data['dept'],
+                        'certification': res_json.data['certification']
+                    }
+                    var profile = window.open(searchUrl);
+                    profile.user_obj = user_obj;
+                }
+        }
+        
+    }
+    $(document).on('click', '#menu-btn', function(){
+        //debugger;
+        if ($('.sidebar').hasClass('active')){
+            $('.sidebar').removeClass('active');
+            $('.chat-container').removeClass('scaledown');
+        } else {
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
+    })
+
+    $(document).on('click', '.bx-search-alt-2' , function(){
+        if (!$('.sidebar').hasClass('active')){
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
+    })
+    
+    $(document).on('click', '.expand-func-icon', function(){
+        console.log(this);
+        // debugger;
+        if ($(this).closest('.incoming, .outgoing').hasClass('active-dropdown')){
+            $(this).closest('.incoming, .outgoing').removeClass('active-dropdown');
+        } else {
+            $('.incoming, .outgoing').removeClass('active-dropdown');
+            $(this).closest('.outgoing, .incoming').addClass('active-dropdown');
+        }
+    })
+
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon'))
+        {
+            var dropdowns = document.getElementsByClassName("active-dropdown");
+            if(dropdowns.length>0)
+            {
+                dropdowns[0].classList.remove("active-dropdown");
+            }
+        }
+    })
+
+</script>
