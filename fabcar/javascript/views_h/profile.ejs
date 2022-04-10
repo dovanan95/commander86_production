@@ -150,7 +150,7 @@
                     
                     <p id="dept">Depatment:</p>
                     
-                    <p id="cert">Certification:</p>
+                    <p id="rank">Rank:</p>
                     
                     <p id="Phone">Phone:</p>
                 </div>  
@@ -187,14 +187,14 @@
 <script type="text/javascript" src="./socket.io.min.js"></script>
 <script src="./jquery-3.6.0.js"></script>
 <script>
-    //var response_init = '<%-data%>';
-    var response_init = window.opener.user_obj;
+    var response_init = '<%-data%>';
+    //var response_init = window.opener.user_obj;
     var id = document.getElementById('ID');
     var username = document.getElementById('name');
     var position = document.getElementById('position');
     var dept = document.getElementById('dept');
     var Phone = document.getElementById('Phone');
-    var cert = document.getElementById("cert");
+    var rank = document.getElementById("rank");
     var content = document.getElementById('content');
 
     var myID_json = sessionStorage.getItem('login_data');
@@ -203,8 +203,8 @@
 
     var socket=io();
 
-    //var response_json = JSON.parse(response_init);
-    var response_json = response_init;
+    var response_json = JSON.parse(response_init);
+    //var response_json = response_init;
     function loadUI()
     {   console.log(response_init);
         id.innerHTML='ID: '+response_json.userID;
@@ -212,7 +212,7 @@
         position.innerHTML='Position: '+ response_json.position;
         dept.innerHTML= 'Department: '+ response_json.dept;
         Phone.innerHTML= 'Phone: '+ response_json.Phone;
-        cert.innerHTML='Certification: '+ response_json.certification;
+        rank.innerHTML='Rank: '+ response_json.rank;
     }
     function connect()
     {
@@ -231,10 +231,14 @@
         socket.emit('connected', myID);
         var current_partner = response_json.userID;
         var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
-        socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
+        if(content.value != '' && myID != current_partner)
+        {
+            socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
              'receiver': response_json.userID, 'message': content.value});
-        content.value='';
-        alert('Message sent');
+            content.value='';
+            alert('Message sent');
+        }
+        
     }
     var modal = document.getElementById("myModal");
 

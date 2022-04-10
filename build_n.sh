@@ -18,6 +18,7 @@ npm install multer
 npm install ejs
 npm install jsonwebtoken
 npm install dotenv
+npm install mssql
 docker update --restart unless-stopped $(docker ps -q)
 #
 
@@ -54,3 +55,8 @@ docker kill couchdb0
 SOCK="${DOCKER_HOST:-/var/run/docker.sock}"
 DOCKER_SOCK="${SOCK##unix://}"
 DOCKER_SOCK="${DOCKER_SOCK}"  docker-compose -f docker/docker-compose-test-net.yaml -f docker/docker-compose-couch.yaml up -d peer0.org1.example.com couchdb0
+
+
+#sql server ubuntu
+sqlcmd -S localhost -U SA -P '<YourPassword>'
+sqlcmd -S localhost -U SA -P '<YourPassword>' -i sqlfilename.sql

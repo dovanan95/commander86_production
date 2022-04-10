@@ -15,6 +15,16 @@ const { Gateway, Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
+var sql = require('mssql');
+
+var sql_config = {
+    user: 'SA',
+    password: 'H@yvuilennao1',
+    server: '127.0.0.1', 
+    database: 'httcddh2018_86_130',
+    trustServerCertificate: true 
+};
+
 
 async function contract()
 {
@@ -220,10 +230,47 @@ app.get('/', function(req, res){
     res.render('./views_h/index', {'data':'Commander System'});
 })
 app.post('/login',async function(req, res){
-    try{
-        console.log(req.body);
-        pwdEncryption(req.body.pw);
-        var _contract = await contract();
+    try
+    {
+        console.log(req.body.pw);
+        var encrypted_password = pwdEncryption(req.body.pw);
+        sql.connect(sql_config, function(err){
+            if(err){
+                console.log(err);
+                res.send({'result':'connect to database failed!'})
+            }
+            var request = new sql.Request();
+            request.input('TenDangNhap', sql.NVarChar, req.body.id);
+            request.input('MatKhau', sql.NVarChar, encrypted_password);
+            request.query('select id, TenDayDu from DoIT_CanBo where TenDangNhap=@TenDangNhap and MatKhau=@MatKhau', 
+            async function(err, recordSet){
+                if(err){
+                    res.send({'result':'NG'});
+                }
+                if(recordSet.recordset.length>0)
+                {
+                    var uid = recordSet.recordset[0].id;
+                    let accessToken = generateAccessToken(uid);
+                    let refeshtoken = generateRefreshToken(uid)
+                    console.log(recordSet.recordset[0].id);
+                    res.send(
+                        {
+                        'result': 'OK',
+                        'myID':uid,
+                        'username':recordSet.recordset[0].TenDayDu , 
+                        'accessToken': accessToken, 
+                        'refreshToken': refeshtoken});
+                    const contract_ = await contract();
+                    await contract_.submitTransaction('transfer_login', uid, recordSet.recordset[0].TenDayDu);
+                }
+                else if(recordSet.recordset.length==0)
+                {
+                    res.send({'result':'NG'});
+                }
+                
+            })
+        });
+        /*var _contract = await contract();
         const authen = await _contract.evaluateTransaction('authentication', req.body.id, req.body.pw);
         if(await authen.toString() != 'false')
         {
@@ -234,7 +281,7 @@ app.post('/login',async function(req, res){
         else if(await authen.toString() == 'false')
         {
             res.send({'result': 'NG'});
-        }
+        }*/
     }
     catch(error){
         console.log(error);
@@ -314,10 +361,11 @@ app.get('/home', function(req, res){
 
 const sample_user_data_1 ={'userID': 001, 'username': 'Do Van An'};
 //for user search
-app.get('/searchUserByID', authenticateAccessToken, async function(req, res){
+app.get('/searchUserByID', authenticateAccessToken, function(req, res){
     try
     {
         console.log(req.query.id);
+        /*
         const query_user={
             "selector":{"userID": req.query.id, "docType":"user"}
         };
@@ -341,7 +389,28 @@ app.get('/searchUserByID', authenticateAccessToken, async function(req, res){
         else if(!user)
         {
             res.send(JSON.stringify({'data': 'no_data'}));
-        }
+        }*/
+        sql.connect(sql_config, function(err){
+            if(err){
+                console.log(err);
+                res.send({'result':'connect to database failed!'})
+            }
+            var request = new sql.Request();
+            request.input('TenDangNhap', sql.NVarChar,'%'+ req.query.id + '%');
+            request.query('select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
+            'from DoIT_CanBo as a inner join DoIT_DMDonVi as b on a.id_DonVi = b.id inner join DoIT_DMChucVu as c on a.id_ChucVu = c.id '+
+            'inner join DoIT_DMCapBac as d on a.id_CapBac = d.id where a.TenDangNhap like @TenDangNhap',function(err, recordSet){
+                if(err){
+                    console.log(err);
+                    res.send(JSON.stringify({'data': 'no_data'}));
+                }
+                if(recordSet)
+                {
+                    console.log(recordSet);
+                    res.send(JSON.stringify({'data': recordSet.recordset}));
+                }
+            })
+        })
     }
     catch(error)
     {
@@ -351,7 +420,7 @@ app.get('/searchUserByID', authenticateAccessToken, async function(req, res){
 })
 
 app.get('/user_information', function(req, res){
-    var user_id = req.query.id_user;
+    /*var user_id = req.query.id_user;
     var user_name = req.query.username;
     res.render('./views_h/profile',
     {
@@ -365,7 +434,40 @@ app.get('/user_information', function(req, res){
                 'position': req.query.position
             }
         )
-    });
+    });*/
+    sql.connect(sql_config, function(err){
+        if(err){
+            console.log(err);
+            res.send({'result':'connect to database failed!'})
+        }
+        var request = new sql.Request();
+        request.input('id', sql.Int,req.query.id_user);
+        request.query('select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
+        'from DoIT_CanBo as a inner join DoIT_DMDonVi as b on a.id_DonVi = b.id inner join DoIT_DMChucVu as c on a.id_ChucVu = c.id '+
+        'inner join DoIT_DMCapBac as d on a.id_CapBac = d.id where a.id =@id',function(err, recordSet){
+            if(err){
+                console.log(err);
+                res.send(JSON.stringify({'data': 'no_data'}));
+            }
+            if(recordSet && recordSet.recordset.length>0)
+            {
+                console.log(recordSet);
+                res.render('./views_h/profile',
+                {
+                    'data':JSON.stringify(
+                        {
+                            'userID': recordSet.recordset[0].id, 
+                            'name': recordSet.recordset[0].TenDayDu,
+                            'Phone': recordSet.recordset[0].Mobile,
+                            'dept': recordSet.recordset[0].TenDonVi,
+                            'rank': recordSet.recordset[0].cap_bac,
+                            'position': recordSet.recordset[0].chuc_vu
+                        }
+                    )
+                })
+            }
+        })
+    })
 })
 
 app.post('/verifyMessBlockchain', async function(req, res){

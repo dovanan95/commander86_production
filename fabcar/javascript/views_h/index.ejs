@@ -289,7 +289,7 @@
     console.log(json_res);
     if(json_res.result=='OK')
     {
-      sessionStorage.setItem('login_data', JSON.stringify({'id': id.value, 'isLogin': true, 
+      sessionStorage.setItem('login_data', JSON.stringify({'id': json_res.myID, 'isLogin': true, 
       'my_username': json_res.username, 'accessToken': json_res.accessToken, 'refreshToken': json_res.refreshToken}));
       window.location.href='/chat?userID='+id.value;
     }

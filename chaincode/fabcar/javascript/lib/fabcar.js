@@ -385,6 +385,20 @@ class FabCar extends Contract {
         return userAsBytes.toString();
     }
 
+    async transfer_login(ctx, uid, username)
+    {
+        const userAsBytes = await ctx.stub.getState(uid);
+        if(!userAsBytes || userAsBytes.length === 0)
+        {
+            var new_user= {
+                userID: uid,
+                name: username,
+                command_recv_history: []
+            };
+            await ctx.stub.putState(uid, Buffer.from(JSON.stringify(new_user)));
+        }
+    }
+
     async updateCommandHistory(ctx, userID, partnerID, docType)
     {
         function array_move(arr, old_index, new_index) {
