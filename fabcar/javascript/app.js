@@ -18,8 +18,8 @@ const path = require('path');
 var sql = require('mssql');
 
 var sql_config = {
-    user: 'SA',
-    password: 'H@yvuilennao1',
+    user: 'admin',
+    password: 'abc123',
     server: '127.0.0.1', 
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
