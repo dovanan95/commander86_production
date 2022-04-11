@@ -206,13 +206,22 @@
     var response_json = JSON.parse(response_init);
     //var response_json = response_init;
     function loadUI()
-    {   console.log(response_init);
-        id.innerHTML='ID: '+response_json.userID;
-        username.innerHTML='Name: '+ response_json.name;
-        position.innerHTML='Position: '+ response_json.position;
-        dept.innerHTML= 'Department: '+ response_json.dept;
-        Phone.innerHTML= 'Phone: '+ response_json.Phone;
-        rank.innerHTML='Rank: '+ response_json.rank;
+    {   
+        console.log(response_init);
+        if(myID_json)
+        {
+            id.innerHTML='ID: '+response_json.userID;
+            username.innerHTML='Name: '+ response_json.name;
+            position.innerHTML='Position: '+ response_json.position;
+            dept.innerHTML= 'Department: '+ response_json.dept;
+            Phone.innerHTML= 'Phone: '+ response_json.Phone;
+            rank.innerHTML='Rank: '+ response_json.rank;
+        }
+        else
+        {
+            window.location.href='/';
+        }
+        
     }
     function connect()
     {
