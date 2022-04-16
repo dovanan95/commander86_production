@@ -18,6 +18,7 @@ npm install multer
 npm install ejs
 npm install jsonwebtoken
 npm install dotenv
+npm install mongodb
 npm install mssql
 docker update --restart unless-stopped $(docker ps -q)
 #

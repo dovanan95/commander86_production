@@ -198,6 +198,7 @@ body {font-family: "Lato", sans-serif;}
     align-items: center;
 }
 
+
 .expand-func-icon:hover {
     background-color: #C7C9CC;
 }
@@ -387,6 +388,9 @@ body {font-family: "Lato", sans-serif;}
         var refreshToken = JSON.parse(myID_json).refreshToken;
 
     socket.emit('connected', myID);
+    socket.emit('joinRoom',{'roomID':'test'})
+    socket.emit('sendRoom', {'roomID':'test', 'content': myID})
+
 
     socket.on('online_list', function(data){
         console.log(data);
@@ -468,11 +472,12 @@ body {font-family: "Lato", sans-serif;}
         } 
     })
 
-    function myMessage(id_block, my_name, content)
+    function myMessage(id_block, my_name, content, isImportant)
     {
         var mess_block = `
                             <div class="outgoing" id=${id_block}>
                                 <div class="bubble">
+                                    <div style="font-size: 10px; font-style:italic; ">${my_name}</div>
                                     ${content}
                                 </div>
                                 <div class="block_func_btn">
@@ -482,18 +487,28 @@ body {font-family: "Lato", sans-serif;}
                                         <div class="dots"></div>    
                                     </div>
                                     <div class="dropdown-button">
-                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
-                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
                                     </div>
                                 </div>
                             </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+
+        }
         return mess_block;
     }
-    function prtnerMessage(id_block, sender_name, content)
+    function prtnerMessage(id_block, sender_name, content, isImportant)
     {
         var mess_block = `
                             <div class="incoming " id=${id_block}>
                                 <div class="bubble">
+                                    <div style="font-size: 10px; font-style:italic; ">${sender_name}</div>
                                     ${content}
                                 </div>
                                 <div class="block_func_btn" style="float:right;">
@@ -503,11 +518,19 @@ body {font-family: "Lato", sans-serif;}
                                         <div class="dots"></div>    
                                     </div>
                                     <div class="dropdown-button">
-                                        <button onclick=verifyMessBlock(this) >VERIFY</button>
-                                        <button onclick=viewDetailBlock(this) > VIEW DETAIL</button>
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
                                     </div>
                                 </div>
                             </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+        }
         return mess_block
     }
     function private_message_left_tab(docType, id, name)
@@ -516,11 +539,16 @@ body {font-family: "Lato", sans-serif;}
         `
             <div class="tablinks" docType=${docType} id="${tab_partner_prefix+id}"
                 onclick=choosePartner_2(this) id_sender="${id}">
-                <div class="acc-status">
+                <div class="acc-status" style=" width: 50%;">
                     <div class="acc">${name}</div>
                     <div class="status-online">${network_status}</div>
                 </div>
-                <div class="dots-online"></div>
+                <div class="dots-offline"></div>
+                <div class="expand-func-icon" onclick={console.log(this)}>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
             </div>
             <hr class="solid">
         `
@@ -542,6 +570,38 @@ body {font-family: "Lato", sans-serif;}
         return element_partner_selection_element;
     }
 
+    async function markImportantMess(obj)
+    {
+        //console.log(obj.parentNode.parentNode.parentNode);
+        var parentObj = obj.parentNode.parentNode.parentNode;
+        var parentObj_id = parentObj.getAttribute('id'); 
+        var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
+                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+        console.log(parentObj.children[1].children[1]);
+        console.log(parentObj);
+        var messItem = document.getElementById(parentObj_id);
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'messID': parentObj_id}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        };
+        var res_markBlockchain = await fetch('/markImportant', options);
+        var res_json = await res_markBlockchain.json();
+        console.log(res_json);
+        if(res_json.data=='ok')
+        {
+            parentObj.children[1].children[1].innerHTML= newItem;
+            parentObj.children[0].style.backgroundColor='red';
+            console.log(res_json.data)
+            messItem = parentObj;
+        }
+        //messItem = parentObj;
+        
+    }
+
     async function verifyMessBlock(obj)
     {
     
@@ -553,12 +613,13 @@ body {font-family: "Lato", sans-serif;}
             method: 'POST',
             body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString()}),
             headers: {
+                'authorization': 'token '+ accessToken,
                 'Content-Type': 'application/json'
             }
         };
         var res_block_verify = await fetch('/verifyMessBlockchain', options);
         var res_block_verify_json = await res_block_verify.json();
-        console.log(res_block_verify_json.data);
+        console.log(res_block_verify_json);
         if(res_block_verify_json.data=="error")
         {
             alert("du lieu da bi thay doi");
@@ -566,10 +627,9 @@ body {font-family: "Lato", sans-serif;}
         else
         {
             var id_block = res_block_verify_json.messID;
-            console.log
             var mess_block = document.getElementById(id_block);
-            // console.log(mess_block);
-            mess_block.children[0].innerHTML=res_block_verify_json.content;
+            var nameUserItem = mess_block.children[0].children[0].outerHTML;
+            mess_block.children[0].innerHTML=nameUserItem + res_block_verify_json.content;
         }
         
 
@@ -596,7 +656,6 @@ body {font-family: "Lato", sans-serif;}
         left_tab.removeChild(document.getElementById(id));
         left_tab.insertAdjacentHTML('afterbegin', tab);
     }
-        
 
     function checkLogin(){
        var check = sessionStorage.getItem('login_data');
@@ -623,7 +682,8 @@ body {font-family: "Lato", sans-serif;}
             }
         }
         var response_init_load = await fetch("/load_chat_history", options);
-        response_init = await response_init_load.json(); //console.log('response_init', response_init);
+        response_init = await response_init_load.json(); 
+        response_init = response_init.sort((a,b)=>b.timestamp-a.timestamp);
         for(var i in response_init)
         {
             console.log(response_init[i]);
@@ -659,6 +719,7 @@ body {font-family: "Lato", sans-serif;}
             console.log('ng');
         }
     }
+
     async function getBlockByID(partner_id, docType){
         //code call API get to /chat_peer
         var block;
@@ -685,7 +746,7 @@ body {font-family: "Lato", sans-serif;}
         console.log(obj.children[0].children[1].innerHTML);
         obj.children[1].innerHTML='';
         message_zone.innerHTML=``;
-        var id_partner = obj.getAttribute('id_sender');
+        var id_partner = parseInt(obj.getAttribute('id_sender'));
         var docType = obj.getAttribute('docType');
         sessionStorage.setItem('current_partner_id', id_partner);
         //callAPI(id)
@@ -696,13 +757,17 @@ body {font-family: "Lato", sans-serif;}
             for(var i in block)
             {
                 var mess_block;
-                if(block[i].Record.sender==id_partner)
+                if(block[i].sender==id_partner)
                 {
-                    mess_block_t = prtnerMessage(block[i].Record.messID, block[i].Record.sender_name, block[i].Record.content);
+            
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant);
+                    
                 }
-                else if(block[i].Record.sender != id_partner)
+                else if(block[i].sender != id_partner)
                 {
-                    mess_block_t = myMessage(block[i].Record.messID, my_name, block[i].Record.content);
+                
+                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant);
+                    
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
             }
@@ -766,29 +831,6 @@ body {font-family: "Lato", sans-serif;}
             }
             else if(res_json.data != 'no_data')
                 {
-                // $('span#exist').addClass('')
-                // infor.innerHTML='user: ';
-                // var node=document.createElement('a');
-                // var text_node = document.createTextNode(res_json.data['name']);
-                // node.appendChild(text_node); 
-                //    var searchUrl="/user_information?id_user="+res_json.data['userID']
-                //   +"&username="+res_json.data['name'] + "&Phone="+ res_json.data['Phone']
-                //    +"&position="+res_json.data['position']+"&dept="+res_json.data['dept']
-                //    +"&certification="+res_json.data['certification'];
-                //    window.location.href = searchUrl;
-                // infor.appendChild(node);
-                /*    var searchUrl = "/user_information";
-                    user_obj = 
-                    {
-                        'userID': res_json.data['userID'],
-                        'name': res_json.data['name'], 
-                        'Phone': res_json.data['Phone'],
-                        'position':res_json.data['position'],
-                        'dept':res_json.data['dept'],
-                        'certification': res_json.data['certification']
-                    }
-                    var profile = window.open(searchUrl);
-                    profile.user_obj = user_obj;*/
                     left_tab.innerHTML='';
                     for(let i=0;i<res_json.data.length;i++)
                     {
@@ -815,6 +857,7 @@ body {font-family: "Lato", sans-serif;}
                 searchUrl=searchUrl+'?id_user='+connect_list[i].id;
                 console.log(searchUrl);
                 window.location.href = searchUrl;
+                //window.open(searchUrl);
             }
         }
         

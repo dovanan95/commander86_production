@@ -16,10 +16,15 @@ const fs = require('fs');
 const path = require('path');
 
 var sql = require('mssql');
+var mongo = require('mongodb').MongoClient;
+const test = require('assert');
+const { Socket } = require('socket.io');
+var url_mongo = "mongodb://localhost:27017/";
+var db_mongo_name = 'httcddh_2022';
 
 var sql_config = {
-    user: 'admin',
-    password: 'abc123',
+    user: 'SA',
+    password: 'H@yvuilennao1',
     server: '127.0.0.1', 
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
@@ -123,6 +128,8 @@ function pwdEncryption(password)
 
 //------------ End Security Zone ------------------------//
 
+//------------ Communication Zone -----------------------//
+
 const socketIo = require("socket.io")(server, {
    cors: {
        origin: "*",
@@ -133,6 +140,96 @@ const socketIo = require("socket.io")(server, {
 async function queryNameUser(id){
     //query chaincode
     return("name_test");
+}
+
+async function savePrivateMessage(data)
+{
+    try
+    {
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        dbo.collection('privateMessage').insertOne(data, function(err, res){
+            if(err){
+            console.log(err);
+        }
+        console.log("1 document inserted");
+        })
+        var myObj = await dbo.collection('user').find({'userID': {'$in':[data.sender, data.receiver]}}).toArray();
+        for(let i=0; i<myObj.length;i++)
+        {
+            console.log(myObj[i].chat_history.length);
+            if(myObj[i].chat_history.length==0) //kiem tra lich su tin nhan neu chua co gi thi them moi
+            {
+                if(myObj[i].userID==data.sender)
+                {
+                    let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
+                    await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                }
+                else if(myObj[i].userID==data.receiver)
+                {
+                    let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
+                    await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                }
+                
+            }
+            else if(myObj[i].chat_history.length>0)
+            {
+                //trong lich su tin nhan neu da co san thong tin thi kiem tra doi phuong dang chat da co trong danh sach chua.
+                //neu co roi thi cap nhat thoi gian. neu chua co thi them moi
+                if(myObj[i].userID==data.sender)
+                {
+                    let flag=0;
+                    for(let j=0; j<myObj[i].chat_history.length;j++)
+                    {
+                        if(myObj[i].chat_history[j].userID==data.receiver)
+                        {
+                            flag=1;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                    }
+                    else if(flag==1)
+                    {
+                        await dbo.collection('user').updateOne({'userID':data.sender, 'chat_history.userID':data.receiver},
+                            {$set:{'chat_history.$.timestamp':data.timestamp}});
+                    }
+                }
+                else if(myObj[i].userID==data.receiver)
+                {
+                    let flag=0;
+                    for(let j=0; j<myObj[i].chat_history.length;j++)
+                    {
+                        if(myObj[i].chat_history[j].userID==data.sender)
+                        {
+                            flag=1;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                    }
+                    else if(flag==1)
+                    {
+                        await dbo.collection('user').updateOne({'userID':data.receiver, 'chat_history.userID':data.sender},
+                            {$set:{'chat_history.$.timestamp':data.timestamp}});
+                    }
+                }
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    finally
+    {
+        db.close()
+    }
+    
 }
 var users = [];
 var online_account = [];
@@ -149,24 +246,27 @@ var online_account = [];
         {
             if(online_account[i]['userID']==userID)
             {
-                flag_online=1;
+                flag_online=1; //kiem tra trong danh sach user neu dang online nhung reload lai page hoac dang nhap o thiet bi khac thi cap nhat lai socketID
                 online_account[i]['socketID']=socket.id;
             }
         }
         if(flag_online==0)
         {
-            online_account.push({'userID':userID, 'socketID':socket.id});
+            online_account.push({'userID':userID, 'socketID':socket.id}); //neu user nay chua co trong danh sach online thi them vao
         }
         
         console.log(online_account);
-        socketIo.to(socket.id).emit('online_list', online_account);
-        socketIo.emit('online_status', {'userID':userID, 'isOnline': true})
+        socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
+        socketIo.emit('online_status', {'userID':userID, 'isOnline': true}) // thong bao user moi online cho tat ca user khac cap nhat
+    })
+    socket.on('joinRoom', function(data){
+        socket.join(data.roomID);
     })
   
     socket.on("sendRoom", function(data) {
-      console.log(data);
-      
-      //socketIo.emit(receiver, { 'data': data, 'socket': socket.id });
+      socketIo.to(data.roomID).emit('incoming_mess', data.content)
+      //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
+      //socketIo.to(room).emit('incoming_mess',{data})
     })
     socket.on("sendMess", async function(data){
         try
@@ -184,13 +284,21 @@ var online_account = [];
             const contract_ = await contract();
             
             var genDate='MessPriv.' + data.sender+'.'+data.receiver+'.' + Date.now().toString();
-
-            await contract_.submitTransaction('savePrivateMessage', data.messID,
+            var privMessObj = {
+                'messID': data.messID,
+                'docType': 'private_message',
+                'sender': data.sender,
+                'receiver': parseInt(data.receiver),
+                'message': data.message,
+                'sender_name': data.sender_name,
+                'timestamp':parseInt(Date.now()),
+                'isImportant': 'false',
+                'seen':[]
+            }
+            await savePrivateMessage(privMessObj);
+            /*await contract_.submitTransaction('savePrivateMessage', data.messID,
                             data.sender, data.sender_name, data.receiver, data.message, parseInt(Date.now()));
-            await contract_.submitTransaction('verifyMessBlockchain', data.messID, Date.now().toString());
-                /*await contract_.submitTransaction('updateCommandHistory', 
-                            data.sender.toString(), data.receiver.toString(), 'private_message');*/
-            //save message to server then response to receiver
+            await contract_.submitTransaction('verifyMessBlockchain', data.messID, Date.now().toString());*/
         }
         catch(error)
         {
@@ -205,14 +313,16 @@ var online_account = [];
       {
           if(online_account[i]['socketID']==socket.id)
           {
-            socketIo.emit('online_status', {'userID':online_account[i]['userID'], 'isOnline': false})
-            online_account.splice(i,1);
+            socketIo.emit('online_status', {'userID':online_account[i]['userID'], 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
+            online_account.splice(i,1); //xoa thong tin user offfline khoi danh sach online
           }
       }
       console.log(online_account);
     });
   });
 
+
+//------------ End Communication Zone -----------------------//
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname);
@@ -261,7 +371,28 @@ app.post('/login',async function(req, res){
                         'accessToken': accessToken, 
                         'refreshToken': refeshtoken});
                     const contract_ = await contract();
-                    await contract_.submitTransaction('transfer_login', uid, recordSet.recordset[0].TenDayDu);
+                    //await contract_.submitTransaction('transfer_login', uid, recordSet.recordset[0].TenDayDu);
+                    mongo.connect(url_mongo, async function(err, db){
+                        if (err) {throw err}
+                        var dbo = db.db(db_mongo_name);
+                        var userObj = {
+                            'userID': uid,
+                            'username': recordSet.recordset[0].TenDayDu,
+                            'chat_history':[]
+                        }
+                        var count_user = await dbo.collection('user').countDocuments({'userID': uid});
+                        console.log(count_user)
+                        if(count_user==0)
+                        {
+                            dbo.collection('user').insertOne(userObj, function(err, res){
+                                if(err){
+                                    console.log(err);
+                                }
+                                console.log("1 document inserted");
+                                db.close();
+                            })
+                        }
+                    })
                 }
                 else if(recordSet.recordset.length==0)
                 {
@@ -270,18 +401,6 @@ app.post('/login',async function(req, res){
                 
             })
         });
-        /*var _contract = await contract();
-        const authen = await _contract.evaluateTransaction('authentication', req.body.id, req.body.pw);
-        if(await authen.toString() != 'false')
-        {
-            let accessToken = generateAccessToken(req.body.id);
-            let refeshtoken = generateRefreshToken(req.body.id)
-            res.send({'result': 'OK', 'username': authen.toString(), 'accessToken': accessToken, 'refreshToken': refeshtoken});
-        }
-        else if(await authen.toString() == 'false')
-        {
-            res.send({'result': 'NG'});
-        }*/
     }
     catch(error){
         console.log(error);
@@ -298,27 +417,48 @@ app.get('/chat', function(req, res){
 app.post('/load_chat_history', authenticateAccessToken, async function(req, res){
     try
     {
-        const contract_ = await contract();
-        /*
-        const query_private_message = {
-            "selector":{
-                "$or":[
-                    {"sender": 'DVA', "receiver": 'LTA'},
-                    {"sender": 'LTA', "receiver": 'DVA'}
-                ],
-                "timestamp": {"$gt": null}
-            },
-            "sort":[{"timestamp":"desc"}],
-            "limit": 100,
-            "skip":0,
-            "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
-        }
-        const result_6 = await contract_.evaluateTransaction('queryCustom',JSON.stringify(query_private_message));
-        console.log('custom query 4:', result_6.toString());*/
-        //const chat_data = await contract_.evaluateTransaction('queryMessage', 'DVA', 'LTA', 'private_message', 100, 0);
-        //console.log(chat_data.toString());
+        /*const contract_ = await contract();
         const chat_history_raw = await contract_.evaluateTransaction('queryHistoryMessage', req.body.id); console.log(chat_history_raw);
-        res.send(chat_history_raw.toString());
+        res.send(chat_history_raw.toString());*/
+
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var list_chat = await dbo.collection('user').findOne({'userID': req.body.id});
+        var queryString_nameuser = 'select id, TenDayDu from DoIT_CanBo where id in (';
+        for(let i = 0; i<list_chat.chat_history.length; i++)
+        {
+            queryString_nameuser = queryString_nameuser + "'"+ list_chat.chat_history[i].userID + "'"+",";
+        }
+        queryString_nameuser=queryString_nameuser+ "1)";
+        sql.connect(sql_config, function(err){
+            if(err){
+                console.log(err);
+                res.send({'result':'connect to database failed!'})
+            }
+            var request = new sql.Request();
+            request.query(queryString_nameuser, function(err,recordSet){
+                if(err){
+                    console.log(err);
+                    //res.send(JSON.stringify({'data': 'no_data'}));
+                }
+                if(recordSet)
+                {
+                    var nameSet = recordSet.recordset;
+                    for (let j=0; j<nameSet.length; j++)
+                    {
+                        for(let k=0; k<list_chat.chat_history.length; k++)
+                        {
+                            if(nameSet[j].id==list_chat.chat_history[k].userID)
+                            {
+                                list_chat.chat_history[k]['username'] = nameSet[j].TenDayDu;
+                            }
+                        }
+                    }
+                    res.send(JSON.stringify(list_chat.chat_history));
+                }
+            })
+        })
+
     }
     catch(error)
     {
@@ -331,11 +471,19 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
 app.post('/chat_peer', authenticateAccessToken, async function(req, res){
     try
     {
-        const contract_ = await contract();
+        //db.privateMessage.find({$or:[{'sender':777,'receiver':783},{'sender':783,'receiver':777}]}).sort({'timestamp':-1}).limit(100)
+        /*const contract_ = await contract();
         console.log({'partner_ID': req.body.partner_ID, 'my_ID': req.body.my_ID, 'limit': req.body.limit, 'skip': req.body.skip});
         const chat_data = await contract_.evaluateTransaction('queryMessage', req.body.my_ID, 
                             req.body.partner_ID, 'private_message', req.body.limit, req.body.skip);
-        res.send(chat_data.toString());
+        res.send(chat_data.toString());*/
+
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var chatBlocks = await dbo.collection('privateMessage').find({$or:[{'sender':req.body.my_ID,'receiver':req.body.partner_ID},
+        {'sender':req.body.partner_ID,'receiver':req.body.my_ID}]}).sort({'timestamp':-1}).limit(req.body.limit).toArray();
+        res.send(JSON.stringify(chatBlocks))
+
     }
     catch(error)
     {
@@ -365,31 +513,6 @@ app.get('/searchUserByID', authenticateAccessToken, function(req, res){
     try
     {
         console.log(req.query.id);
-        /*
-        const query_user={
-            "selector":{"userID": req.query.id, "docType":"user"}
-        };
-        //neccessary to check if userID exist and response true/false
-        const contract_ = await contract();
-        const user = await contract_.evaluateTransaction('queryCustom', JSON.stringify(query_user));
-        
-        if(user) //only for test, change condition when finish develop chaincode
-        {
-            const user_json = JSON.parse(user.toString());
-            const response_data = {
-                'userID': user_json[0].Record.userID,
-                'name': user_json[0].Record.name,
-                'Phone': user_json[0].Record.Phone,
-                'certification': user_json[0].Record.certification,
-                'position': user_json[0].Record.position,
-                'dept': user_json[0].Record.dept,
-            }
-            res.send(JSON.stringify({'data': response_data}));
-        }
-        else if(!user)
-        {
-            res.send(JSON.stringify({'data': 'no_data'}));
-        }*/
         sql.connect(sql_config, function(err){
             if(err){
                 console.log(err);
@@ -420,21 +543,7 @@ app.get('/searchUserByID', authenticateAccessToken, function(req, res){
 })
 
 app.get('/user_information', function(req, res){
-    /*var user_id = req.query.id_user;
-    var user_name = req.query.username;
-    res.render('./views_h/profile',
-    {
-        'data':JSON.stringify(
-            {
-                'userID': user_id, 
-                'name': user_name,
-                'Phone': req.query.Phone,
-                'dept': req.query.dept,
-                'certification': req.query.certification,
-                'position': req.query.position
-            }
-        )
-    });*/
+
     sql.connect(sql_config, function(err){
         if(err){
             console.log(err);
@@ -470,15 +579,47 @@ app.get('/user_information', function(req, res){
     })
 })
 
-app.post('/verifyMessBlockchain', async function(req, res){
+app.post('/markImportant', authenticateAccessToken, async function(req, res){
+    const contract_ = await contract();
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
+    var chatBlock = await dbo.collection('privateMessage').findOne({'messID': req.body.messID});
+
+    await contract_.submitTransaction('savePrivateMessage', req.body.messID,
+                            chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, parseInt(Date.now()));
+    var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
+    if(JSON.parse(resporn.toString()).messID)
+    {
+        console.log(JSON.parse(resporn.toString()).messID);
+        if(chatBlock.docType =='private_message')
+        {
+            await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{'isImportant': 'true'}})
+            res.send({'data':'ok'});
+        }
+        
+    }
+    else if(!JSON.parse(resporn.toString()).messID)
+    {
+        res.send({'data':'error'});
+    }
+    
+})
+
+app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, res){
     try
     {
         const contract_ = await contract();
-        //var dateTime = Date.now().toString();
-        console.log(req.body);
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
         const updated_Mess = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, req.body.dateTime);
-        console.log(updated_Mess.toString());
-        res.send(updated_Mess.toString());
+        var update_Mess_json = await JSON.parse(updated_Mess.toString()); console.log(update_Mess_json);
+        if(update_Mess_json.docType=='private_message')
+        {
+            await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{'message': update_Mess_json.content}})
+            console.log(updated_Mess.toString());
+            res.send(updated_Mess.toString());
+        }
+        
 
     }
     catch(error)
