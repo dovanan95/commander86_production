@@ -586,7 +586,7 @@ app.post('/markImportant', authenticateAccessToken, async function(req, res){
     var chatBlock = await dbo.collection('privateMessage').findOne({'messID': req.body.messID});
 
     await contract_.submitTransaction('savePrivateMessage', req.body.messID,
-                            chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, parseInt(Date.now()));
+                            chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
     var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
     if(JSON.parse(resporn.toString()).messID)
     {
@@ -615,7 +615,16 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
         var update_Mess_json = await JSON.parse(updated_Mess.toString()); console.log(update_Mess_json);
         if(update_Mess_json.docType=='private_message')
         {
-            await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{'message': update_Mess_json.content}})
+            await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{
+                'message': update_Mess_json.content,
+                'sender_name':update_Mess_json.sender_name,
+                'sender': update_Mess_json.sender,
+                'receiver': update_Mess_json.receiver,
+                'timestamp': update_Mess_json.timestamp,
+                'isImportant': "true",
+                'seen':[],
+                'docType': update_Mess_json.docType
+            }})
             console.log(updated_Mess.toString());
             res.send(updated_Mess.toString());
         }
