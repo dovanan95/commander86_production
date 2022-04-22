@@ -24,7 +24,7 @@ var db_mongo_name = 'httcddh_2022';
 
 var sql_config = {
     user: 'SA',
-    password: 'H@yvuilennao1',
+    password: 'blablo',
     server: '127.0.0.1', 
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
@@ -618,9 +618,9 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
             await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{
                 'message': update_Mess_json.content,
                 'sender_name':update_Mess_json.sender_name,
-                'sender': update_Mess_json.sender,
-                'receiver': update_Mess_json.receiver,
-                'timestamp': update_Mess_json.timestamp,
+                'sender': parseInt(update_Mess_json.sender),
+                'receiver': parseInt(update_Mess_json.receiver),
+                'timestamp': parseInt(update_Mess_json.timestamp),
                 'isImportant': "true",
                 'seen':[],
                 'docType': update_Mess_json.docType
