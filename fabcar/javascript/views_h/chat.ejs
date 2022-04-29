@@ -367,6 +367,31 @@ body {font-family: "Lato", sans-serif;}
   cursor: pointer;
 }
 
+.dropdown-group-btn {
+  display: inline-block;
+}
+
+.dropdown-group-btn:hover .dropdown-content-grbtn{display: block;}
+.dropdown-content-grbtn {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  width: 90%;
+  bottom: 50px;
+  z-index: 1;
+  flex-direction: column;
+}
+
+.dropdown-content-grbtn a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.show {display: block;}
+
+.dropdown-group-btn a:hover {background-color: #ddd; cursor: pointer;}
+
 </style>
 <html>
     <body onload="checkLogin()">
@@ -376,9 +401,15 @@ body {font-family: "Lato", sans-serif;}
                 <div  id='hist_tab'>
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
-                <div style="position: absolute; bottom: 0;display: flex;flex-direction: column;
+                <div class="dropdown-group-btn" style="position: absolute; bottom: 0;display: flex;flex-direction: column;
                         width: 23%; padding: 10px;">
-                    <button class="button_messType_add button2 " onclick="{console.log(this)}">ADD GROUP</button>
+                   
+                    <button class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">OPTIONS</button>
+                    <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
+                        <a onclick="console.log('add group')">ADD GROUP</a>
+                        <a href="#about">ADD CHANNEL</a>
+                      </div>
+                    
                 </div>
             </div>
             
@@ -941,5 +972,10 @@ body {font-family: "Lato", sans-serif;}
             }
         }
     })
+    /*
+    function openUpDropdownGrbtn() {
+        var item = document.getElementById("dropdown-item-grbtn"); console.log(item);
+        item.classList.toggle("show")
+    }*/
 
 </script>
