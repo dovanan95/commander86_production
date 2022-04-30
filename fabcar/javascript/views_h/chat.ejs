@@ -406,8 +406,8 @@ body {font-family: "Lato", sans-serif;}
                    
                     <button class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">OPTIONS</button>
                     <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
-                        <a onclick="console.log('add group')">ADD GROUP</a>
-                        <a href="#about">ADD CHANNEL</a>
+                        <a onclick="newGroup()">ADD GROUP</a>
+                        <a href="#addChannel">ADD CHANNEL</a>
                       </div>
                     
                 </div>
@@ -977,5 +977,9 @@ body {font-family: "Lato", sans-serif;}
         var item = document.getElementById("dropdown-item-grbtn"); console.log(item);
         item.classList.toggle("show")
     }*/
+
+    function newGroup(){
+        window.open("/newGroup");
+    }
 
 </script>

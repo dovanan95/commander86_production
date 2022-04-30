@@ -24,7 +24,7 @@ var db_mongo_name = 'httcddh_2022';
 
 var sql_config = {
     user: 'SA',
-    password: 'blablo',
+    password: 'H@yvuilennao1',
     server: '127.0.0.1', 
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
@@ -636,6 +636,14 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
         console.log(error);
         res.send( {"data": "error"});
     }
+})
+
+app.get('/newGroup', function(req, res){
+    res.render('./views_h/newGroup')
+});
+
+app.get('/authenOnLoad', authenticateAccessToken, function(req, res){
+    res.send(req.user);
 })
 
 server.listen(8082, () => {

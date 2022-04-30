@@ -111,12 +111,12 @@ async function main() {
 				timestamp: '7'
 			},
 		];
-        
+        /*
         for(let j in message)
         {
             await contract.submitTransaction('savePrivateMessage', message[j].messID ,message[j].sender,message[j].sender_name, 
                                                     message[j].receiver, message[j].content, parseInt(Date.now()));
-        }
+        }*/
         //await contract.submitTransaction('savePrivateMessage','009', 'DVA','Do Van An','LTA', 'OK', Date.now().toString());
         //const response_cr_user = await contract.submitTransaction('createUser', 'ETH', 'Ethermathaaa', '01423453556789', 'MGG', 'TGGD', 'BCT', '6868');
         //console.log(response_cr_user.toString());
@@ -124,6 +124,8 @@ async function main() {
         //const authen = await contract.evaluateTransaction('authentication','LTA', '6863448'); console.log(authen.toString());
         //const qr_mess = await contract.evaluateTransaction('queryMessage','DVA', 'LTA', 'private_message'); console.log(qr_mess.toString());
         //const authen = await contract.evaluateTransaction('queryUser', 'DVA'); console.log(authen.toString());
+        console.log(Date.now().toString())
+        await contract.submitTransaction('verifyMessBlockchain','MessPriv.783.777.1649775692555', Date.now().toString());
         await gateway.disconnect();
 
     } catch (error) {

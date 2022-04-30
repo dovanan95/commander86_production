@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Group Option</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./bootstrap-5.1.3-dist/css/bootstrap.min.css">
+  <script src="./bootstrap-5.1.3-dist/js/jquery.slim.min.js"></script>
+  <script src="./bootstrap-5.1.3-dist/js/popper.min.js"></script>
+  <script src="./bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <p class="h1">NEW CHAT GROUP</p>
+    <div class="modal-body row">
+        <div class="col-md-6">
+          <!-- Your first column here -->
+          <label>SEARCH MEMBER</label>
+          <div class="input-group">
+            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <button type="button" class="btn btn-outline-primary">search</button>
+          </div>
+          <table class="table" id="queryTable">
+            <thead>
+              <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john@example.com</td>
+                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
+              </tr>
+              <tr>
+                <td>Mary</td>
+                <td>Moe</td>
+                <td>mary@example.com</td>
+                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
+              </tr>
+              <tr>
+                <td>July</td>
+                <td>Dooley</td>
+                <td>july@example.com</td>
+                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <!-- Your second column here -->
+          <div class="form-group">
+            <label for="groupName">GROUP NAME</label>
+            <input type="text" class="form-control" id="groupName" placeholder="Group Name">
+          </div>
+          <table class="table" id="memberListTable">
+            <thead>
+              <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john@example.com</td>
+                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
+              </tr>
+              <tr>
+                <td>Mary</td>
+                <td>Moe</td>
+                <td>mary@example.com</td>
+                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
+              </tr>
+              <tr>
+                <td>July</td>
+                <td>Dooley</td>
+                <td>july@example.com</td>
+                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+
+</body>
+</html>
+<script>
+    var myID_json = sessionStorage.getItem('login_data');
+    if(myID_json==null){
+        if(window.confirm('ban khong co quyen truy cap!!!')){
+            window.location.href='/';
+        }
+        else
+        {
+            window.location.href='/';
+        }
+    }
+    else
+    {
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+    }
+    
+    
+    window.onload = async function(){
+        const options = {
+            method: 'GET',
+            headers: {
+                'authorization': 'token '+ accessToken
+            }
+        };
+        var res= await fetch('/authenOnLoad', options);
+        var res_json = await res.json();
+        console.log(res_json.id);
+        if(!res || res.status!=200)
+        {
+            if(window.confirm('ban khong co quyen truy cap!!!')){
+                window.location.href='/';
+            }
+            else
+            {
+                window.location.href='/';
+            }
+        }
+        
+    }
+    $(document).on('click', '.delete', function(){
+        $(this).parents("tr").remove();
+    })
+    var selectBtn = document.getElementsByClassName('select');
+    var queryTable = document.getElementById('queryTable').getElementsByTagName('tbody')[0];
+    var memListTable = document.getElementById("memberListTable").getElementsByTagName('tbody')[0];
+    for(var i=0; i<selectBtn.length;i++)
+    {
+        selectBtn[i].addEventListener('click', function(event){
+            var thisTarget = event.currentTarget;
+            var row = thisTarget.parentNode.parentNode;
+            var lastBTN = row.cells[row.cells.length-1]; 
+            lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete">Delete</button>`;
+            memListTable.appendChild(row)
+        })
+    }
+
+</script>
