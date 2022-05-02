@@ -16,37 +16,20 @@
           <!-- Your first column here -->
           <label>SEARCH MEMBER</label>
           <div class="input-group">
-            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-            <button type="button" class="btn btn-outline-primary">search</button>
+            <input type="search" id="searchBox" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <button type="button" onclick="searchUsers()" class="btn btn-outline-primary">search</button>
           </div>
           <table class="table" id="queryTable">
             <thead>
               <tr>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Email</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Mobile</th>
                 <th>Select</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>John</td>
-                <td>Doe</td>
-                <td>john@example.com</td>
-                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
-              </tr>
-              <tr>
-                <td>Mary</td>
-                <td>Moe</td>
-                <td>mary@example.com</td>
-                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
-              </tr>
-              <tr>
-                <td>July</td>
-                <td>Dooley</td>
-                <td>july@example.com</td>
-                <td><button type="button" class="btn btn-outline-primary select">Select</button></td> 
-              </tr>
+              
             </tbody>
           </table>
         </div>
@@ -59,31 +42,14 @@
           <table class="table" id="memberListTable">
             <thead>
               <tr>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Email</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Mobile</th>
                 <th>Delete</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>John</td>
-                <td>Doe</td>
-                <td>john@example.com</td>
-                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
-              </tr>
-              <tr>
-                <td>Mary</td>
-                <td>Moe</td>
-                <td>mary@example.com</td>
-                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
-              </tr>
-              <tr>
-                <td>July</td>
-                <td>Dooley</td>
-                <td>july@example.com</td>
-                <td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>
-              </tr>
+             
             </tbody>
           </table>
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -147,6 +113,76 @@
             lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete">Delete</button>`;
             memListTable.appendChild(row)
         })
+    }
+
+    function addNewMember(event){
+        //var thisTarget = event.currentTarget;
+        var row = event.parentNode.parentNode;
+        var lastBTN = row.cells[row.cells.length-1]; 
+        lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete">Delete</button>`;
+        memListTable.appendChild(row)
+    }
+
+    async function searchUsers(){
+        var searchBox = document.getElementById('searchBox');
+        var userID = searchBox.value;
+        const options = {
+                  method: 'GET',
+                  headers: {
+                      'authorization': 'token '+ accessToken,
+                  }
+              }
+        var res = await fetch('/searchUserByID?id='+userID, options);
+        var res_json = await res.json();
+        console.log(res_json);
+        for(let i=0; i<res_json.data.length; i++)
+        {
+          var newRow = document.createElement('tr');
+          var id = res_json.data[i]['id'];
+          var name = res_json.data[i]['TenDayDu'];
+          var dept = res_json.data[i]['TenDonVi'];
+          var mobile = res_json.data[i]['Mobile'];
+          var selectBtn =`<td><button type="button" onclick="addNewMember(this)" 
+            class="btn btn-outline-primary select">Select</button></td> `;
+          newRow.innerHTML= 
+          `
+            <td style="display:none;">${id}</td>
+            <td>${name}</td>
+            <td>${dept}</td>
+            <td>${mobile}</td>
+            ${selectBtn}
+          `;
+          console.log(queryTable.rows.length);
+          var flag_q=0;
+          var flag_m =0
+          if(queryTable.rows.length>0){
+            
+            for(let j=0;j<queryTable.rows.length;j++){
+              if(id==queryTable.rows[j].cells[0].innerHTML){
+                flag_q=1;
+              }
+            }
+          }
+          if(memListTable.rows.length>0){
+            for(let k=0; k<memListTable.rows.length;k++){
+              if(id== memListTable.rows[k].cells[0].innerHTML){
+                flag_m=1
+              }
+            }
+          }
+            
+          if(flag_m==0 && flag_q==0){
+              queryTable.appendChild(newRow);
+          }
+          
+          if(queryTable.rows.length==0 && memListTable.rows.length==0)
+          {
+            queryTable.appendChild(newRow);
+          }
+
+        }
+    
+
     }
 
 </script>

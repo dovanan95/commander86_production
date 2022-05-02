@@ -427,7 +427,9 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
         var queryString_nameuser = 'select id, TenDayDu from DoIT_CanBo where id in (';
         for(let i = 0; i<list_chat.chat_history.length; i++)
         {
-            queryString_nameuser = queryString_nameuser + "'"+ list_chat.chat_history[i].userID + "'"+",";
+            if(list_chat.chat_history[i]['docType']=='private_message'){
+                queryString_nameuser = queryString_nameuser + "'"+ list_chat.chat_history[i].userID + "'"+",";
+            }
         }
         queryString_nameuser=queryString_nameuser+ "1)";
         sql.connect(sql_config, function(err){
