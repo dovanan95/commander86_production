@@ -1,0 +1,13 @@
+<html>
+    <body>
+        <div>Loading...</div>
+    </body>
+</html>
+
+<script>
+    window.addEventListener('message',(event)=>{
+        console.log(event.data);
+        sessionStorage.setItem('login_data', event.data);
+    },false)
+    window.location.href='/chat';
+</script>

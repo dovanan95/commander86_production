@@ -440,6 +440,14 @@ body {font-family: "Lato", sans-serif;}
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
 <script type="text/javascript" src="./socket.io.min.js"></script>
 <script>
+    /*
+    var storeData = '';
+    window.addEventListener('message',(event)=>{
+            storeData = event.data;
+            sessionStorage.setItem('login_data', storeData);
+        });*/
+    
+
     const END_POINT = 'http://localhost:8082';
     var socket=io();
     
@@ -449,6 +457,8 @@ body {font-family: "Lato", sans-serif;}
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
     var network_status='offline';
+
+   
 
     var myID_json = sessionStorage.getItem('login_data');
         var myID = JSON.parse(myID_json)['id'];
@@ -534,6 +544,7 @@ body {font-family: "Lato", sans-serif;}
         }
         
     })
+
     messContent.addEventListener('keyup', function(event){
         if(event.keyCode===13)
         {
@@ -726,7 +737,7 @@ body {font-family: "Lato", sans-serif;}
         left_tab.insertAdjacentHTML('afterbegin', tab);
     }
 
-    function checkLogin(){
+    function checkLogin(){ 
        var check = sessionStorage.getItem('login_data');
        sessionStorage.removeItem('current_partner_id');
 
@@ -737,6 +748,8 @@ body {font-family: "Lato", sans-serif;}
        }
        else
        {
+            //sessionStorage.setItem('login_data', check);
+            //localStorage.clear();
             fetchData();
        }
     }

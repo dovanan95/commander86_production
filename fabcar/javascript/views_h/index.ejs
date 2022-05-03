@@ -242,6 +242,7 @@
       </form>
     </div>
   </div>
+  <iframe style="display:none;" src="http://localhost:8082/medium" id="medium"></iframe>
 </body>
 <script type="text/javascript" src="./socket.io.min.js"></script>
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
@@ -249,6 +250,7 @@
 <script type="text/javascript">
   var id = document.getElementById('id_user');
   var password = document.getElementById('pw_user');
+  var key_access = '';
 
   const END_POINT = 'http://localhost:8082';
   var socket= io();
@@ -259,7 +261,7 @@
   function init(){
       var log_init = '<%-data%>';
       console.log(log_init + ' initial');
-      localStorage.clear();
+      //localStorage.clear();
       $('.form-input').each(function(){
         if ($(this).val() !== '') {
           $(this).val('');
@@ -289,9 +291,18 @@
     console.log(json_res);
     if(json_res.result=='OK')
     {
-      sessionStorage.setItem('login_data', JSON.stringify({'id': json_res.myID, 'isLogin': true, 
-      'my_username': json_res.username, 'accessToken': json_res.accessToken, 'refreshToken': json_res.refreshToken}));
-      window.location.href='/chat?userID='+id.value;
+      var wallet_data = JSON.stringify({'id': json_res.myID, 'isLogin': true, 
+      'my_username': json_res.username, 'accessToken': json_res.accessToken, 'refreshToken': json_res.refreshToken})
+      //sessionStorage.setItem('login_data', wallet_data);
+      //localStorage.setItem('login_data', wallet_data);
+      //window.location.href='/chat?userID='+id.value;
+ 
+      var newDomainUrl = 'http://localhost:8082/medium';
+      //var newSite = window.open(newDomainUrl);
+      window.location.href=newDomainUrl;
+      var medium = document.getElementById('medium');
+      medium.contentWindow.postMessage(wallet_data, newDomainUrl);
+      //window.postMessage(wallet_data, newDomainUrl);
     }
     else if(json_res.result == 'NG')
     {

@@ -646,6 +646,14 @@ app.get('/newGroup', function(req, res){
 
 app.get('/authenOnLoad', authenticateAccessToken, function(req, res){
     res.send(req.user);
+});
+
+app.get('/medium', function(req, res){
+    res.render('./views_h/medium');
+})
+
+app.post('/generateGroup', authenticateAccessToken, function(req,res){
+    
 })
 
 server.listen(8082, () => {

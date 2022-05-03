@@ -52,7 +52,7 @@
              
             </tbody>
           </table>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" onclick="generateGroup()" class="btn btn-primary">Submit</button>
         </div>
       </div>
 
@@ -156,13 +156,13 @@
           var flag_q=0;
           var flag_m =0
           if(queryTable.rows.length>0){
-            
             for(let j=0;j<queryTable.rows.length;j++){
               if(id==queryTable.rows[j].cells[0].innerHTML){
                 flag_q=1;
               }
             }
           }
+
           if(memListTable.rows.length>0){
             for(let k=0; k<memListTable.rows.length;k++){
               if(id== memListTable.rows[k].cells[0].innerHTML){
@@ -181,8 +181,17 @@
           }
 
         }
-    
-
+    }
+    async function generateGroup(){
+      var groupName= document.getElementById('groupName');
+      if(memListTable.rows.length>0 && groupName.value != ''){
+        var listUser = [];
+        for(let i=0;i<memListTable.rows.length;i++){
+          let id = memListTable.rows[i].cells[0].innerHTML;
+          listUser.push(id);
+        }
+        console.log(groupName.value, listUser);
+      }
     }
 
 </script>
