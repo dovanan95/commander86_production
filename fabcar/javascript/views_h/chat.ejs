@@ -457,9 +457,7 @@ body {font-family: "Lato", sans-serif;}
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
     var network_status='offline';
-
    
-
     var myID_json = sessionStorage.getItem('login_data');
         var myID = JSON.parse(myID_json)['id'];
         var my_name = JSON.parse(myID_json)['my_username'];
@@ -468,7 +466,7 @@ body {font-family: "Lato", sans-serif;}
 
     socket.emit('connected', myID);
     socket.emit('joinRoom',{'roomID':'test'})
-    socket.emit('sendRoom', {'roomID':'test', 'content': myID})
+    socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
 
 
     socket.on('online_list', function(data){
