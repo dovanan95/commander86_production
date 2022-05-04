@@ -141,6 +141,10 @@ async function queryNameUser(id){
     //query chaincode
     return("name_test");
 }
+async function saveGroupMessage(data)
+{
+
+}
 
 async function savePrivateMessage(data)
 {
@@ -263,10 +267,38 @@ var online_account = [];
         socket.join(data.roomID);
     })
   
-    socket.on("sendRoom", function(data) {
-      socketIo.to(data.roomID).emit('incoming_mess', data.content)
+    socket.on("sendRoom", async function(data) {
       //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
       //socketIo.to(room).emit('incoming_mess',{data})
+      try
+      {
+        socket.to(data.groupID).emit('incoming_mess', 
+        {
+            'messID': data.messID,
+            'sender': data.sender, 
+            'groupID': data.groupID, 
+            'groupName': data.groupName,
+            'message': data.message, 
+            'sender_name': data.sender_name,
+            'docType': 'group_message'
+        })
+        var groupMessObj = {
+            'messID': data.messID,
+            'docType': 'grou[_message',
+            'sender': data.sender,
+            'groupID': data.groupID,
+            'message': data.message,
+            'sender_name': data.sender_name,
+            'timestamp':parseInt(Date.now()),
+            'isImportant': 'false',
+            'seen':[]
+        }
+        await saveGroupMessage(groupMessObj);
+      }
+      catch(error)
+      {
+          console.log(error);
+      }
     })
     socket.on("sendMess", async function(data){
         try
@@ -281,7 +313,7 @@ var online_account = [];
                     'sender_name': data.sender_name,
                     'docType': 'private_message'
             });
-            const contract_ = await contract();
+            //const contract_ = await contract();
             
             var genDate='MessPriv.' + data.sender+'.'+data.receiver+'.' + Date.now().toString();
             var privMessObj = {
@@ -495,8 +527,10 @@ app.post('/chat_peer', authenticateAccessToken, async function(req, res){
 
 
 //for chat room (dev in future)
-app.post('/chat_room', function(req, res){
+app.post('/chat_room', async function(req, res){
     console.log({'room_ID': req.body.room_ID, 'docType':req.body.type});
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
 })
 
 //for begin chat with one user from query
@@ -652,8 +686,40 @@ app.get('/medium', function(req, res){
     res.render('./views_h/medium');
 })
 
-app.post('/generateGroup', authenticateAccessToken, function(req,res){
-    
+app.post('/generateGroup', authenticateAccessToken, async function(req,res){
+    console.log(req.body.groupName);
+    console.log(req.body.userID);
+    res.send({'data':'ok'});
+    try{
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var groupID = 'groupComm'+ req.body.admin + req.body.groupName.replace(/\s/g, '') + Date.now().toString();
+        var intUserList = [];
+        for(let i=0; i<req.body.userID.length;i++){
+            intUserList.push(parseInt(req.body.userID[i]));
+        }
+        intUserList.push(parseInt(req.body.admin));
+        var data = {
+            'groupID': groupID,
+            'groupName': req.body.groupName,
+            'admin': req.body.admin,
+            'member': intUserList,
+            'dateCreate': parseInt(Date.now())
+        };
+        
+        dbo.collection('groupCollection').insertOne(data, function(err, res){
+            if(err){
+                console.log(err);
+            }
+        });
+        //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
+        var groupHistoryObject = {'groupID': groupID, 'groupName': req.body.groupName, 'docType': 'group_message', 'timestamp': parseInt(Date.now())};
+        dbo.collection('user').updateMany({'userID':{$in:intUserList}},{$push:{'chat_history':groupHistoryObject}});;
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 })
 
 server.listen(8082, () => {

@@ -23,6 +23,7 @@ body {font-family: "Lato", sans-serif;}
   /* min-height: 100vh; */
   background-color: rgba(121, 199, 197, 0.2);
   border-right: 1px solid rgba(121, 199, 197, 0.2);
+  height: 94vh;
 }
 
 .tablinks {
@@ -398,20 +399,22 @@ body {font-family: "Lato", sans-serif;}
         <%- include('./header')%>
         <div class="chat-container">
             <div class="tab">
-                <div  id='hist_tab'>
+                <div  id='hist_tab' style="overflow: auto;position: relative;">
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
                 <div class="dropdown-group-btn" style="position: absolute; bottom: 0;display: flex;flex-direction: column;
                         width: 23%; padding: 10px;">
-                   
+                
                     <button class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">OPTIONS</button>
                     <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
                         <a onclick="newGroup()">ADD GROUP</a>
                         <a href="#addChannel">ADD CHANNEL</a>
-                      </div>
+                    </div>
                     
                 </div>
+         
             </div>
+         
             
             <div class="chat-box">
                 <div class="top-bar" >
@@ -535,6 +538,45 @@ body {font-family: "Lato", sans-serif;}
                         partner_tab.children[1].innerHTML='new message';
                     }
                     reloadLeftTab(tab_partner_prefix+ data.sender);
+                }
+                
+            }
+            
+        }
+        if(data.docType=='group_message')
+        {
+            if(data.groupID == current_partner)
+            {
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message)
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                // messContainer.scrollTop = messContainer.scrollHeight;
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.groupID);
+            }
+            else if(data.groupID != current_partner)
+            {   
+                var flag =0;
+                for(var k in response_init)
+                {
+                    if(data.groupID==response_init[k]['groupID'])
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    var tab_partner_el = private_message_left_tab(data.docType, data.groupID, data.groupName)
+                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.groupID);
+                        console.log(partner_tab);
+                        partner_tab.children[1].innerHTML='new message';
+                    }
+                    reloadLeftTab(tab_partner_prefix+ data.groupID);
                 }
                 
             }
@@ -764,13 +806,24 @@ body {font-family: "Lato", sans-serif;}
         var response_init_load = await fetch("/load_chat_history", options);
         response_init = await response_init_load.json(); 
         response_init = response_init.sort((a,b)=>b.timestamp-a.timestamp);
+        var tab_partner_el;
+        var room_chat=[];
         for(var i in response_init)
         {
             console.log(response_init[i]);
-            var tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username)
+            if(response_init[i].docType=='private_message')
+            {
+                tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username);
+            }
+            else if(response_init[i].docType=='group_message')
+            {
+                tab_partner_el = private_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
+                room_chat.push(response_init[i].groupID);
+            }
+            
             left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
         }
-
+        socket.emit('joinRoom',{'roomID':room_chat});
         //console.log(document.getElementsByClassName('tablinks').length);
         var online_partner = sessionStorage.getItem('online_partner');
         if(online_partner)
@@ -791,6 +844,13 @@ body {font-family: "Lato", sans-serif;}
                         tablinks[i].children[0].children[1].style.color='green';
                         tablinks[i].children[1].style.backgroundColor='green';
                     }
+                }
+                let docType = tablinks[i].getAttribute('docType');
+                if(docType=='group_message')
+                {
+                    tablinks[i].children[0].children[1].innerHTML='online';
+                    tablinks[i].children[0].children[1].style.color='green';
+                    tablinks[i].children[1].style.backgroundColor='green';
                 }
             }
         }
@@ -818,6 +878,10 @@ body {font-family: "Lato", sans-serif;}
             var getPrivMessBlock = await fetch('/chat_peer', options);
             block = await getPrivMessBlock.json();
         }
+        if(docType=='group_message')
+        {
+
+        }
         return(block);
     }
     async function choosePartner_2(obj){
@@ -826,12 +890,13 @@ body {font-family: "Lato", sans-serif;}
         console.log(obj.children[0].children[1].innerHTML);
         obj.children[1].innerHTML='';
         message_zone.innerHTML=``;
-        var id_partner = parseInt(obj.getAttribute('id_sender'));
+        var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');
         sessionStorage.setItem('current_partner_id', id_partner);
         //callAPI(id)
         if(docType=='private_message')
-        {
+        {   
+            id_partner=parseInt(id_partner);
             var block_ = await getBlockByID(id_partner, docType); //API call result
             block =block_.reverse(); 
             for(var i in block)
@@ -851,6 +916,10 @@ body {font-family: "Lato", sans-serif;}
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
             }
+        }
+        if(docType=='group_message')
+        {
+    
         }
 
         message_zone.scrollTop = message_zone.scrollHeight;
@@ -875,6 +944,20 @@ body {font-family: "Lato", sans-serif;}
                 'receiver': current_partner, 'message': messContent.value});
                 messContent.value='';
                 reloadLeftTab(tab_partner_prefix+ current_partner);
+            }
+            if(docType == 'group_message')
+            {
+                var groupName_parent = document.getElementById(tab_partner_prefix+ current_partner).querySelector('.acc-status').querySelector('.acc');
+ 
+                var groupName = groupName_parent.innerHTML;
+                var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+                var mess_block_g = myMessage(messID, my_name, messContent.value);
+                message_zone.insertAdjacentHTML('beforeend', mess_block_g);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
+                'groupID': current_partner, 'groupName': groupName, 'message': messContent.value});
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+current_partner);
             }
         }    
     }

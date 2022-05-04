@@ -60,6 +60,7 @@
 </html>
 <script>
     var myID_json = sessionStorage.getItem('login_data');
+    var myID = JSON.parse(myID_json)['id'];
     if(myID_json==null){
         if(window.confirm('ban khong co quyen truy cap!!!')){
             window.location.href='/';
@@ -171,11 +172,11 @@
             }
           }
             
-          if(flag_m==0 && flag_q==0){
+          if(flag_m==0 && flag_q==0 && id!=myID){
               queryTable.appendChild(newRow);
           }
           
-          if(queryTable.rows.length==0 && memListTable.rows.length==0)
+          if(queryTable.rows.length==0 && memListTable.rows.length==0 && id!=myID)
           {
             queryTable.appendChild(newRow);
           }
@@ -191,6 +192,27 @@
           listUser.push(id);
         }
         console.log(groupName.value, listUser);
+        const options={
+          method:'POST',
+          headers: {
+              'authorization': 'token '+ accessToken,
+              'Content-Type': 'application/json'
+            },
+          body: JSON.stringify({
+            'groupName': groupName.value,
+            'userID': listUser,
+            'admin': myID
+          })
+        }
+        var res = await fetch('/generateGroup', options);
+        var json_res = await res.json();
+        if(json_res.data=='ok'){
+          memListTable.innerHTML='';
+        }
+      }
+      else if(memListTable.rows.length==0 || groupName.value == '')
+      {
+        alert('vui long nhap ten nhom va chon thanh vien!!!')
       }
     }
 
