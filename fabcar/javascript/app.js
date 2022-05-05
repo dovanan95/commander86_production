@@ -143,7 +143,16 @@ async function queryNameUser(id){
 }
 async function saveGroupMessage(data)
 {
-
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
+    dbo.collection('groupMessage').insertOne(data, function(err, res){
+        if(err){
+            console.log(err);
+        }
+    });
+    var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
+    console.log(groupChat['member'])
+    dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},{$set:{'chat_history.$.timestamp':data.timestamp}});
 }
 
 async function savePrivateMessage(data)
@@ -284,7 +293,7 @@ var online_account = [];
         })
         var groupMessObj = {
             'messID': data.messID,
-            'docType': 'grou[_message',
+            'docType': 'group_message',
             'sender': data.sender,
             'groupID': data.groupID,
             'message': data.message,
@@ -526,11 +535,12 @@ app.post('/chat_peer', authenticateAccessToken, async function(req, res){
 })
 
 
-//for chat room (dev in future)
-app.post('/chat_room', async function(req, res){
-    console.log({'room_ID': req.body.room_ID, 'docType':req.body.type});
+//for chat room 
+app.post('/chat_room', authenticateAccessToken, async function(req, res){
     var db = await mongo.connect(url_mongo);
     var dbo = await db.db(db_mongo_name);
+    var chatBlocks = await dbo.collection('groupMessage').find({'groupID': req.body.groupID}).sort({'timestamp': -1}).limit(req.body.limit).toArray();
+    res.send(JSON.stringify(chatBlocks));
 })
 
 //for begin chat with one user from query
@@ -616,28 +626,50 @@ app.get('/user_information', function(req, res){
 })
 
 app.post('/markImportant', authenticateAccessToken, async function(req, res){
-    const contract_ = await contract();
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    var chatBlock = await dbo.collection('privateMessage').findOne({'messID': req.body.messID});
-
-    await contract_.submitTransaction('savePrivateMessage', req.body.messID,
-                            chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
-    var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
-    if(JSON.parse(resporn.toString()).messID)
+    try
     {
-        console.log(JSON.parse(resporn.toString()).messID);
-        if(chatBlock.docType =='private_message')
+        const contract_ = await contract();
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var chatBlock;
+        if(req.body.docType=='private_message')
         {
-            await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{'isImportant': 'true'}})
-            res.send({'data':'ok'});
+            chatBlock = await dbo.collection('privateMessage').findOne({'messID': req.body.messID});
+            await contract_.submitTransaction('savePrivateMessage', req.body.messID,
+                                chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
+            var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
+            if(JSON.parse(resporn.toString()).messID)
+            {
+                await dbo.collection('privateMessage').updateOne({'messID': req.body.messID},{$set:{'isImportant': 'true'}})
+                res.send({'data':'ok'});
+            }
+            else if(!JSON.parse(resporn.toString()).messID)
+            {
+                res.send({'data':'error'});
+            }
         }
-        
+        else if(req.body.docType == 'group_message')
+        {
+            chatBlock = await dbo.collection('groupMessage').findOne({'messID': req.body.messID});
+            await contract_.submitTransaction('saveGroupMessage', req.body.messID,chatBlock.groupID,
+                                chatBlock.sender, chatBlock.sender_name,  chatBlock.message, chatBlock.timestamp);
+            var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
+            if(JSON.parse(resporn.toString()).messID)
+            {
+                await dbo.collection('groupMessage').updateOne({'messID': req.body.messID},{$set:{'isImportant': 'true'}})
+                res.send({'data':'ok'});
+            }
+            else if(!JSON.parse(resporn.toString()).messID)
+            {
+                res.send({'data':'error'});
+            }
+        }
     }
-    else if(!JSON.parse(resporn.toString()).messID)
+    catch(error)
     {
-        res.send({'data':'error'});
+        console.log(error);
     }
+   
     
 })
 
@@ -687,9 +719,6 @@ app.get('/medium', function(req, res){
 })
 
 app.post('/generateGroup', authenticateAccessToken, async function(req,res){
-    console.log(req.body.groupName);
-    console.log(req.body.userID);
-    res.send({'data':'ok'});
     try{
         var db = await mongo.connect(url_mongo);
         var dbo = await db.db(db_mongo_name);
@@ -699,11 +728,18 @@ app.post('/generateGroup', authenticateAccessToken, async function(req,res){
             intUserList.push(parseInt(req.body.userID[i]));
         }
         intUserList.push(parseInt(req.body.admin));
+        var userinMongo = await dbo.collection('user').find({'userID':{$in:intUserList}}).toArray();
+  
+        var new_intUserList=[];
+        for(let j=0;j<userinMongo.length;j++){
+            new_intUserList.push(userinMongo[j]['userID']);
+        }
+
         var data = {
             'groupID': groupID,
             'groupName': req.body.groupName,
             'admin': req.body.admin,
-            'member': intUserList,
+            'member': new_intUserList,
             'dateCreate': parseInt(Date.now())
         };
         
@@ -714,7 +750,8 @@ app.post('/generateGroup', authenticateAccessToken, async function(req,res){
         });
         //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
         var groupHistoryObject = {'groupID': groupID, 'groupName': req.body.groupName, 'docType': 'group_message', 'timestamp': parseInt(Date.now())};
-        dbo.collection('user').updateMany({'userID':{$in:intUserList}},{$push:{'chat_history':groupHistoryObject}});;
+        dbo.collection('user').updateMany({'userID':{$in:new_intUserList}},{$push:{'chat_history':groupHistoryObject}});;
+        res.send({'data':'ok'});
     }
     catch(error)
     {

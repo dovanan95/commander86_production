@@ -508,7 +508,7 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.sender == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message)
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
@@ -547,7 +547,7 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.groupID == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message)
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
@@ -592,10 +592,10 @@ body {font-family: "Lato", sans-serif;}
         } 
     })
 
-    function myMessage(id_block, my_name, content, isImportant)
+    function myMessage(id_block, my_name, content, isImportant, docType)
     {
         var mess_block = `
-                            <div class="outgoing" id=${id_block}>
+                            <div class="outgoing" id=${id_block} docType=${docType}>
                                 <div class="bubble">
                                     <div style="font-size: 10px; font-style:italic; ">${my_name}</div>
                                     ${content}
@@ -623,10 +623,10 @@ body {font-family: "Lato", sans-serif;}
         }
         return mess_block;
     }
-    function prtnerMessage(id_block, sender_name, content, isImportant)
+    function prtnerMessage(id_block, sender_name, content, isImportant, docType)
     {
         var mess_block = `
-                            <div class="incoming " id=${id_block}>
+                            <div class="incoming " id=${id_block} docType=${docType}>
                                 <div class="bubble">
                                     <div style="font-size: 10px; font-style:italic; ">${sender_name}</div>
                                     ${content}
@@ -695,6 +695,7 @@ body {font-family: "Lato", sans-serif;}
         //console.log(obj.parentNode.parentNode.parentNode);
         var parentObj = obj.parentNode.parentNode.parentNode;
         var parentObj_id = parentObj.getAttribute('id'); 
+        var docType = parentObj.getAttribute('docType')
         var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
                         <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
         console.log(parentObj.children[1].children[1]);
@@ -702,7 +703,7 @@ body {font-family: "Lato", sans-serif;}
         var messItem = document.getElementById(parentObj_id);
         const options = {
             method: 'POST',
-            body: JSON.stringify({'messID': parentObj_id}),
+            body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
             headers: {
                 'authorization': 'token '+ accessToken,
                 'Content-Type': 'application/json'
@@ -728,10 +729,11 @@ body {font-family: "Lato", sans-serif;}
         var parentObj = obj.parentElement.parentNode.parentNode;
         console.log(parentObj);
         var id_block = parentObj.getAttribute('id');
+        var docType = parentObj.getAttribute('docType');
         console.log(id_block);
         const options = {
             method: 'POST',
-            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString()}),
+            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
             headers: {
                 'authorization': 'token '+ accessToken,
                 'Content-Type': 'application/json'
@@ -880,7 +882,17 @@ body {font-family: "Lato", sans-serif;}
         }
         if(docType=='group_message')
         {
-
+            var dataG = {'groupID': partner_id, 'limit':100, 'skip':0};
+            const optionsG ={
+                method: 'POST',
+                body: JSON.stringify(dataG),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var getrGroupMessBlock = await fetch('/chat_room', optionsG);
+            block = await getrGroupMessBlock.json();
         }
         return(block);
     }
@@ -898,20 +910,20 @@ body {font-family: "Lato", sans-serif;}
         {   
             id_partner=parseInt(id_partner);
             var block_ = await getBlockByID(id_partner, docType); //API call result
-            block =block_.reverse(); 
+            var block =block_.reverse(); 
             for(var i in block)
             {
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
             
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant);
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant, block[i].docType);
                     
                 }
                 else if(block[i].sender != id_partner)
                 {
                 
-                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant);
+                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant, block[i].docType);
                     
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
@@ -919,7 +931,20 @@ body {font-family: "Lato", sans-serif;}
         }
         if(docType=='group_message')
         {
-    
+            var blockG = await getBlockByID(id_partner, docType);
+            block = blockG.reverse();
+            for(var j in blockG){
+                var mess_block_G;
+                if(blockG[j].sender != myID)
+                {
+                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, blockG[j].message, blockG[j].isImportant, blockG[j].docType);
+                }
+                else if(blockG[j].sender == myID)
+                {
+                    mess_block_G = myMessage(blockG[j].messID, my_name, blockG[j].message, blockG[j]. isImportant, blockG[j].docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_G);
+            }
         }
 
         message_zone.scrollTop = message_zone.scrollHeight;
@@ -937,7 +962,7 @@ body {font-family: "Lato", sans-serif;}
             {
                 var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
                 console.log(messID);
-                mess_block_t = myMessage(messID, my_name, messContent.value);
+                mess_block_t = myMessage(messID, my_name, messContent.value , docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
@@ -951,7 +976,7 @@ body {font-family: "Lato", sans-serif;}
  
                 var groupName = groupName_parent.innerHTML;
                 var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
-                var mess_block_g = myMessage(messID, my_name, messContent.value);
+                var mess_block_g = myMessage(messID, my_name, messContent.value, docType);
                 message_zone.insertAdjacentHTML('beforeend', mess_block_g);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
