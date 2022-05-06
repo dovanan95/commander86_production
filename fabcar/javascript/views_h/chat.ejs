@@ -504,6 +504,7 @@ body {font-family: "Lato", sans-serif;}
         //console.log(document.getElementsByClassName('tablinks').length);
 
         var current_partner = sessionStorage.getItem('current_partner_id');
+        var tablinks = document.getElementsByClassName('tablinks');
         if(data.docType=='private_message')
         {
             if(data.sender == current_partner)
@@ -517,9 +518,12 @@ body {font-family: "Lato", sans-serif;}
             else if(data.sender != current_partner)
             {   
                 var flag =0;
-                for(var k in response_init)
+                for(var k=0;k<tablinks.length;k++)
                 {
-                    if(data.sender==response_init[k]['userID'])
+                    console.log(tablinks[k]);
+                    var id = tablinks[k].getAttribute('id_sender');
+                    console.log(id);
+                    if(data.sender==id)
                     {
                         flag=1;
                     }
@@ -556,9 +560,10 @@ body {font-family: "Lato", sans-serif;}
             else if(data.groupID != current_partner)
             {   
                 var flag =0;
-                for(var k in response_init)
+                for(var k=0;k<tablinks.length;k++)
                 {
-                    if(data.groupID==response_init[k]['groupID'])
+                    var id = tablinks[k].getAttribute('id_sender')
+                    if(data.groupID==id)
                     {
                         flag=1;
                     }
