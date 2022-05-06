@@ -799,7 +799,7 @@ body {font-family: "Lato", sans-serif;}
     async function fetchData(){
         const options = {
             method: 'POST',
-            body: JSON.stringify({'id': myID}),
+            body: JSON.stringify({'id': myID, 'limit':10}),
             headers: {
                 'authorization': 'token '+ accessToken,
                 'Content-Type': 'application/json'

@@ -152,7 +152,10 @@ async function saveGroupMessage(data)
     });
     var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
     console.log(groupChat['member'])
-    dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},{$set:{'chat_history.$.timestamp':data.timestamp}});
+    dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
+    {$set:{'chat_history.$.timestamp':data.timestamp}});
+    dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
+    {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
 }
 
 async function savePrivateMessage(data)
@@ -163,9 +166,9 @@ async function savePrivateMessage(data)
         var dbo = await db.db(db_mongo_name);
         dbo.collection('privateMessage').insertOne(data, function(err, res){
             if(err){
-            console.log(err);
-        }
-        console.log("1 document inserted");
+                console.log(err);
+            }
+            console.log("1 document inserted");
         })
         var myObj = await dbo.collection('user').find({'userID': {'$in':[data.sender, data.receiver]}}).toArray();
         for(let i=0; i<myObj.length;i++)
@@ -233,6 +236,8 @@ async function savePrivateMessage(data)
                 }
             }
         }
+        await dbo.collection('user').updateMany({'userID': {$in:[data.sender, data.receiver]}}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
     }
     catch(error)
     {
@@ -464,7 +469,9 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
 
         var db = await mongo.connect(url_mongo);
         var dbo = await db.db(db_mongo_name);
-        var list_chat = await dbo.collection('user').findOne({'userID': req.body.id});
+        var list_chat_arr = await dbo.collection('user')
+            .find({'userID': req.body.id}).project({'chat_history':{$slice: req.body.limit}}).toArray();
+        var list_chat = list_chat_arr[0];
         var queryString_nameuser = 'select id, TenDayDu from DoIT_CanBo where id in (';
         for(let i = 0; i<list_chat.chat_history.length; i++)
         {
