@@ -535,7 +535,7 @@ class FabCar extends Contract {
             timestamp
         }
         await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
-        await this.updateCommandHistory(ctx, sender, receiver, 'private_message');
+        //await this.updateCommandHistory(ctx, sender, receiver, 'private_message');
     }
 
     async saveGroupMessage(ctx, messID, room_id, sender, sender_name, content, timestamp)
