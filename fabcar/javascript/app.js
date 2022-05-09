@@ -30,6 +30,8 @@ var sql_config = {
     trustServerCertificate: true 
 };
 
+var app_helper = require('./app_helper');
+
 
 async function contract()
 {
@@ -764,6 +766,67 @@ app.post('/generateGroup', authenticateAccessToken, async function(req,res){
     {
         console.log(error);
     }
+})
+
+app.get('/groupOptions', function(req, res){
+    var id_group = req.query.id;
+    res.render('./views_h/groupOptions', {'id_group': id_group});    
+})
+
+app.post('/loadOptions', async function(req, res){
+    try
+    {
+        var docType = req.body.docType;
+        if(docType=='group_message')
+        {
+            var id_group = req.body.id_group;
+            var userID = parseInt(req.body.userID);
+            var db = await mongo.connect(url_mongo);
+            var dbo = await db.db(db_mongo_name);
+            var group = await dbo.collection('groupCollection').findOne({'groupID': id_group});
+            var listUserID = group.member;
+            var admin = group.admin;
+            var inforSet=0;
+            var queryString_nameuser = 'select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
+            'from DoIT_CanBo as a inner join DoIT_DMDonVi as b on a.id_DonVi = b.id inner join DoIT_DMChucVu as c on a.id_ChucVu = c.id '+
+            'inner join DoIT_DMCapBac as d on a.id_CapBac = d.id  where a.id in (';
+            for(let i =0; i<listUserID.length;i++){
+                queryString_nameuser=queryString_nameuser+ "'"+ listUserID[i] + "'"+",";
+            };
+            queryString_nameuser=queryString_nameuser+ "1)";
+            sql.connect(sql_config, function(err){
+                if(err){
+                    console.log(err);
+                    res.send({'result':'connect to database failed!'})
+                }
+                var request = new sql.Request();
+                request.query(queryString_nameuser, function(err,recordSet){
+                    if(err){
+                        console.log(err);
+                        //res.send(JSON.stringify({'data': 'no_data'}));
+                        res.send(err);
+                    }
+                    if(recordSet)
+                    {
+                        inforSet = recordSet.recordset;
+                        if(admin==userID)
+                        {
+                            res.send({'data': inforSet, 'isAdmin':'true'});
+                        }
+                        else if( admin != userID)
+                        {
+                            res.send({'data': inforSet, 'isAdmin':'false'});
+                        }
+                    }
+                })
+            })
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
 })
 
 server.listen(8082, () => {

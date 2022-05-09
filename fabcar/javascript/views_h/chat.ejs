@@ -211,6 +211,30 @@ body {font-family: "Lato", sans-serif;}
     background: #777777;
 }
 
+.expand-func-icon_left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.expand-func-icon_left:hover {
+    background-color: #C7C9CC;
+}
+
+.expand-func-icon_left .dots {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #777777;
+}
+
 .incoming .block_func_btn .dropdown-button {
     min-width: 110px;
     min-height: 60px;
@@ -395,6 +419,9 @@ body {font-family: "Lato", sans-serif;}
 
 </style>
 <html>
+    <head>
+        <title>He Thong Tin Chi Dao Dieu Hanh</title>
+    </head>
     <body onload="checkLogin()">
         <%- include('./header')%>
         <div class="chat-container">
@@ -669,7 +696,7 @@ body {font-family: "Lato", sans-serif;}
                     <div class="status-online">${network_status}</div>
                 </div>
                 <div class="dots-offline"></div>
-                <div class="expand-func-icon" onclick={console.log(this)}>
+                <div class="expand-func-icon_left" onclick=leftTabOption(this)>
                                         <div class="dots"></div>
                                         <div class="dots"></div>
                                         <div class="dots"></div>    
@@ -693,6 +720,17 @@ body {font-family: "Lato", sans-serif;}
             <hr class="solid">
         `
         return element_partner_selection_element;
+    }
+
+    function leftTabOption(obj){
+        var leftTab = obj.closest('.tablinks');
+        var docType = leftTab.getAttribute('docType');
+        var id = leftTab.getAttribute('id_sender');
+        if(docType=='group_message')
+        {
+            window.open('/groupOptions?id='+id);
+        }
+        
     }
 
     async function markImportantMess(obj)
