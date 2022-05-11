@@ -25,6 +25,7 @@
                 <th>Name</th>
                 <th>Department</th>
                 <th>Mobile</th>
+                <th>Admin</th>
                 <th>Select</th>
               </tr>
             </thead>
@@ -46,20 +47,20 @@
                 <th>Name</th>
                 <th>Department</th>
                 <th>Mobile</th>
-                <th>Delete</th>
+                <th>Admin</th>
+                <th>Option</th>
               </tr>
             </thead>
             <tbody>
              
             </tbody>
           </table>
-          <button type="submit" onclick="generateGroup()" class="btn btn-primary" id="btnApply">APPLY</button>
+          <button type="submit" onclick="applySettings()" class="btn btn-primary" id="btnApply">APPLY</button>
         </div>
       </div>
       <div class="modal-body row">
         <button type="button" class="btn btn-secondary btn-lg btn-block">Leave Group</button>
       </div>
-      
 </body>
 </html>
 <script>
@@ -105,6 +106,22 @@
         }
     }
     var isAdmin;
+    var admin;
+    //var optionBTN_enable = '<td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>';
+    var optionBTN_enable =
+    `<td>
+        <div class="btn-group">
+          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Action
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item delete" href="#">Delete</a>
+            <a class="dropdown-item" href="#">Block</a>
+          </div>
+        </div>
+      </td>
+    `;
+    var optionBTN_disable = '<td><button type="button" class="btn btn-outline-danger delete" disabled>Action</button></td>';
     async function fetchData()
     {
         const options = {
@@ -129,6 +146,45 @@
         else if(res_json.isAdmin=='true')
         {
             isAdmin='true';
+            admin= res_json.admin;
+        }
+
+        for(let i=0;i<res_json.data.length;i++)
+        {
+          var newRow = document.createElement('tr');
+              var id = res_json.data[i]['id'];
+              var name = res_json.data[i]['TenDayDu'];
+              var dept = res_json.data[i]['TenDonVi'];
+              var mobile = res_json.data[i]['Mobile'];
+              if(isAdmin=='true')
+              {
+                var selectBtn =optionBTN_enable;
+                queryTable.disabled=true;
+              }
+              else if(isAdmin=='false')
+              {
+                var selectBtn = optionBTN_disable;
+              }
+
+              if(id==admin)
+              {
+                var admin_element=`<td>Admin</td>`
+              }
+              else
+              {
+                var admin_element=`<td>Member</td>`
+              }
+              
+              newRow.innerHTML= 
+              `
+                  <td style="display:none;">${id}</td>
+                  <td>${name}</td>
+                  <td>${dept}</td>
+                  <td>${mobile}</td>
+                  ${admin_element}
+                  ${selectBtn}
+              `;
+              memListTable.append(newRow);
         }
     }
     $(document).on('click', '.delete', function(){
@@ -143,7 +199,7 @@
             var thisTarget = event.currentTarget;
             var row = thisTarget.parentNode.parentNode;
             var lastBTN = row.cells[row.cells.length-1]; 
-            lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete">Delete</button>`;
+            lastBTN.innerHTML = optionBTN_enable;
             memListTable.appendChild(row)
         })
     }
@@ -154,11 +210,11 @@
         var lastBTN = row.cells[row.cells.length-1]; 
         if(isAdmin=='false')
         {
-            lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete" disabled>Delete</button>`;
+            lastBTN.innerHTML = optionBTN_disable;
         }
         else if(isAdmin == 'true')
         {
-            lastBTN.innerHTML = `<button type="button" class="btn btn-outline-danger delete">Delete</button>`;
+            lastBTN.innerHTML = optionBTN_enable;
         }
         
         memListTable.appendChild(row)
@@ -180,48 +236,49 @@
             console.log(res_json);
             for(let i=0; i<res_json.data.length; i++)
             {
-            var newRow = document.createElement('tr');
-            var id = res_json.data[i]['id'];
-            var name = res_json.data[i]['TenDayDu'];
-            var dept = res_json.data[i]['TenDonVi'];
-            var mobile = res_json.data[i]['Mobile'];
-            var selectBtn =`<td><button type="button" onclick="addNewMember(this)" 
-                class="btn btn-outline-primary select">Select</button></td> `;
-            newRow.innerHTML= 
-            `
-                <td style="display:none;">${id}</td>
-                <td>${name}</td>
-                <td>${dept}</td>
-                <td>${mobile}</td>
-                ${selectBtn}
-            `;
-            console.log(queryTable.rows.length);
-            var flag_q=0;
-            var flag_m =0
-            if(queryTable.rows.length>0){
-                for(let j=0;j<queryTable.rows.length;j++){
-                if(id==queryTable.rows[j].cells[0].innerHTML){
-                    flag_q=1;
-                }
-                }
-            }
+              var newRow = document.createElement('tr');
+              var id = res_json.data[i]['id'];
+              var name = res_json.data[i]['TenDayDu'];
+              var dept = res_json.data[i]['TenDonVi'];
+              var mobile = res_json.data[i]['Mobile'];
+              var selectBtn =`<td><button type="button" onclick="addNewMember(this)" 
+                  class="btn btn-outline-primary select">Select</button></td> `;
+              newRow.innerHTML= 
+              `
+                  <td style="display:none;">${id}</td>
+                  <td>${name}</td>
+                  <td>${dept}</td>
+                  <td>${mobile}</td>
+                  <td>Member</td>
+                  ${selectBtn}
+              `;
+              console.log(queryTable.rows.length);
+              var flag_q=0;
+              var flag_m =0
+              if(queryTable.rows.length>0){
+                  for(let j=0;j<queryTable.rows.length;j++){
+                  if(id==queryTable.rows[j].cells[0].innerHTML){
+                      flag_q=1;
+                    }
+                  }
+              }
 
-            if(memListTable.rows.length>0){
-                for(let k=0; k<memListTable.rows.length;k++){
-                if(id== memListTable.rows[k].cells[0].innerHTML){
-                    flag_m=1
-                }
-                }
-            }
-                
-            if(flag_m==0 && flag_q==0 && id!=myID){
-                queryTable.appendChild(newRow);
-            }
-            
-            if(queryTable.rows.length==0 && memListTable.rows.length==0 && id!=myID)
-            {
-                queryTable.appendChild(newRow);
-            }
+              if(memListTable.rows.length>0){
+                  for(let k=0; k<memListTable.rows.length;k++){
+                  if(id== memListTable.rows[k].cells[0].innerHTML){
+                      flag_m=1
+                    }
+                  }
+              }
+                  
+              if(flag_m==0 && flag_q==0 && id!=myID){
+                  queryTable.appendChild(newRow);
+              }
+              
+              if(queryTable.rows.length==0 && memListTable.rows.length==0 && id!=myID)
+              {
+                  queryTable.appendChild(newRow);
+              }
 
             }
         }
@@ -231,7 +288,7 @@
         }
     }
 
-    async function generateGroup(){
+    async function applySettings(){
       var groupName= document.getElementById('groupName');
       if(memListTable.rows.length>0 && groupName.value != ''){
         var listUser = [];

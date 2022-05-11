@@ -513,15 +513,17 @@ body {font-family: "Lato", sans-serif;}
             var id_sender = tablinks[i].getAttribute('id_sender');
             if(id_sender==data.userID && data.isOnline==true)
             {
-                tablinks[i].children[0].children[1].innerHTML='online';
-                tablinks[i].children[0].children[1].style.color='green';
-                tablinks[i].children[1].style.backgroundColor='green';
+                //tablinks[i].children[0].children[1].innerHTML='online';
+                tablinks[i].querySelector('.status-online').innerHTML='online';
+                tablinks[i].querySelector('.status-online').style.color='green';
+                tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
             } 
             else if(id_sender==data.userID && data.isOnline==false)
             {
-                tablinks[i].children[0].children[1].innerHTML='offline';
-                tablinks[i].children[0].children[1].style.color='red';
-                tablinks[i].children[1].style.backgroundColor='red';
+                //tablinks[i].children[0].children[1].innerHTML='offline';
+                tablinks[i].querySelector('.status-online').innerHTML='offline';
+                tablinks[i].querySelector('.status-online').style.color='red';
+                tablinks[i].querySelector('.dots-offline').style.backgroundColor='red';
             }
         }
     })
@@ -627,7 +629,7 @@ body {font-family: "Lato", sans-serif;}
     function myMessage(id_block, my_name, content, isImportant, docType)
     {
         var mess_block = `
-                            <div class="outgoing" id=${id_block} docType=${docType}>
+                            <div class="outgoing messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
                                     <div style="font-size: 10px; font-style:italic; ">${my_name}</div>
                                     ${content}
@@ -658,7 +660,7 @@ body {font-family: "Lato", sans-serif;}
     function prtnerMessage(id_block, sender_name, content, isImportant, docType)
     {
         var mess_block = `
-                            <div class="incoming " id=${id_block} docType=${docType}>
+                            <div class="incoming messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
                                     <div style="font-size: 10px; font-style:italic; ">${sender_name}</div>
                                     ${content}
@@ -736,7 +738,7 @@ body {font-family: "Lato", sans-serif;}
     async function markImportantMess(obj)
     {
         //console.log(obj.parentNode.parentNode.parentNode);
-        var parentObj = obj.parentNode.parentNode.parentNode;
+        var parentObj = obj.closest('.messBlock');
         var parentObj_id = parentObj.getAttribute('id'); 
         var docType = parentObj.getAttribute('docType')
         var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
@@ -768,8 +770,8 @@ body {font-family: "Lato", sans-serif;}
 
     async function verifyMessBlock(obj)
     {
-    
-        var parentObj = obj.parentElement.parentNode.parentNode;
+        var parentObj = obj.closest('.messBlock');
+        //var parentObj = obj.parentElement.parentNode.parentNode;
         console.log(parentObj);
         var id_block = parentObj.getAttribute('id');
         var docType = parentObj.getAttribute('docType');

@@ -811,11 +811,11 @@ app.post('/loadOptions', async function(req, res){
                         inforSet = recordSet.recordset;
                         if(admin==userID)
                         {
-                            res.send({'data': inforSet, 'isAdmin':'true'});
+                            res.send({'data': inforSet, 'isAdmin':'true', 'admin': admin});
                         }
                         else if( admin != userID)
                         {
-                            res.send({'data': inforSet, 'isAdmin':'false'});
+                            res.send({'data': inforSet, 'isAdmin':'false', 'admin': admin});
                         }
                     }
                 })
