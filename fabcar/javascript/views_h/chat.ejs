@@ -489,7 +489,7 @@ body {font-family: "Lato", sans-serif;}
     var network_status='offline';
    
     var myID_json = sessionStorage.getItem('login_data');
-        var myID = JSON.parse(myID_json)['id'];
+        var myID = parseInt(JSON.parse(myID_json)['id']);
         var my_name = JSON.parse(myID_json)['my_username'];
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
