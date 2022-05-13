@@ -501,6 +501,21 @@ body {font-family: "Lato", sans-serif;}
     socket.emit('joinRoom',{'roomID':'test'})
     socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
 
+    socket.on('kickoutGroup', function(data)
+    {
+        var tablinks = document.getElementsByClassName('tablinks');
+
+        for(let i=0;i<tablinks.length;i++)
+        {
+            var groupID = tablinks[i].getAttribute('id_sender');
+            if(groupID==data.groupID && data.userID.includes(myID))
+            {
+                tablinks[i].nextSibling.remove();
+                tablinks[i].remove();
+                socket.emit('leaveRoom', data);
+            }
+        }
+    })
 
     socket.on('online_list', function(data){
         console.log(data);

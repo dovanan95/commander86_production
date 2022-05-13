@@ -288,6 +288,9 @@ var sockets = [];
     socket.on('joinRoom', function(data){
         socket.join(data.roomID);
     })
+    socket.on('leaveRoom', function(data){
+        socket.leave(data.roomID);
+    })
   
     socket.on("sendRoom", async function(data) {
       //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
@@ -883,11 +886,11 @@ app.post('/updateGroup', authenticateAccessToken, async function(req, res){
                 await dbo.collection('user').updateMany({'userID':{$in:listMem}, 'chat_history.groupID':groupID},{$set:{'chat_history.$.groupName':groupName}});
             }
             await dbo.collection('groupCollection').updateOne({'groupID':groupID}, {$set:{'groupName': groupName, 'member':listMem}}); 
-            socketIo.emit('incoming_mess', 'data');
+            
         }
         res.send({'data':'ok'});
-        //console.log(sockets);
-        //sockets[0].emit('incoming_mess', 'data');
+        //socketIo.to(users[userID]).emit('kickoutGroup', groupID);
+        socketIo.in(groupID).emit('kickoutGroup', {'groupID': groupID,'userID':oldMemFilt});
     }
     catch(error)
     {
