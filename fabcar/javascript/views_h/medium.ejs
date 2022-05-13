@@ -2,17 +2,19 @@
     <body>
         <div>Loading...</div>
     </body>
-    <iframe style="display:none;" src="http://localhost:8082/" id="index"></iframe>
+    <div id="token"></div>
 </html>
 
 <script>
     window.addEventListener('message', async (event)=>{
         console.log(event.data);
+        //document.getElementById('token').innerHTML= event.data;
         sessionStorage.setItem('login_data', event.data);
     },false)
     setInterval(() => {
         if(sessionStorage.getItem('login_data')){
             window.location.href='/chat';
+            //console.log(sessionStorage.getItem('login_data'))
         }
     }, 1000);
     

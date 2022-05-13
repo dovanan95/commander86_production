@@ -383,8 +383,11 @@ body {font-family: "Lato", sans-serif;}
   background-color: white; 
   color: black; 
   border: 2px solid #008CBA;
-  height: 40px;
+  height: 90%;
+  min-height: 2pc;
   position: relative;
+  width: 100%;
+  text-align: center;
 }
 .button2:hover {
   background-color: #008CBA;
@@ -394,6 +397,10 @@ body {font-family: "Lato", sans-serif;}
 
 .dropdown-group-btn {
   display: inline-block;
+  height: auto;
+  min-height: max-content;
+  position: absolute; bottom: 0;display: flex;flex-direction: column;
+                        width: 23%; padding: 10px; align-items: center;
 }
 
 .dropdown-group-btn:hover .dropdown-content-grbtn{display: block;}
@@ -405,6 +412,7 @@ body {font-family: "Lato", sans-serif;}
   bottom: 50px;
   z-index: 1;
   flex-direction: column;
+
 }
 
 .dropdown-content-grbtn a {
@@ -429,20 +437,15 @@ body {font-family: "Lato", sans-serif;}
                 <div  id='hist_tab' style="overflow: auto;position: relative;">
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
-                <div class="dropdown-group-btn" style="position: absolute; bottom: 0;display: flex;flex-direction: column;
-                        width: 23%; padding: 10px;">
-                
-                    <button class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">OPTIONS</button>
+                <div class="dropdown-group-btn">
+                    <div class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">OPTIONS</div>
                     <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
                         <a onclick="newGroup()">ADD GROUP</a>
                         <a href="#addChannel">ADD CHANNEL</a>
-                    </div>
-                    
-                </div>
-         
+                    </div>                  
+                </div>       
             </div>
-         
-            
+     
             <div class="chat-box">
                 <div class="top-bar" >
                     <!-- <div id="message_bubble">
@@ -844,7 +847,7 @@ body {font-family: "Lato", sans-serif;}
     async function fetchData(){
         const options = {
             method: 'POST',
-            body: JSON.stringify({'id': myID, 'limit':10}),
+            body: JSON.stringify({'id': myID, 'limit':30}),
             headers: {
                 'authorization': 'token '+ accessToken,
                 'Content-Type': 'application/json'
@@ -887,17 +890,17 @@ body {font-family: "Lato", sans-serif;}
                     if(id_sender==id_prt)
                     {
                         console.log(tablinks[i].children[0].children[1]);
-                        tablinks[i].children[0].children[1].innerHTML='online';
-                        tablinks[i].children[0].children[1].style.color='green';
-                        tablinks[i].children[1].style.backgroundColor='green';
+                        tablinks[i].querySelector('.status-online').innerHTML='online';
+                        tablinks[i].querySelector('.status-online').style.color='green';
+                        tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
                     }
                 }
                 let docType = tablinks[i].getAttribute('docType');
                 if(docType=='group_message')
                 {
-                    tablinks[i].children[0].children[1].innerHTML='online';
-                    tablinks[i].children[0].children[1].style.color='green';
-                    tablinks[i].children[1].style.backgroundColor='green';
+                    tablinks[i].querySelector('.status-online').innerHTML='online';
+                    tablinks[i].querySelector('.status-online').style.color='green';
+                    tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
                 }
             }
         }

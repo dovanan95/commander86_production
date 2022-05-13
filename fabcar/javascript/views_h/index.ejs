@@ -242,7 +242,7 @@
       </form>
     </div>
   </div>
-  <iframe style="display:none;" src="http://localhost:8082/medium" id="medium"></iframe>
+  <iframe style="display:none;" src="https://127.0.0.1:8082/medium" id="medium"></iframe>
 </body>
 <script type="text/javascript" src="./socket.io.min.js"></script>
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
@@ -252,7 +252,7 @@
   var password = document.getElementById('pw_user');
   var key_access = '';
 
-  const END_POINT = 'http://localhost:8082';
+  const END_POINT = 'https://192.168.0.38:8082';
   var socket= io();
   socket.on('getId', (data)=>{
       console.log(data);
@@ -297,7 +297,7 @@
       //localStorage.setItem('login_data', wallet_data);
       //window.location.href='/chat?userID='+id.value;
  
-      var newDomainUrl = 'http://localhost:8082/medium';
+      var newDomainUrl = 'https://127.0.0.1:8082/medium';
       //var newSite = window.open(newDomainUrl);
       console.log('wallet: ', wallet_data)
       var medium = document.getElementById('medium');

@@ -7,12 +7,17 @@ var app = express();
 const bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer();
-var http = require("http");
-const server = http.createServer(app);
+const fs = require('fs');
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+  };
+var https = require("https");
+const server = https.createServer(options, app);
 const cors = require('cors');
 
 const { Gateway, Wallets } = require('fabric-network');
-const fs = require('fs');
+
 const path = require('path');
 
 var sql = require('mssql');
@@ -253,12 +258,13 @@ async function savePrivateMessage(data)
 }
 var users = [];
 var online_account = [];
+var sockets = [];
 
  socketIo.on("connection", (socket) => {
     console.log("New client connected ->" + socket.id);
     const ID = socket.id // id property on the socket Object
     socketIo.to(ID).emit("getId", socket.id);
-
+    sockets.push(socket);
     socket.on('connected', function(userID){
         users[userID]=socket.id;
         let flag_online=0;
@@ -785,6 +791,7 @@ app.post('/loadOptions', async function(req, res){
             var dbo = await db.db(db_mongo_name);
             var group = await dbo.collection('groupCollection').findOne({'groupID': id_group});
             var listUserID = group.member;
+            var groupName = group.groupName;
             var admin = group.admin;
             var inforSet=0;
             var queryString_nameuser = 'select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
@@ -811,11 +818,11 @@ app.post('/loadOptions', async function(req, res){
                         inforSet = recordSet.recordset;
                         if(admin==userID)
                         {
-                            res.send({'data': inforSet, 'isAdmin':'true', 'admin': admin});
+                            res.send({'data': inforSet, 'isAdmin':'true', 'admin': admin, 'groupName': groupName});
                         }
                         else if( admin != userID)
                         {
-                            res.send({'data': inforSet, 'isAdmin':'false', 'admin': admin});
+                            res.send({'data': inforSet, 'isAdmin':'false', 'admin': admin, 'groupName': groupName});
                         }
                     }
                 })
@@ -826,8 +833,68 @@ app.post('/loadOptions', async function(req, res){
     {
         console.log(error);
     }
-    
 })
+
+app.post('/changeGroupName', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id;
+        var newGroupName = req.body.groupName;
+        var groupID = req.body.groupID;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
+        var memList = group['member'];
+        if(group.admin==userID)
+        {
+            await dbo.collection('groupCollection').updateOne({'groupID':groupID}, {$set:{'groupName': newGroupName}});
+            await dbo.collection('user').updateMany({'userID':{$in:memList}, 'chat_history.groupID':groupID},{$set:{'chat_history.$.groupName':newGroupName}}); 
+            res.send({'data':'ok'});
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data': error});
+
+    }
+});
+app.post('/updateGroup', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id;
+        var groupName = req.body.groupName;
+        var listMem = req.body.userListID;
+        var groupID= req.body.groupID;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
+        var old_memList = group.member;
+
+        var oldMemFilt = old_memList.filter(x => !listMem.includes(x));
+        var newMemFilt = listMem.filter(x => !old_memList.includes(x));
+        if(group.admin==userID)
+        {
+            await dbo.collection('user').updateMany({'userID':{$in:oldMemFilt}},{$pull:{'chat_history':{'groupID':groupID}}});
+            var newGroupObj = {'groupID': groupID, 'groupName': groupName, 'docType': 'group_message', 'timestamp': parseInt(Date.now())};
+            await dbo.collection('user').updateMany({'userID':{$in:newMemFilt}},{$push:{'chat_history': {$each:[newGroupObj], $sort:{'timestamp': -1}}}});
+            if(group.groupName!= groupName)
+            {
+                await dbo.collection('user').updateMany({'userID':{$in:listMem}, 'chat_history.groupID':groupID},{$set:{'chat_history.$.groupName':groupName}});
+            }
+            await dbo.collection('groupCollection').updateOne({'groupID':groupID}, {$set:{'groupName': groupName, 'member':listMem}}); 
+            socketIo.emit('incoming_mess', 'data');
+        }
+        res.send({'data':'ok'});
+        //console.log(sockets);
+        //sockets[0].emit('incoming_mess', 'data');
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
+
 
 server.listen(8082, () => {
     console.log('Server đang chay tren cong 8082');

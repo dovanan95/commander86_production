@@ -39,7 +39,7 @@
           <label for="groupName">GROUP NAME</label>
           <div class="input-group">
             <input type="text" class="form-control" id="groupName" placeholder="Group Name">
-            <button type="submit" onclick="console.log(this)" class="btn btn-primary" id="btnChangeName">Change Name</button>
+            <button type="submit" class="btn btn-primary" id="btnChangeName">Change Name</button>
           </div>
           <table class="table" id="memberListTable">
             <thead>
@@ -56,6 +56,7 @@
             </tbody>
           </table>
           <button type="submit" onclick="applySettings()" class="btn btn-primary" id="btnApply">APPLY</button>
+          <button type="submit" class="btn btn-danger" id="btnDelGrp">DELETE GROUP</button>
         </div>
       </div>
       <div class="modal-body row">
@@ -135,6 +136,7 @@
         var res= await fetch('/loadOptions', options);
         var res_json = await res.json();
         console.log(res_json);
+        document.getElementById('groupName').value=res_json.groupName;
         if(res_json.isAdmin=='false')
         {
             isAdmin='false';
@@ -294,7 +296,7 @@
         var listUser = [];
         for(let i=0;i<memListTable.rows.length;i++){
           let id = memListTable.rows[i].cells[0].innerHTML;
-          listUser.push(id);
+          listUser.push(parseInt(id));
         }
         console.log(groupName.value, listUser);
         const options={
@@ -305,14 +307,14 @@
             },
           body: JSON.stringify({
             'groupName': groupName.value,
-            'userID': listUser,
-            'admin': myID
+            'userListID': listUser,
+            'groupID': id_group
           })
         }
-        var res = await fetch('/generateGroup', options);
+        var res = await fetch('/updateGroup', options);
         var json_res = await res.json();
         if(json_res.data=='ok'){
-          memListTable.innerHTML='';
+          alert('cap nhat thanh cong!!!');
         }
       }
       else if(memListTable.rows.length==0 || groupName.value == '')
@@ -320,5 +322,27 @@
         alert('vui long nhap ten nhom va chon thanh vien!!!')
       }
     }
+
+
+    document.getElementById('btnChangeName').addEventListener('click', async function(){
+      var groupName = document.getElementById('groupName').value;
+      var groupID = sessionStorage.getItem('current_partner_id');
+      console.log(groupName);
+      const options = {
+                method: 'POST',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({'groupName': groupName, 'groupID': groupID})
+            }
+      var res = await fetch('/changeGroupName', options);
+      var json_res = await res.json();
+      console.log(json_res);
+      if(json_res.data == 'ok')
+      {
+        alert('doi ten nhom thanh cong!');
+      }
+    })
 
 </script>
