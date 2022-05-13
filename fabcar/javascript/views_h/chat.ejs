@@ -510,7 +510,8 @@ body {font-family: "Lato", sans-serif;}
             var groupID = tablinks[i].getAttribute('id_sender');
             if(groupID==data.groupID && data.userID.includes(myID))
             {
-                tablinks[i].nextSibling.remove();
+                console.log(tablinks[i].nextSibling.nextSibling)
+                tablinks[i].nextSibling.nextSibling.remove();
                 tablinks[i].remove();
                 socket.emit('leaveRoom', data);
             }
@@ -962,8 +963,8 @@ body {font-family: "Lato", sans-serif;}
     async function choosePartner_2(obj){
         // debugger;
         console.log(obj.getAttribute('id_sender'));
-        console.log(obj.children[0].children[1].innerHTML);
-        obj.children[1].innerHTML='';
+        console.log(obj, obj.nextSibling.nextSibling);
+        obj.querySelector('.dots-offline').innerHTML='';
         message_zone.innerHTML=``;
         var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');

@@ -60,8 +60,9 @@
         </div>
       </div>
       <div class="modal-body row">
-        <button type="button" class="btn btn-secondary btn-lg btn-block">Leave Group</button>
+        <button type="button" class="btn btn-secondary btn-lg btn-block" id="btnLeave">Leave Group</button>   
       </div>
+      
 </body>
 </html>
 <script>
@@ -144,6 +145,7 @@
             document.getElementById('btnChangeName').setAttribute('disabled','');
             //document.getElementById('btnApply').disabled=false;
             document.getElementById('btnApply').disabled=true;
+            document.getElementById('btnDelGrp').disabled=true;
         }
         else if(res_json.isAdmin=='true')
         {
@@ -343,6 +345,34 @@
       {
         alert('doi ten nhom thanh cong!');
       }
+    })
+
+    document.getElementById('btnLeave').addEventListener('click', async function(){
+      //console.log('leave');
+      const options = {
+                method: 'POST',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({'groupID': id_group})
+            }
+      var res = await fetch('/leaveGroup', options);
+      var json_res = await res.json();
+      if(json_res.data=='ok')
+      {
+        //window.close();
+        alert('ok')
+        window.close()
+      }
+      else
+      {
+        console.log(json_res);
+      } 
+    });
+
+    document.getElementById('btnDelGrp').addEventListener('click', async function(){
+
     })
 
 </script>

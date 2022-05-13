@@ -782,7 +782,7 @@ app.get('/groupOptions', function(req, res){
     res.render('./views_h/groupOptions', {'id_group': id_group});    
 })
 
-app.post('/loadOptions', async function(req, res){
+app.post('/loadOptions', authenticateAccessToken, async function(req, res){
     try
     {
         var docType = req.body.docType;
@@ -895,6 +895,31 @@ app.post('/updateGroup', authenticateAccessToken, async function(req, res){
     catch(error)
     {
         console.log(error);
+    }
+})
+
+app.post('/leaveGroup', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id;
+        var groupID = req.body.groupID;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
+        var memList = group.member;
+        if(group.admin == userID)
+        {
+            await dbo.collection('groupCollection').updateOne({'groupID': groupID}, {$set:{'admin': memList[0]}})
+        };
+        await dbo.collection('groupCollection').updateOne({'groupID': groupID}, {$pull:{'member':userID}});
+        await dbo.collection('user').updateOne({'userID': userID},{$pull:{'chat_history':{'groupID':groupID}}})
+        socketIo.in(groupID).emit('kickoutGroup', {'groupID': groupID,'userID':[userID]});
+        res.send({'data': 'ok'});
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data':'ng'});
     }
 })
 
