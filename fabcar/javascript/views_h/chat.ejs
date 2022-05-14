@@ -518,6 +518,25 @@ body {font-family: "Lato", sans-serif;}
         }
     })
 
+    socket.on('kickinGroup', function(data)
+    {
+        var docType = data.docType;
+        var groupID = data.groupID;
+        var groupName = data.groupName;
+        var tabGroup = private_message_left_tab(docType, groupID, groupName);
+        left_tab.insertAdjacentHTML("afterbegin", tabGroup);
+        socket.emit('joinRoom',{'roomID':groupID});
+        Array.from(document.getElementsByClassName('tablinks')).forEach(tab => {
+            if(tab.getAttribute('id_sender')==groupID){
+                console.log('a')
+                tab.querySelector('.status-online').innerHTML='online';
+                tab.querySelector('.status-online').style.color='green';
+                tab.querySelector('.dots-offline').style.backgroundColor='green';
+
+            }
+        });
+    })
+
     socket.on('online_list', function(data){
         console.log(data);
         //console.log(document.getElementsByClassName('tablinks').length);

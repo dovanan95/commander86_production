@@ -769,6 +769,10 @@ app.post('/generateGroup', authenticateAccessToken, async function(req,res){
         //db.privateMessage.updateMany({'sender':{$in:[777, 783]}},{$set:{'key':'test value'}}) -> update for multi different item id
         var groupHistoryObject = {'groupID': groupID, 'groupName': req.body.groupName, 'docType': 'group_message', 'timestamp': parseInt(Date.now())};
         dbo.collection('user').updateMany({'userID':{$in:new_intUserList}},{$push:{'chat_history':groupHistoryObject}});;
+        //socketIo.to(users[userID]).emit('kickoutGroup', groupID);
+        new_intUserList.forEach(userID =>{
+            socketIo.to(users[userID]).emit('kickinGroup', {'docType': 'group_message', 'groupID': groupID, 'groupName': req.body.groupName});
+        })
         res.send({'data':'ok'});
     }
     catch(error)
@@ -920,6 +924,29 @@ app.post('/leaveGroup', authenticateAccessToken, async function(req, res){
     {
         console.log(error);
         res.send({'data':'ng'});
+    }
+});
+
+app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
+    try{
+        var userID = req.user.id;
+        var groupID = req.body.groupID;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
+        var memList = group.member;
+        if(group.admin == userID)
+        {
+            await dbo.collection('groupCollection').deleteOne({'groupID': groupID});
+            await dbo.collection('user').updateMany({'userID':{$in:memList}},{$pull:{'chat_history':{'groupID':groupID}}});
+            socketIo.in(groupID).emit('kickoutGroup', {'groupID': groupID,'userID':memList});
+            res.send({'data': 'ok'});
+        };
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data': 'ng'});
     }
 })
 

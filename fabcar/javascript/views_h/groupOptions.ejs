@@ -143,6 +143,7 @@
         var res_json = await res.json();
         console.log(res_json);
         document.getElementById('groupName').value=res_json.groupName;
+        admin= res_json.admin;
         if(res_json.isAdmin=='false')
         {
             isAdmin='false';
@@ -155,7 +156,7 @@
         else if(res_json.isAdmin=='true')
         {
             isAdmin='true';
-            admin= res_json.admin;
+            
         }
 
         for(let i=0;i<res_json.data.length;i++)
@@ -168,7 +169,6 @@
               if(isAdmin=='true')
               {
                 var selectBtn =optionBTN_enable;
-                queryTable.disabled=true;
               }
               else if(isAdmin=='false')
               {
@@ -378,7 +378,26 @@
     });
 
     document.getElementById('btnDelGrp').addEventListener('click', async function(){
-
+      const options = {
+                method: 'POST',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({'groupID': id_group})
+            }
+      var res = await fetch('/deleteGroup', options);
+      var json_res = await res.json();
+      if(json_res.data=='ok')
+      {
+        //window.close();
+        alert('ok')
+        window.close()
+      }
+      else
+      {
+        console.log(json_res);
+      } 
     })
 
 </script>
