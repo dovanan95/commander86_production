@@ -407,7 +407,7 @@ body {font-family: "Lato", sans-serif;}
 .dropdown-content-grbtn {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: #fff;
   width: 90%;
   bottom: 50px;
   z-index: 1;
@@ -1011,22 +1011,18 @@ body {font-family: "Lato", sans-serif;}
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
-            
                     mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant, block[i].docType);
-                    
+                    if(block[i].seen && block[i].seen.length==0)
+                    {
+                        seen.push(block[i].messID);
+                    }
                 }
                 else if(block[i].sender != id_partner)
                 {
-                
                     mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant, block[i].docType);
-                    
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                
-                if(block[i].seen && block[i].seen.length==0)
-                {
-                    seen.push(block[i].messID);
-                }
+     
             }
 
             options ={
@@ -1055,9 +1051,23 @@ body {font-family: "Lato", sans-serif;}
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
 
-                if(blockG[j].seen.length==0 || (blockG[j].seen.length>0 && !blockG[j].seen.includes(myID)))
+                if(blockG[j].seen.length==0)
                 {
                     seen_Group.push(blockG[j].messID);
+                }
+                else if(blockG[j].seen.length>0)
+                {
+                    let flag=0;
+                    blockG[j].seen.forEach(seenItem =>{
+                        if(seenItem.userID==myID)
+                        {
+                            flag=1;                            
+                        }
+                    })
+                    if(flag==0)
+                    {
+                        seen_Group.push(blockG[j].messID);
+                    }
                 }
             }
             options ={

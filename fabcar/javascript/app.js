@@ -939,6 +939,7 @@ app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
         {
             await dbo.collection('groupCollection').deleteOne({'groupID': groupID});
             await dbo.collection('user').updateMany({'userID':{$in:memList}},{$pull:{'chat_history':{'groupID':groupID}}});
+            await dbo.collection('groupMessage').deleteMany({'groupID':groupID});
             socketIo.in(groupID).emit('kickoutGroup', {'groupID': groupID,'userID':memList});
             res.send({'data': 'ok'});
         };
@@ -951,18 +952,37 @@ app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
 });
 
 app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
-    var userID = req.user.id;
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    if(req.body.docType=='private_message')
+    try
     {
-        console.log(req.body);
+        var userID = req.user.id;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        if(req.body.docType=='private_message')
+        {
+            var messList = req.body.seenMessID;
+            let timestamp = req.body.timestamp;
+            if(req.body.seenMessID.length>0)
+            {
+                console.log(req.body);
+                await dbo.collection('privateMessage').updateMany({'messID':{$in: messList}},{$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
+            }
+        }
+        else if(req.body.docType=='group_message')
+        {
+            var messList = req.body.seenMessID;
+            let timestamp = req.body.timestamp;
+            if(req.body.seenMessID.length>0)
+            {
+                await dbo.collection('groupMessage').updateMany({'messID':{$in: messList}},{$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
+            }
+        }
+        res.send({'data': 'ok'});
     }
-    else if(req.body.docType=='group_message')
+    catch(error)
     {
-        console.log(req.body);
+        res.send({'data': error});
     }
-    res.send({'data': 'ok'});
+
 })
 
 
