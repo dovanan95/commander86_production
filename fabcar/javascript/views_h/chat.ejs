@@ -606,7 +606,7 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
                         console.log(partner_tab);
-                        partner_tab.children[1].innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
                     }
                     reloadLeftTab(tab_partner_prefix+ data.sender);
                 }
@@ -646,7 +646,7 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.groupID);
                         console.log(partner_tab);
-                        partner_tab.children[1].innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
                     }
                     reloadLeftTab(tab_partner_prefix+ data.groupID);
                 }
@@ -669,7 +669,7 @@ body {font-family: "Lato", sans-serif;}
         var mess_block = `
                             <div class="outgoing messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
-                                    <div style="font-size: 10px; font-style:italic; ">${my_name}</div>
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${my_name}</div>
                                     ${content}
                                 </div>
                                 <div class="block_func_btn">
@@ -700,7 +700,7 @@ body {font-family: "Lato", sans-serif;}
         var mess_block = `
                             <div class="incoming messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
-                                    <div style="font-size: 10px; font-style:italic; ">${sender_name}</div>
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${sender_name}</div>
                                     ${content}
                                 </div>
                                 <div class="block_func_btn" style="float:right;">
@@ -781,7 +781,6 @@ body {font-family: "Lato", sans-serif;}
         var docType = parentObj.getAttribute('docType')
         var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
                         <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
-        console.log(parentObj.children[1].children[1]);
         console.log(parentObj);
         var messItem = document.getElementById(parentObj_id);
         const options = {
@@ -797,8 +796,8 @@ body {font-family: "Lato", sans-serif;}
         console.log(res_json);
         if(res_json.data=='ok')
         {
-            parentObj.children[1].children[1].innerHTML= newItem;
-            parentObj.children[0].style.backgroundColor='red';
+            parentObj.querySelector('.dropdown-button').innerHTML= newItem;
+            parentObj.querySelector('.bubble').style.backgroundColor='red';
             console.log(res_json.data)
             messItem = parentObj;
         }
@@ -833,8 +832,8 @@ body {font-family: "Lato", sans-serif;}
         {
             var id_block = res_block_verify_json.messID;
             var mess_block = document.getElementById(id_block);
-            var nameUserItem = mess_block.children[0].children[0].outerHTML;
-            mess_block.children[0].innerHTML=nameUserItem + res_block_verify_json.content;
+            var nameUserItem = mess_block.querySelector('.userName').outerHTML;
+            mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
         }
         
 
@@ -928,7 +927,6 @@ body {font-family: "Lato", sans-serif;}
                         let id_prt = online_prt_json['live'][j]['userID'];
                         if(id_sender==id_prt)
                         {
-                            console.log(tablinks[i].children[0].children[1]);
                             tablinks[i].querySelector('.status-online').innerHTML='online';
                             tablinks[i].querySelector('.status-online').style.color='green';
                             tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
