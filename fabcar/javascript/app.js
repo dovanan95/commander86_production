@@ -148,6 +148,7 @@ async function queryNameUser(id){
     //query chaincode
     return("name_test");
 }
+
 async function saveGroupMessage(data)
 {
     var db = await mongo.connect(url_mongo);
@@ -362,6 +363,28 @@ var sockets = [];
             console.log(error);
         }
        
+    })
+
+    socket.on('seenUpdate', async function(data){
+        try
+        {
+            console.log(data);
+            var db = await mongo.connect(url_mongo);
+            var dbo = await db.db(db_mongo_name);
+            if(data.docType=='private_message')
+            {
+                await dbo.collection('privateMessage').updateOne({'messID':data.messID},{$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
+
+            }
+            else if(data.docType=='group_message')
+            {
+                await dbo.collection('groupMessage').updateOne({'messID':data.messID},{$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
     })
   
     socket.on("disconnect", () => {

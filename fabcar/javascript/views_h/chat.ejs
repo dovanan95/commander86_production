@@ -583,6 +583,8 @@ body {font-family: "Lato", sans-serif;}
                 // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
+
+                socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.sender != current_partner)
             {   
@@ -625,6 +627,8 @@ body {font-family: "Lato", sans-serif;}
                 // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
+
+                socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.groupID != current_partner)
             {   
