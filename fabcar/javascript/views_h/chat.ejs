@@ -911,27 +911,31 @@ body {font-family: "Lato", sans-serif;}
         socket.emit('joinRoom',{'roomID':room_chat});
         //console.log(document.getElementsByClassName('tablinks').length);
         var online_partner = sessionStorage.getItem('online_partner');
+        var tablinks = document.getElementsByClassName('tablinks');
         if(online_partner)
         {
             var online_prt_json = JSON.parse(online_partner);
             console.log(online_prt_json['live']);
-            var tablinks = document.getElementsByClassName('tablinks');
+            
             for(var i=0;i<tablinks.length;i++)
             {
-                for(var j=0;j<online_prt_json['live'].length;j++)
+                let docType = tablinks[i].getAttribute('docType');
+                if(docType=='private_message')
                 {
-                    let id_sender = tablinks[i].getAttribute('id_sender');
-                    let id_prt = online_prt_json['live'][j]['userID'];
-                    if(id_sender==id_prt)
+                    for(var j=0;j<online_prt_json['live'].length;j++)
                     {
-                        console.log(tablinks[i].children[0].children[1]);
-                        tablinks[i].querySelector('.status-online').innerHTML='online';
-                        tablinks[i].querySelector('.status-online').style.color='green';
-                        tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
+                        let id_sender = tablinks[i].getAttribute('id_sender');
+                        let id_prt = online_prt_json['live'][j]['userID'];
+                        if(id_sender==id_prt)
+                        {
+                            console.log(tablinks[i].children[0].children[1]);
+                            tablinks[i].querySelector('.status-online').innerHTML='online';
+                            tablinks[i].querySelector('.status-online').style.color='green';
+                            tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
+                        }
                     }
                 }
-                let docType = tablinks[i].getAttribute('docType');
-                if(docType=='group_message')
+                else if(docType=='group_message')
                 {
                     tablinks[i].querySelector('.status-online').innerHTML='online';
                     tablinks[i].querySelector('.status-online').style.color='green';
@@ -941,7 +945,13 @@ body {font-family: "Lato", sans-serif;}
         }
         else if(!online_partner)
         {
-            console.log('ng');
+            Array.from(tablinks).forEach(tab =>{
+                if(tab.getAttribute('docType')=='group_message'){
+                    tab.querySelector('.status-online').innerHTML='online';
+                    tab.querySelector('.status-online').style.color='green';
+                    tab.querySelector('.dots-offline').style.backgroundColor='green';
+                }
+            })
         }
     }
 
@@ -988,13 +998,15 @@ body {font-family: "Lato", sans-serif;}
         var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');
         sessionStorage.setItem('current_partner_id', id_partner);
+        var options;
         //callAPI(id)
         if(docType=='private_message')
         {   
             id_partner=parseInt(id_partner);
             var block_ = await getBlockByID(id_partner, docType); //API call result
             var block =block_.reverse(); 
-            for(var i in block)
+            var seen = [];
+            for(let i=0;i<block.length;i++)
             {
                 var mess_block;
                 if(block[i].sender==id_partner)
@@ -1010,12 +1022,27 @@ body {font-family: "Lato", sans-serif;}
                     
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                
+                if(block[i].seen && block[i].seen.length==0)
+                {
+                    seen.push(block[i].messID);
+                }
+            }
+
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
             }
         }
         if(docType=='group_message')
         {
             var blockG = await getBlockByID(id_partner, docType);
             block = blockG.reverse();
+            var seen_Group = [];
             for(var j in blockG){
                 var mess_block_G;
                 if(blockG[j].sender != myID)
@@ -1027,11 +1054,24 @@ body {font-family: "Lato", sans-serif;}
                     mess_block_G = myMessage(blockG[j].messID, my_name, blockG[j].message, blockG[j]. isImportant, blockG[j].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
+
+                if(blockG[j].seen.length==0 || (blockG[j].seen.length>0 && !blockG[j].seen.includes(myID)))
+                {
+                    seen_Group.push(blockG[j].messID);
+                }
+            }
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen_Group, 'docType': 'group_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
             }
         }
 
         message_zone.scrollTop = message_zone.scrollHeight;
-        
+        var res = await fetch('/seenUpdate', options);
     }
 
     function sendMess()

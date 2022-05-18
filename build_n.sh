@@ -20,6 +20,7 @@ npm install jsonwebtoken
 npm install dotenv
 npm install mongodb
 npm install mssql
+npm install cryptico
 docker update --restart unless-stopped $(docker ps -q)
 #
 

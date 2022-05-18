@@ -948,6 +948,21 @@ app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
         console.log(error);
         res.send({'data': 'ng'});
     }
+});
+
+app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
+    var userID = req.user.id;
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
+    if(req.body.docType=='private_message')
+    {
+        console.log(req.body);
+    }
+    else if(req.body.docType=='group_message')
+    {
+        console.log(req.body);
+    }
+    res.send({'data': 'ok'});
 })
 
 
