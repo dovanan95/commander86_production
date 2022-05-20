@@ -731,8 +731,21 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
                 'receiver': parseInt(update_Mess_json.receiver),
                 'timestamp': parseInt(update_Mess_json.timestamp),
                 'isImportant': "true",
-                'seen':[],
                 'docType': update_Mess_json.docType
+            }})
+            console.log(updated_Mess.toString());
+            res.send(updated_Mess.toString());
+        }
+        else if(update_Mess_json.docType=='group_message')
+        {
+            await dbo.collection('groupMessage').updateOne({'messID': req.body.messID},{$set:{
+                'message': update_Mess_json.content,
+                'sender_name':update_Mess_json.sender_name,
+                'sender': parseInt(update_Mess_json.sender),
+                'timestamp': parseInt(update_Mess_json.timestamp),
+                'isImportant': "true",
+                'docType': update_Mess_json.docType,
+                'groupID': update_Mess_json.room_id
             }})
             console.log(updated_Mess.toString());
             res.send(updated_Mess.toString());
