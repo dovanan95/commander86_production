@@ -1,325 +1,1363 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-    /* Bordered form */
-  
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-  
-    body {
-      height: 100%;
-      font-family: 'Poppins', sans-serif;
-    }
-    .container-login {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      background-color: #f2f2f2;
-      padding: 30px;
-    }
-  
-    .wrap-login {
-      width: 450px;
-      background: #fff;
-      overflow: hidden;
-      border-radius: 10px;
-      padding: 77px 55px 33px 55px;
-      box-shadow: 0 5px 10px 0 #888888;
-    }
-  
-    .form-login {
-      width: 100%;
-      border: none;
-      display: flex;
-      flex-direction: column;
-    }
-  
-    .login-form-tittle {
-      display: flex;
-      font-weight: bold;
-      font-size: 30px;
-      color: #333333;
-      line-height: 1.2;
-      justify-content: center;
-      padding: 0px 0px 30px;
-    }
-  
-    .wrap-input {
-      width: 100%;
-      position: relative;
-      border-bottom: 2px solid #adadad;
-      margin-bottom: 37px;
-    }
-  
-    .form-input {
-      font-size: 16px;
-      color: #555555;
-      line-height: 1.2;
-      display: block;
-      width: 100%;
-      height: 45px;
-      background: transparent;
-      padding: 0 5px;
-      border: none;
-      outline: none;
-    }
-  
-    .focus-input {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      display: block;
-      bottom: 0;
-      left: 0;
-      pointer-events: none;
-    }
-  
-    .focus-input::before {
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      height: 2px;
-      /* width: 100%; */
-      background: #6a7dfe;
-      background-image: -moz-linear-gradient(left, #21d4fd, #b721ff);  
-      background-image: linear-gradient(left, #21d4fd, #b721ff);
-  
-      transition: all 0.4s;
-    }
-  
-    .focus-input::after {
-      content: attr(data-placeholder);
-      font-size: 16px;
-      color: #999999;
-      line-height: 1.2;
-      width: 100%;
-      display: block;
-      position: absolute;
-      top: 16px;
-      left: 0;
-      padding-left: 8px;
-      transition: all 0.4s;
-    }
-  
-    .form-input:focus + .focus-input::before {
-      width: 100%;
-    }
-  
-    .form-input:focus + .focus-input::after {
-      top: -15px;
-    }
-  
-    .has-val.form-input + .focus-input::before {
-      width: 100%;
-    }
-  
-    .has-val.form-input + .focus-input::after {
-      top: -15px;
-    }
-  
-  
-    .btn {
-      display: flex;
-      justify-content: center;
-      border: none;
-      text-transform: uppercase;
-      border-radius: 30px;
-      background-color: #2fc5fe;
-      padding: 18px;
-      margin-bottom: 20px;
-      outline: none;
-      /* text-transform: uppercase; */
-      font-size: 20px;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  
-    .btn:hover {
-      opacity: 0.8;
-    }
-  
-    span.psw {
-      text-align: center;
-      padding-top: 60px;
-      color: #555555;
-    }
-  
-    span.psw a {
-      color: black;
-      text-decoration: none;
-    }
-  /* form {
-    border: 3px solid #f1f1f1;
-  } */
-  
-  /* Full-width inputs */
-  /* input[type=text], input[type=password] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  } */
-  
-  /* Set a style for all buttons */
-  /* button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
+* {box-sizing: border-box}
+body {font-family: "Lato", sans-serif;}
+
+.chat-container {
+    display: flex;
+    width: 94%;
+    float: right;
+    transition: all 0.4s ease;
+    min-height: 100vh;
+}
+
+.chat-container.scaledown {
+    width: 80%;
+}
+
+/* Style the tab */
+.tab {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  /* min-height: 100vh; */
+  background-color: rgba(121, 199, 197, 0.2);
+  border-right: 1px solid rgba(121, 199, 197, 0.2);
+  height: 94vh;
+}
+
+.tablinks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0 20px 22px;
+    font-family: 'Poppins', sans-serif;
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
+    margin: 0;
+    border: 0px rgb(121, 199, 197);
+    position: relative;
+}
+
+.tablinks:hover {
     cursor: pointer;
-    width: 100%;
-  }
-  
-  /* Add a hover effect for buttons */
-  
-  /* Extra style for the cancel button (red) */
-  /* .cancelbtn {
-    width: auto;
-    padding: 10px 18px;
-    background-color: #f44336;
-  }
-  
-  /* Center the avatar image inside this container */
-  /* .imgcontainer {
-    text-align: center;
-    margin: 24px 0 12px 0;
-  } */
-  
-  /* Avatar image */
-  /* img.avatar {
-    width: 40%;
+    background-color: #fff;
+    border-bottom: 1px solid rgb(121, 199, 197);
+}
+
+.tablinks .acc{
+    text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.tablinks .status-offline {
+    color: red;
+}
+
+.dots-offline {
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-  } */ 
-  
-  /* Add padding to containers */
-  /* .container {
-    padding: 16px;
-  } */
-  
-  /* The "Forgot password" text */
-  
-  
-  /* Change styles for span and cancel button on extra small screens */
-  /* @media screen and (max-width: 300px) {
-    span.psw {
-      display: block;
-      float: none;
-    }
-    .cancelbtn {
-      width: 100%;
-    }
-  } */
-  </style>
-  <body onload="init()">
-    <div class="container-login">
-      <div class="wrap-login">
-        <form class="form-login" action="action_page.php" method="post">
-          <span class="login-form-tittle">Welcome</span>
-          <div class="wrap-input">
-            <input id="id_user" type="text" class="form-input" name="uname" required>
-            <span class="focus-input" data-placeholder="Username"></span>
+    background-color: red;
+    margin-right: 15px;
+}
+
+
+.tablinks .status-online {
+    color: red;
+}
+
+.dots-online {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: green;
+    margin-right: 15px;
+}
+
+/* Style the tab content */
+.chat-box {
+    display: flex;
+    width: 75%;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+}
+
+.chat-box .top-bar {
+    width: 100%;
+    max-height: 9vh;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+    align-items: center;
+}
+
+.chat-box .top-bar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-box .top-bar .user-info .avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgb(47, 197, 254); 
+    position: relative;
+}
+
+.chat-box .top-bar .user-info .avatar p {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    position: absolute;
+    /* left: 50%; */
+    text-align: center;
+    color: white;
+    font-weight: 400;
+}
+
+.chat-box .top-bar .user-info .name-chat {
+    letter-spacing: 1px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+
+.chat-box .top-bar button {
+    outline: none;
+    border: none;
+}
+
+.chat-box .top-bar i.bxs-phone-call {
+    color: rgb(47, 197, 254);
+    font-size: 30px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#chat-content {
+    min-width: 100%;
+    height: 82vh;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-color: #f9fbff;
+    padding: 20px;
+}
+
+.incoming {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+    width: 50%;
+}
+
+.incoming .bubble {
+    padding: 10px 10px 10px 12px;
+    background:  #777777;
+    border-radius: 0px 12px 12px 12px;
+    color: white;
+    font-size: 19px;
+    margin-right: 5px;
+}
+
+.outgoing {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-bottom: 2px;
+    width: 100%;
+}
+
+.outgoing .bubble {
+    padding: 10px 10px 10px 12px;
+    background:  #79C7C5;
+    border-radius: 12px 0px 12px 12px;
+    color: white;
+    font-size: 19px;
+    margin-left: 5px;
+}
+
+.block_func_btn {
+    position: relative;
+    display: inline-block;
+}
+
+.expand-func-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.expand-func-icon:hover {
+    background-color: #C7C9CC;
+}
+
+.expand-func-icon .dots {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #777777;
+}
+
+.expand-func-icon_left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.expand-func-icon_left:hover {
+    background-color: #C7C9CC;
+}
+
+.expand-func-icon_left .dots {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #777777;
+}
+
+.incoming .block_func_btn .dropdown-button {
+    min-width: 110px;
+    min-height: 60px;
+    position: absolute;
+    left: 20%;
+    top: 25px;
+    padding: 8px 11px;
+    background-color: #C7C9CC;
+    border-radius: 0px 8px 10px 8px;
+    display: none;
+}
+
+.incoming.active-dropdown .block_func_btn .dropdown-button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    z-index: 99;
+}
+
+.block_func_btn .dropdown-button button {
+    outline: none;
+    border: none;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    width: 100%;
+    font-weight: 400;
+}
+
+
+.block_func_btn .dropdown-button button:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+    padding: 5px 8px;
+    border-radius: 4px;
+}
+
+.outgoing .block_func_btn .dropdown-button {
+    min-width: 110px;
+    min-height: 60px;
+    position: absolute; /*neu muon dung hover thi phair an cai nay di*/
+    right: 20%;
+    top: 25px;
+    padding: 8px 11px;
+    background-color: #C7C9CC;
+    border-radius: 10px 0px 10px 10px;
+    display: none;
+}
+
+.outgoing.active-dropdown .block_func_btn .dropdown-button{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    z-index: 99;
+}
+
+/* .input_form{
+    position: absolute;
+    position: sticky;
+    bottom: 50;
+    top: 430px;
+} */
+
+/* .input_mess{
+    float: right;
+    width: 50%;
+    height: 50px;
+    margin-top: auto;
+} */
+/* .send_button{
+    margin-top: auto;
+    float: right;
+    height: 50px;
+} */
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+
+.msger-inputarea {
+    border-top: 1px solid #f2f2f2;
+  display:flex;
+  padding: 10px;
+  background: #fff;
+  max-height: 9vh;
+}
+
+.msger-input {
+    border: none;
+    outline: none;
+    margin: 0px 10px 0px 10px;
+  width: 100%;
+  background: #fff;
+  display: block;
+  padding-top: 10px;
+  font-size: 18px;
+  font-family: 'Poppins', sans-serif;
+}
+.msger-send-btn {
+    border:none;
+    outline: none;
+  margin-left: 10px;
+  background: #fff;
+  color: #79C7C5;
+  cursor: pointer;
+  transition: background 0.23s;
+}
+
+.msger-send-btn i {
+    padding: 5px;
+    font-size: 30px;
+}
+
+.msger-send-btn:hover {
+  background: #C7C9CC;
+}
+
+.netstat{
+    color:green;
+}
+
+.button_menu {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button_messType_add {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+
+.button2 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+  height: 90%;
+  min-height: 2pc;
+  position: relative;
+  width: 100%;
+  text-align: center;
+}
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+  cursor: pointer;
+}
+
+.dropdown-group-btn {
+  display: inline-block;
+  height: auto;
+  background-color: rgba(121, 199, 197, 0.2);
+  min-height: max-content;
+  position: absolute; bottom: 0;display: flex;flex-direction: column;
+                        width: 23.5%; padding: 10px; align-items: center;
+}
+
+.dropdown-group-btn:hover .dropdown-content-grbtn{display: block;}
+.dropdown-content-grbtn {
+  display: none;
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  width: 90%;
+  bottom: 50px;
+  z-index: 1;
+  flex-direction: column;
+
+}
+
+.dropdown-content-grbtn a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.show {display: block;}
+
+.dropdown-group-btn a:hover {background-color: #ddd; cursor: pointer;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+}
+
+</style>
+<html>
+    <head>
+        <title>He Thong Tin Chi Dao Dieu Hanh</title>
+    </head>
+    <body onload="checkLogin()">
+        <%- include('./header')%>
+        <div class="chat-container">
+            <div class="tab">
+                <div  id='hist_tab' style="overflow: auto;position: relative;">
+                    <!--button class="tablinks" >Chat History</button-->
+                </div>
+                <div class="dropdown-group-btn">
+                    <div class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">
+                        <div style="align-items: center;padding-top: 1vh; padding-bottom: 1vh;">OPTIONS</div> 
+                    </div>
+                    <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
+                        <a onclick="newGroup()">ADD GROUP</a>
+                        <a href="#addChannel">ADD CHANNEL</a>
+                    </div>                  
+                </div>       
+            </div>
+     
+            <div class="chat-box">
+                <div class="top-bar" >
+                    <!-- <div id="message_bubble">
+                        <h3>Message</h3>
+                        p>Chat Content</p
+                    </div> -->
+                    <div class="user-info">
+                        <div class="avatar"><p>H</p></div>
+                        <div class="name-chat"></div>
+                    </div>
+                    <button><i class='bx bxs-phone-call'></i></button>
+                </div>
+                <div id="chat-content">
+                    <!-- contentchat -->
+                </div>
+                <div class="msger-inputarea">  
+                    <input id='inputMess'  class="msger-input" placeholder="Type a message..."/>
+                    <div class="msger-send-btn">
+                        <label for="myFile"  >
+                            
+                            <i class='bx bx-file'></i>
+                        </label>
+                        <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
+                    </div>
+                   
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn"><i class='bx bxs-send' ></i></button> 
+                </div>
+            </div>
+        </div>
+
+        <div id="infoModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <span class="close" id="closeInfoModal">&times;</span>
+                <h2>Modal Header</h2>
+              </div>
+              <div class="modal-body">
+                <p>Some text in the Modal Body</p>
+                <p>Some other text...</p>
+              </div>
+              <div class="modal-footer">
+                <h3>Modal Footer</h3>
+              </div>
+            </div>
+          
           </div>
-          <div class="wrap-input">
-            <input id="pw_user" type="password" class="form-input" name="password" required>
-            <span class="focus-input" data-placeholder="Password"></span>
-          </div>
-          <button class="btn" type="button" onclick="login()">Login</button>
-          <label>
-            <input class="" type="checkbox" checked="checked" name="remember"> Remember me
-          </label>
-          <span class="psw">Forgot <a href="#">password?</a></span>
-        </form>
-      </div>
-    </div>
-    <iframe style="display:none;" src="https://127.0.0.1:8082/medium" id="medium"></iframe>
-  </body>
-  <script type="text/javascript" src="./socket.io.min.js"></script>
-  <script type="text/javascript" src="./jquery-3.6.0.js"></script>
-  <!--script src="/socket.io/socket.io.js"></script-->
-  <script type="text/javascript">
-    var id = document.getElementById('id_user');
-    var password = document.getElementById('pw_user');
-    var key_access = '';
-  
-    const END_POINT = 'https://192.168.0.38:8082';
-    var socket= io();
-    socket.on('getId', (data)=>{
+    </body>
+</html>
+<script type="text/javascript" src="./jquery-3.6.0.js"></script>
+<script type="text/javascript" src="./socket.io.min.js"></script>
+<script>
+    /*
+    var storeData = '';
+    window.addEventListener('message',(event)=>{
+            storeData = event.data;
+            sessionStorage.setItem('login_data', storeData);
+        });*/
+    
+
+    const END_POINT = 'http://localhost:8082';
+    var socket=io();
+    
+    const left_tab = document.getElementById('hist_tab');
+    var message_zone = document.getElementById('chat-content');
+    const messContent = document.getElementById('inputMess');
+    // const messContainer = document.getElementById('mess_container');
+    var tab_partner_prefix = 'partner_list.';
+    var network_status='offline';
+   
+    var myID_json = sessionStorage.getItem('login_data');
+        var myID = parseInt(JSON.parse(myID_json)['id']);
+        var my_name = JSON.parse(myID_json)['my_username'];
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+
+    socket.emit('connected', myID);
+    socket.emit('joinRoom',{'roomID':'test'})
+    socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
+
+    socket.on('kickoutGroup', function(data)
+    {
+        var tablinks = document.getElementsByClassName('tablinks');
+
+        for(let i=0;i<tablinks.length;i++)
+        {
+            var groupID = tablinks[i].getAttribute('id_sender');
+            if(groupID==data.groupID && data.userID.includes(myID))
+            {
+                console.log(tablinks[i].nextSibling.nextSibling)
+                tablinks[i].nextSibling.nextSibling.remove();
+                tablinks[i].remove();
+                socket.emit('leaveRoom', data);
+            }
+        }
+    })
+
+    socket.on('kickinGroup', function(data)
+    {
+        var docType = data.docType;
+        var groupID = data.groupID;
+        var groupName = data.groupName;
+        var tabGroup = private_message_left_tab(docType, groupID, groupName);
+        left_tab.insertAdjacentHTML("afterbegin", tabGroup);
+        socket.emit('joinRoom',{'roomID':groupID});
+        Array.from(document.getElementsByClassName('tablinks')).forEach(tab => {
+            if(tab.getAttribute('id_sender')==groupID){
+                console.log('a')
+                tab.querySelector('.status-online').innerHTML='online';
+                tab.querySelector('.status-online').style.color='green';
+                tab.querySelector('.dots-offline').style.backgroundColor='green';
+
+            }
+        });
+    })
+
+    socket.on('online_list', function(data){
         console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        sessionStorage.setItem('online_partner', JSON.stringify({'live':data}));
+    });
+    socket.on('online_status', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var tablinks = document.getElementsByClassName('tablinks');
+        for(var i=0;i<tablinks.length;i++)
+        {
+            var id_sender = tablinks[i].getAttribute('id_sender');
+            if(id_sender==data.userID && data.isOnline==true)
+            {
+                //tablinks[i].children[0].children[1].innerHTML='online';
+                tablinks[i].querySelector('.status-online').innerHTML='online';
+                tablinks[i].querySelector('.status-online').style.color='green';
+                tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
+            } 
+            else if(id_sender==data.userID && data.isOnline==false)
+            {
+                //tablinks[i].children[0].children[1].innerHTML='offline';
+                tablinks[i].querySelector('.status-online').innerHTML='offline';
+                tablinks[i].querySelector('.status-online').style.color='red';
+                tablinks[i].querySelector('.dots-offline').style.backgroundColor='red';
+            }
+        }
+    })
+
+    socket.on('incoming_mess', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var tablinks = document.getElementsByClassName('tablinks');
+        if(data.docType=='private_message')
+        {
+            if(data.sender == current_partner)
+            {
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                // messContainer.scrollTop = messContainer.scrollHeight;
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.sender);
+
+                socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
+            }
+            else if(data.sender != current_partner)
+            {   
+                var flag =0;
+                for(var k=0;k<tablinks.length;k++)
+                {
+                    console.log(tablinks[k]);
+                    var id = tablinks[k].getAttribute('id_sender');
+                    console.log(id);
+                    if(data.sender==id)
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
+                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                        console.log(partner_tab);
+                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                    }
+                    reloadLeftTab(tab_partner_prefix+ data.sender);
+                }
+                
+            }
+            
+        }
+        if(data.docType=='group_message')
+        {
+            if(data.groupID == current_partner)
+            {
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                // messContainer.scrollTop = messContainer.scrollHeight;
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.groupID);
+
+                socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})
+            }
+            else if(data.groupID != current_partner)
+            {   
+                var flag =0;
+                for(var k=0;k<tablinks.length;k++)
+                {
+                    var id = tablinks[k].getAttribute('id_sender')
+                    if(data.groupID==id)
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    var tab_partner_el = private_message_left_tab(data.docType, data.groupID, data.groupName)
+                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.groupID);
+                        console.log(partner_tab);
+                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                    }
+                    reloadLeftTab(tab_partner_prefix+ data.groupID);
+                }
+                
+            }
+            
+        }
+        
+    })
+
+    messContent.addEventListener('keyup', function(event){
+        if(event.keyCode===13)
+        {
+            document.getElementById('button_send_mess').click();
+        } 
+    })
+
+    function myMessage(id_block, my_name, content, isImportant, docType)
+    {
+        var mess_block = `
+                            <div class="outgoing messBlock" id=${id_block} docType=${docType}>
+                                <div class="bubble">
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${my_name}</div>
+                                    <div class="mess-content">${content}</div>
+                                </div>
+                                <div class="block_func_btn">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+
+        }
+        return mess_block;
+    }
+    function prtnerMessage(id_block, sender_name, content, isImportant, docType)
+    {
+        var mess_block = `
+                            <div class="incoming messBlock" id=${id_block} docType=${docType}>
+                                <div class="bubble">
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${sender_name}</div>
+                                    <div class="mess-content">${content}</div>
+                                </div>
+                                <div class="block_func_btn" style="float:right;">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+        }
+        return mess_block
+    }
+    function private_message_left_tab(docType, id, name)
+    {
+        var left_private_block =
+        `
+            <div class="tablinks" docType=${docType} id="${tab_partner_prefix+id}"
+                onclick=choosePartner_2(this) id_sender="${id}">
+                <div class="acc-status" style=" width: 50%;">
+                    <div class="acc">${name}</div>
+                    <div class="status-online">${network_status}</div>
+                </div>
+                <div class="dots-offline"></div>
+                <div class="expand-func-icon_left" onclick=leftTabOption(this)>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+            </div>
+            <hr class="solid">
+        `
+        return left_private_block
+    }
+    function el_partner_connect(id, name, position, dept, Phone, rank)
+    {
+        var element_partner_selection_element =
+        `
+            <div class="tablinks" username="${name}"" id="${tab_partner_prefix+id}" dept="${dept}" rank="${rank}"
+                onclick={connect_user(this)} id_user="${id}" position="${position}" Phone="${Phone}">
+                <div class="acc-status">
+                    <div class="acc">${name}</div>
+                    <div class="status-online">${rank}</div>
+                </div>
+            </div>
+            <hr class="solid">
+        `
+        return element_partner_selection_element;
+    }
+
+    function leftTabOption(obj){
+        var leftTab = obj.closest('.tablinks');
+        var docType = leftTab.getAttribute('docType');
+        var id = leftTab.getAttribute('id_sender');
+        if(docType=='group_message')
+        {
+            window.open('/groupOptions?id='+id);
+        }
+        
+    }
+
+    async function markImportantMess(obj)
+    {
+        //console.log(obj.parentNode.parentNode.parentNode);
+        var parentObj = obj.closest('.messBlock');
+        var parentObj_id = parentObj.getAttribute('id'); 
+        var docType = parentObj.getAttribute('docType')
+        var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
+                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+        console.log(parentObj);
+        var messItem = document.getElementById(parentObj_id);
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        };
+        var res_markBlockchain = await fetch('/markImportant', options);
+        var res_json = await res_markBlockchain.json();
+        console.log(res_json);
+        if(res_json.data=='ok')
+        {
+            parentObj.querySelector('.dropdown-button').innerHTML= newItem;
+            parentObj.querySelector('.bubble').style.backgroundColor='red';
+            console.log(res_json.data)
+            messItem = parentObj;
+        }
+        //messItem = parentObj;
+        
+    }
+
+    async function verifyMessBlock(obj)
+    {
+        var parentObj = obj.closest('.messBlock');
+        //var parentObj = obj.parentElement.parentNode.parentNode;
+        console.log(parentObj);
+        var id_block = parentObj.getAttribute('id');
+        var docType = parentObj.getAttribute('docType');
+        console.log(id_block);
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        };
+        var res_block_verify = await fetch('/verifyMessBlockchain', options);
+        var res_block_verify_json = await res_block_verify.json();
+        console.log(res_block_verify_json);
+        if(res_block_verify_json.data=="error")
+        {
+            alert("du lieu da bi thay doi");
+        }
+        else
+        {
+            var id_block = res_block_verify_json.messID;
+            var mess_block = document.getElementById(id_block);
+            mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
+            mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
+            //console.log(mess_block);
+            //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
+            //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
+        }
+        
+
+    }
+    //----------Modal---------------------
+    var modal = document.getElementById("infoModal");
+    function viewDetailBlock(obj)
+    {
+        console.log(obj.tagName);
+        // When the user clicks the button, open the modal 
+        modal.style.display = "block";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    var modal = document.getElementById("infoModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    document.getElementById('closeInfoModal').addEventListener('click', function(e){
+        modal.style.display = "none";
+    })
+
+    //----------End--------
+
+    function reloadLeftTab(id){
+        
+        var childLeftButton = left_tab.children;
+        var index; var tab;
+        for(let i=0; i<childLeftButton.length; i++)
+        {
+            var childItem = childLeftButton[i];
+            if(childItem.id==id)
+            {
+                index = i;
+                tab=childItem.outerHTML+ `<hr class="solid">`;
+            }
+        }
+        left_tab.removeChild(left_tab.children[index+1]);
+        left_tab.removeChild(document.getElementById(id));
+        left_tab.insertAdjacentHTML('afterbegin', tab);
+    }
+
+    function checkLogin(){ 
+       var check = sessionStorage.getItem('login_data');
+       sessionStorage.removeItem('current_partner_id');
+
+       var check_json = JSON.parse(check);
+       if(check_json ==null || check_json.isLogin != true)
+       {
+           window.location.href='/';
+       }
+       else
+       {
+            //sessionStorage.setItem('login_data', check);
+            //localStorage.clear();
+            fetchData();
+       }
+    }
+    var response_init;
+    async function fetchData(){
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'id': myID, 'limit':30}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        }
+        var response_init_load = await fetch("/load_chat_history", options);
+        response_init = await response_init_load.json(); 
+        response_init = response_init.sort((a,b)=>b.timestamp-a.timestamp);
+        var tab_partner_el;
+        var room_chat=[];
+        for(var i in response_init)
+        {
+            console.log(response_init[i]);
+            if(response_init[i].docType=='private_message')
+            {
+                tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username);
+            }
+            else if(response_init[i].docType=='group_message')
+            {
+                tab_partner_el = private_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
+                room_chat.push(response_init[i].groupID);
+            }
+            
+            left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
+        }
+        socket.emit('joinRoom',{'roomID':room_chat});
+        //console.log(document.getElementsByClassName('tablinks').length);
+        var online_partner = sessionStorage.getItem('online_partner');
+        var tablinks = document.getElementsByClassName('tablinks');
+        if(online_partner)
+        {
+            var online_prt_json = JSON.parse(online_partner);
+            console.log(online_prt_json['live']);
+            
+            for(var i=0;i<tablinks.length;i++)
+            {
+                let docType = tablinks[i].getAttribute('docType');
+                if(docType=='private_message')
+                {
+                    for(var j=0;j<online_prt_json['live'].length;j++)
+                    {
+                        let id_sender = tablinks[i].getAttribute('id_sender');
+                        let id_prt = online_prt_json['live'][j]['userID'];
+                        if(id_sender==id_prt)
+                        {
+                            tablinks[i].querySelector('.status-online').innerHTML='online';
+                            tablinks[i].querySelector('.status-online').style.color='green';
+                            tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
+                        }
+                    }
+                }
+                else if(docType=='group_message')
+                {
+                    tablinks[i].querySelector('.status-online').innerHTML='online';
+                    tablinks[i].querySelector('.status-online').style.color='green';
+                    tablinks[i].querySelector('.dots-offline').style.backgroundColor='green';
+                }
+            }
+        }
+        else if(!online_partner)
+        {
+            Array.from(tablinks).forEach(tab =>{
+                if(tab.getAttribute('docType')=='group_message'){
+                    tab.querySelector('.status-online').innerHTML='online';
+                    tab.querySelector('.status-online').style.color='green';
+                    tab.querySelector('.dots-offline').style.backgroundColor='green';
+                }
+            })
+        }
+    }
+
+    async function getBlockByID(partner_id, docType){
+        //code call API get to /chat_peer
+        var block;
+        if(docType=='private_message')
+        {
+            //code
+            var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var getPrivMessBlock = await fetch('/chat_peer', options);
+            block = await getPrivMessBlock.json();
+        }
+        if(docType=='group_message')
+        {
+            var dataG = {'groupID': partner_id, 'limit':100, 'skip':0};
+            const optionsG ={
+                method: 'POST',
+                body: JSON.stringify(dataG),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var getrGroupMessBlock = await fetch('/chat_room', optionsG);
+            block = await getrGroupMessBlock.json();
+        }
+        return(block);
+    }
+    async function choosePartner_2(obj){
+        // debugger;
+        console.log(obj.getAttribute('id_sender'));
+        console.log(obj, obj.nextSibling.nextSibling);
+        obj.querySelector('.dots-offline').innerHTML='';
+        message_zone.innerHTML=``;
+        var id_partner = obj.getAttribute('id_sender');
+        var docType = obj.getAttribute('docType');
+        sessionStorage.setItem('current_partner_id', id_partner);
+        var options;
+        //callAPI(id)
+        if(docType=='private_message')
+        {   
+            id_partner=parseInt(id_partner);
+            var block_ = await getBlockByID(id_partner, docType); //API call result
+            var block =block_.reverse(); 
+            var seen = [];
+            for(let i=0;i<block.length;i++)
+            {
+                var mess_block;
+                if(block[i].sender==id_partner)
+                {
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant, block[i].docType);
+                    if(block[i].seen && block[i].seen.length==0)
+                    {
+                        seen.push(block[i].messID);
+                    }
+                }
+                else if(block[i].sender != id_partner)
+                {
+                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant, block[i].docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+     
+            }
+
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+        if(docType=='group_message')
+        {
+            var blockG = await getBlockByID(id_partner, docType);
+            block = blockG.reverse();
+            var seen_Group = [];
+            for(var j in blockG){
+                var mess_block_G;
+                if(blockG[j].sender != myID)
+                {
+                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, blockG[j].message, blockG[j].isImportant, blockG[j].docType);
+                }
+                else if(blockG[j].sender == myID)
+                {
+                    mess_block_G = myMessage(blockG[j].messID, my_name, blockG[j].message, blockG[j]. isImportant, blockG[j].docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_G);
+
+                if(blockG[j].seen.length==0)
+                {
+                    seen_Group.push(blockG[j].messID);
+                }
+                else if(blockG[j].seen.length>0)
+                {
+                    let flag=0;
+                    blockG[j].seen.forEach(seenItem =>{
+                        if(seenItem.userID==myID)
+                        {
+                            flag=1;                            
+                        }
+                    })
+                    if(flag==0)
+                    {
+                        seen_Group.push(blockG[j].messID);
+                    }
+                }
+            }
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen_Group, 'docType': 'group_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+
+        message_zone.scrollTop = message_zone.scrollHeight;
+        var res = await fetch('/seenUpdate', options);
+    }
+
+    function sendFile()
+    {
+        console.log('sendFile');
+    }
+
+    function sendMess()
+    {
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+        var docType = partner_element.getAttribute('docType');
+        if(current_partner != null && messContent.value!= '')
+        {
+            if(docType=='private_message')
+            {
+                var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+                console.log(messID);
+                mess_block_t = myMessage(messID, my_name, messContent.value , docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
+                'receiver': current_partner, 'message': messContent.value});
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+ current_partner);
+            }
+            if(docType == 'group_message')
+            {
+                var groupName_parent = document.getElementById(tab_partner_prefix+ current_partner).querySelector('.acc-status').querySelector('.acc');
+ 
+                var groupName = groupName_parent.innerHTML;
+                var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
+                var mess_block_g = myMessage(messID, my_name, messContent.value, docType);
+                message_zone.insertAdjacentHTML('beforeend', mess_block_g);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
+                'groupID': current_partner, 'groupName': groupName, 'message': messContent.value});
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+current_partner);
+            }
+        }    
+    }
+
+    // ------------------ //
+    var id = document.getElementById("input_ID");
+    var infor = document.getElementById('exist');
+
+    id.addEventListener("keyup", function(e){
+        if (e.keyCode === 13){
+        search();
+        }
+    })
+    var user_obj;
+    async function search()
+    {
+        if(myID==id.value) {
+        alert('this is your ID');
+        } 
+        else
+        {
+            const options = {
+                method: 'GET',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var res = await fetch('/searchUserByID?id='+id.value, options);
+            var res_json = await res.json();
+            console.log(res_json);
+            if(res_json.data == 'no_data')
+            {
+                infor.innerHTML='no information';
+            }
+            else if(res_json.data != 'no_data')
+                {
+                    left_tab.innerHTML='';
+                    for(let i=0;i<res_json.data.length;i++)
+                    {
+                        var el_connect= el_partner_connect(res_json.data[i].id,res_json.data[i].TenDayDu,
+                        res_json.data[i].chuc_vu, res_json.data[i].TenDonVi, res_json.data[i].Mobile, res_json.data[i].cap_bac);
+                        left_tab.insertAdjacentHTML("beforeend", el_connect);
+                    }
+                    sessionStorage.setItem('temp_list_connect', JSON.stringify(res_json.data));
+                }
+        }
+        
+    }
+
+    function connect_user(obj)
+    {
+        var searchUrl = "/user_information";
+        var connect_list = JSON.parse(sessionStorage.getItem('temp_list_connect'));
+        var uid = obj.getAttribute('id_user');
+        var user_obj;
+        for(let i=0;i<connect_list.length;i++)
+        {
+            if(uid==connect_list[i].id)
+            {
+                searchUrl=searchUrl+'?id_user='+connect_list[i].id;
+                console.log(searchUrl);
+                window.location.href = searchUrl;
+                //window.open(searchUrl);
+            }
+        }
+        
+    }
+
+
+    $(document).on('click', '#menu-btn', function(){
+        //debugger;
+        if ($('.sidebar').hasClass('active')){
+            $('.sidebar').removeClass('active');
+            $('.chat-container').removeClass('scaledown');
+        } else {
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
+    })
+
+    $(document).on('click', '.bx-search-alt-2' , function(){
+        if (!$('.sidebar').hasClass('active')){
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
     })
     
-    function init(){
-        var log_init = '<%-data%>';
-        console.log(log_init + ' initial');
-        localStorage.clear();
-        $('.form-input').each(function(){
-          if ($(this).val() !== '') {
-            $(this).val('');
-          }
-        });
+    $(document).on('click', '.expand-func-icon', function(){
+        console.log(this);
+        // debugger;
+        if ($(this).closest('.incoming, .outgoing').hasClass('active-dropdown')){
+            $(this).closest('.incoming, .outgoing').removeClass('active-dropdown');
+        } else {
+            $('.incoming, .outgoing').removeClass('active-dropdown');
+            $(this).closest('.outgoing, .incoming').addClass('active-dropdown');
+        }
+    })
+
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon'))
+        {
+            var dropdowns = document.getElementsByClassName("active-dropdown");
+            if(dropdowns.length>0)
+            {
+                dropdowns[0].classList.remove("active-dropdown");
+            }
+        }
+    })
+    /*
+    function openUpDropdownGrbtn() {
+        var item = document.getElementById("dropdown-item-grbtn"); console.log(item);
+        item.classList.toggle("show")
+    }*/
+
+    function newGroup(){
+        window.open("/newGroup");
     }
-  
-    async function login(){
-        
-        console.log(id.value + ' '+ password.value);
-        //socket.emit("sendMess", {'sender': 'sender', 'receiver': 'receiver', 'message': 'message'});
-        
-        var data_post = {
-          'id': id.value,
-          'pw': password.value
-      }
-      //const xhttp = new XMLHttpRequest();
-      const options = {
-          method: 'POST',
-          body: JSON.stringify(data_post),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-      }
-      var res = await fetch("/login", options);
-      var json_res = await res.json();
-      console.log(json_res);
-      if(json_res.result=='OK')
-      {
-        var wallet_data = JSON.stringify({'id': json_res.myID, 'isLogin': true, 
-        'my_username': json_res.username, 'accessToken': json_res.accessToken, 'refreshToken': json_res.refreshToken})
-        //sessionStorage.setItem('login_data', wallet_data);
-        //localStorage.setItem('login_data', wallet_data);
-        //window.location.href='/chat?userID='+id.value;
-   
-        var newDomainUrl = 'https://127.0.0.1:8082/medium';
-        //var newSite = window.open(newDomainUrl);
-        console.log('wallet: ', wallet_data)
-        var medium = document.getElementById('medium');
-        //window.open(newDomainUrl)
-        medium.contentWindow.postMessage(wallet_data, newDomainUrl);
-  
-        window.location.href=newDomainUrl;
-        
-        //window.postMessage(wallet_data, newDomainUrl);
-      }
-      else if(json_res.result == 'NG')
-      {
-        alert('login failed');
-      }
-    }
-    $('.form-input').each(function(){
-        $(this).on('blur input', function(){
-          if ($(this).val().trim() != ''){
-            $(this).addClass('has-val');
-          } else {
-            $(this).removeClass('has-val');
-          }
-        })
-      })
-  </script>
+
+</script>
