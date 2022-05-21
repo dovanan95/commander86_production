@@ -555,14 +555,12 @@ body {font-family: "Lato", sans-serif;}
             <div class="modal-content">
               <div class="modal-header">
                 <span class="close" id="closeInfoModal">&times;</span>
-                <h2>Modal Header</h2>
+                <h2> MESSAGE INFOMATION</h2>
               </div>
-              <div class="modal-body">
-                <p>Some text in the Modal Body</p>
-                <p>Some other text...</p>
+              <div class="modal-body" id="info-body">
               </div>
               <div class="modal-footer">
-                <h3>Modal Footer</h3>
+                <h3>HTTCDDH 2022</h3>
               </div>
             </div>
           
@@ -946,9 +944,46 @@ body {font-family: "Lato", sans-serif;}
     }
     //----------Modal---------------------
     var modal = document.getElementById("infoModal");
-    function viewDetailBlock(obj)
+    async function viewDetailBlock(obj)
     {
-        console.log(obj.tagName);
+        var messObjID = obj.closest('.messBlock').getAttribute('id');
+        var messDocType = obj.closest('.messBlock').getAttribute('docType');
+        var modalBody = document.getElementById('info-body');
+        modalBody.innerHTML='';
+        const options = {
+                method: 'GET',
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        var res = await fetch('/getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
+        var json_res = await res.json();
+        console.log(json_res);
+        var sendTime = document.createElement('p');
+        sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
+        if(json_res.docType=='private_message')
+        {   
+            let seenTime = document.createElement('p');
+            modalBody.appendChild(sendTime);
+            if(json_res.seenTime!=0)
+            {
+                seenTime.innerHTML='Da xem: '+ json_res.seenTime;
+                modalBody.appendChild(seenTime);
+            }
+        }
+        else if(json_res.docType=='group_message')
+        {
+            modalBody.appendChild(sendTime);
+            if(json_res.seenTime!=0)
+            {
+                for(let i=0;i<json_res.seenTime.length;i++)
+                {
+                    let seenTime = document.createElement('p');
+                    seenTime.innerHTML=json_res.seenTime[i].userName + ' da xem luc: '+json_res.seenTime[i].dateTime;
+                    modalBody.appendChild(seenTime);
+                }
+            }
+        }
         // When the user clicks the button, open the modal 
         modal.style.display = "block";
     }
@@ -1215,13 +1250,14 @@ body {font-family: "Lato", sans-serif;}
         var current_partner = sessionStorage.getItem('current_partner_id');
         var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
         var docType = partner_element.getAttribute('docType');
+        var isImportant = 'false';
         if(current_partner != null && messContent.value!= '')
         {
             if(docType=='private_message')
             {
                 var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
                 console.log(messID);
-                mess_block_t = myMessage(messID, my_name, messContent.value , docType);
+                mess_block_t = myMessage(messID, my_name, messContent.value, isImportant, docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
@@ -1235,7 +1271,7 @@ body {font-family: "Lato", sans-serif;}
  
                 var groupName = groupName_parent.innerHTML;
                 var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
-                var mess_block_g = myMessage(messID, my_name, messContent.value, docType);
+                var mess_block_g = myMessage(messID, my_name, messContent.value, isImportant, docType);
                 message_zone.insertAdjacentHTML('beforeend', mess_block_g);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,

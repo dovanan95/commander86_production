@@ -1021,6 +1021,81 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
 
 })
 
+app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
+    var userID = req.user.id;
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
+    if(req.query.docType=='private_message')
+    {
+        let seenTime;
+        var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID});
+        
+        if(message.seen && message.seen.length>0)
+        {
+            seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
+        }
+        else if(!message.seen)
+        {
+            seenTime = 0;
+        }
+        let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+        res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenTime});
+    }
+    else if(req.query.docType=='group_message')
+    {
+        var message = await dbo.collection('groupMessage').findOne({'messID':req.query.messID});
+        let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+        let seenTime = [];
+        if(message.seen && message.seen.length>0)
+        {
+            let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
+            for (let i=0;i<message.seen.length;i++)
+            {
+                queryString += "'"+ message.seen[i].userID + "'"+",";
+            }
+            queryString += "1)";
+            sql.connect(sql_config, function(err){
+                if(err){
+                    console.log(err);
+                    res.send({'result':'connect to database failed!'})
+                }
+                var request = new sql.Request();
+                request.query(queryString, function(err, recordSet){
+                    if(err){
+                        console.log(err);
+                        //res.send(JSON.stringify({'data': 'no_data'}));
+                    }
+                    if(recordSet)
+                    {
+                        let seenArray =[];
+                        for(let k=0; k<recordSet.recordset.length;k++)
+                        {
+                            for(let l=0; l<message.seen.length;l++)
+                            {
+                                if(k==l)
+                                {
+                                    let seenObj = {
+                                        'userID': message.seen[l].userID,
+                                        'userName': recordSet.recordset[k].TenDayDu,
+                                        'dateTime': app_helper.timestamptoDateConverter(message.seen[l].timestamp)
+                                    }
+                                    seenArray.push(seenObj);
+                                }
+                            }
+                        }
+                        console.log(seenArray);
+                        res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenArray})
+                    }
+                })
+            })
+        }
+        else if((message.seen && message.seen.length==0) || !message.seen)
+        {
+            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': 0})
+        }
+    }
+})
+
 
 server.listen(8082, () => {
     console.log('Server đang chay tren cong 8082');
