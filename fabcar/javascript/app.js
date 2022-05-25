@@ -1102,7 +1102,9 @@ app.post('/sendFile', authenticateAccessToken, function(req, res){
     {
         let sender = req.headers.sender;
         let receiver = req.headers.receiver;
-        let fileName = 'file'+sender+ receiver+ Date.now().toString()
+        let docType = req.headers.doctype; console.log(req.body);
+        
+        let fileName = 'file'+sender+ receiver+ docType+ Date.now().toString()
         var storage = multer.diskStorage({
             destination: function (req, file, callback) {
                 var dir = './fileServer';
@@ -1121,7 +1123,7 @@ app.post('/sendFile', authenticateAccessToken, function(req, res){
             if(err) {
                 return res.end("Error uploading file.");
             }
-            res.send({'data':'ok', 'fileName': fileName});
+            res.send({'data':'ok', 'fileName': fileName, 'sender': sender, 'receiver': receiver, 'docType': docType});
         });
     
     }

@@ -1244,18 +1244,21 @@ body {font-family: "Lato", sans-serif;}
     {
         try
         {
-            ;
             const uri = "/sendFile";
             const xhr = new XMLHttpRequest();
             const fd = new FormData();
             var file = document.getElementById('myFile').files[0];
             var current_partner = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+            var docType = partner_element.getAttribute('docType');
+ 
             if(current_partner && file)
             {
                 xhr.open("POST", uri, true);
                 xhr.setRequestHeader('authorization', 'token '+ accessToken);
-                xhr.setRequestHeader('sender', myID.toString());
-                xhr.setRequestHeader('receiver',current_partner);
+                xhr.setRequestHeader('sender',myID.toString());
+                xhr.setRequestHeader('receiver', current_partner);
+                xhr.setRequestHeader('docType', docType);
                 //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -1265,6 +1268,7 @@ body {font-family: "Lato", sans-serif;}
                 
                 console.log(file);
                 fd.append('files', file);
+                fd.append('data','test');
                 // Initiate a multipart/form-data upload
                 xhr.send(fd);
                 document.getElementById("myFile").value = "";
