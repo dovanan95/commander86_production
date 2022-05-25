@@ -541,7 +541,7 @@ body {font-family: "Lato", sans-serif;}
                             
                             <i class='bx bx-file'></i>
                         </label>
-                        <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
+                        <input type="file" style="display: none;" id="myFile" name="files">
                     </div>
                    
                     <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn"><i class='bx bxs-send' ></i></button> 
@@ -1240,10 +1240,44 @@ body {font-family: "Lato", sans-serif;}
         var res = await fetch('/seenUpdate', options);
     }
 
-    function sendFile()
+    async function sendFile()
     {
-        console.log('sendFile');
+        try
+        {
+            ;
+            const uri = "/sendFile";
+            const xhr = new XMLHttpRequest();
+            const fd = new FormData();
+            var file = document.getElementById('myFile').files[0];
+            var current_partner = sessionStorage.getItem('current_partner_id');
+            if(current_partner && file)
+            {
+                xhr.open("POST", uri, true);
+                xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                xhr.setRequestHeader('sender', myID.toString());
+                xhr.setRequestHeader('receiver',current_partner);
+                //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        console.log(JSON.parse(xhr.responseText)); // handle response.
+                    }
+                };
+                
+                console.log(file);
+                fd.append('files', file);
+                // Initiate a multipart/form-data upload
+                xhr.send(fd);
+                document.getElementById("myFile").value = "";
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+            
+
     }
+    document.getElementById('myFile').addEventListener('change', sendFile);
 
     function sendMess()
     {

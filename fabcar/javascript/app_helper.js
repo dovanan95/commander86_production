@@ -1,9 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
+var multer = require('multer');
+
 var sql = require('mssql');
 var mongo = require('mongodb').MongoClient;
 const { Module } = require('module');
+const { request } = require('express');
 
 var url_mongo = "mongodb://localhost:27017/";
 var db_mongo_name = 'httcddh_2022';
@@ -69,5 +72,6 @@ function timestamptoDateConverter(timestamp)
     var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
     return time;
 }
+
 
 module.exports = {loadUserInformation, timestamptoDateConverter}

@@ -24,11 +24,13 @@
         "express": "^4.17.3",
         "fabric-ca-client": "^2.2.4",
         "fabric-network": "^2.2.11",
+        "formidable": "^2.0.1",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^4.5.0",
         "mssql": "^8.1.0",
         "multer": "^1.4.4",
         "pbkdf2": "^3.1.2",
+        "secure-link": "^1.0.4",
         "socket.io": "^4.4.0"
     },
     "devDependencies": {
