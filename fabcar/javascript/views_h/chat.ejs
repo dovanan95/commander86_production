@@ -1208,7 +1208,15 @@ body {font-family: "Lato", sans-serif;}
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant, block[i].docType);
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -1216,7 +1224,15 @@ body {font-family: "Lato", sans-serif;}
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant, block[i].docType);
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
      
@@ -1240,11 +1256,27 @@ body {font-family: "Lato", sans-serif;}
                 var mess_block_G;
                 if(blockG[j].sender != myID)
                 {
-                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, blockG[j].message, blockG[j].isImportant, blockG[j].docType);
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, message, blockG[j].isImportant, blockG[j].docType);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    mess_block_G = myMessage(blockG[j].messID, my_name, blockG[j].message, blockG[j]. isImportant, blockG[j].docType);
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = myMessage(blockG[j].messID, my_name, message, blockG[j].isImportant, blockG[j].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
 
