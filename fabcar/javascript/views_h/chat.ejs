@@ -685,9 +685,9 @@ body {font-family: "Lato", sans-serif;}
                     var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
                     message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                     // messContainer.scrollTop = messContainer.scrollHeight;
-                    message_zone.scrollTop = message_zone.scrollHeight;
-                    reloadLeftTab(tab_partner_prefix+ data.sender);
                 }
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.sender);
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.sender != current_partner)
@@ -735,12 +735,28 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.groupID == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                // messContainer.scrollTop = messContainer.scrollHeight;
+                if(data.isFile && data.isFile=='true')
+                {
+                    var message = messageFile(data.message)
+                    //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                    if(data.sender==myID)
+                    {
+                        var mess_block_t = myMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                    }
+                    else if(data.sender!=myID)
+                    {
+                        var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                    }
+                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                }
+                else
+                {
+                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
+                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                    // messContainer.scrollTop = messContainer.scrollHeight;
+                }
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
-
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.groupID != current_partner)
@@ -1283,7 +1299,7 @@ body {font-family: "Lato", sans-serif;}
                 {
                     xhr.open("POST", uri, true);
                     xhr.setRequestHeader('authorization', 'token '+ accessToken);
-                    xhr.setRequestHeader('sender',myID.toString());
+                    xhr.setRequestHeader('sender',myID);
                     xhr.setRequestHeader('receiver', current_partner);
                     xhr.setRequestHeader('docType', docType);
                     xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
@@ -1308,7 +1324,7 @@ body {font-family: "Lato", sans-serif;}
                     var groupName = groupName_parent.innerHTML;
                     xhr.open("POST", uri, true);
                     xhr.setRequestHeader('authorization', 'token '+ accessToken);
-                    xhr.setRequestHeader('sender',myID.toString());
+                    xhr.setRequestHeader('sender',myID);
                     xhr.setRequestHeader('groupID', current_partner);
                     xhr.setRequestHeader('docType', docType);
                     xhr.setRequestHeader('groupName', encodeURIComponent(groupName));

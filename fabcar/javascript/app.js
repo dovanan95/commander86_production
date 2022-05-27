@@ -1100,7 +1100,6 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
 app.post('/sendFile', authenticateAccessToken, function(req, res){
     try
     {
-        
         let docType = req.headers.doctype; 
         
         if(docType=='private_message')
@@ -1109,20 +1108,7 @@ app.post('/sendFile', authenticateAccessToken, function(req, res){
             let sender = req.headers.sender;
             let receiver = req.headers.receiver;
             let fileName = 'file'+sender+ receiver+ docType+ Date.now().toString()
-            var storage = multer.diskStorage({
-                destination: function (req, file, callback) {
-                    var dir = './fileServer';
-                    if (!fs.existsSync(dir)){
-                        fs.mkdirSync(dir);
-                    }
-                    callback(null, dir);
-                },
-                filename: function (req, file, callback) {
-                    callback(null, fileName);
-                }
-            });
-
-            var upload = multer({ storage : storage}).single('files');
+            var upload = multer({ storage : app_helper.storage(fileName)}).single('files');
             upload(req,res,function(err) {
                 if(err) {
                     return res.end("Error uploading file.");
@@ -1141,7 +1127,28 @@ app.post('/sendFile', authenticateAccessToken, function(req, res){
         }
         else if(docType=='group_message')
         {
-
+            let sender_name = req.headers.sender_name;
+            let sender = req.headers.sender;
+            let groupID = req.headers.groupid; console.log(groupID);
+            let groupName = req.headers.groupname;
+            let fileName = 'file'+sender+groupID+docType+Date.now().toString();
+            var upload = multer({storage: app_helper.storage(fileName)}).single('files');
+            upload(req, res, function(err){
+                if(err){
+                    return res.end("Error uploading file.");
+                }
+                res.send({'data':'ok'});
+                socketIo.in(groupID).emit('incoming_mess',{
+                    'messID': 'MessGroup.'+sender+'.'+groupID+'.'+Date.now().toString(),
+                    'sender': sender, 
+                    'groupID': groupID, 
+                    'groupName': decodeURIComponent(groupName),
+                    'message': fileName, 
+                    'sender_name': decodeURIComponent(sender_name),
+                    'docType': 'group_message',
+                    'isFile': 'true'
+                })
+            })
         }
         
     

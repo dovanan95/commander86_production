@@ -59,6 +59,23 @@ async function loadUserInformation(listUserID)
     
 }
 
+function storage(fileName)
+{
+    var storage = multer.diskStorage({
+        destination: function (req, file, callback) {
+            var dir = './fileServer';
+            if (!fs.existsSync(dir)){
+                fs.mkdirSync(dir);
+            }
+            callback(null, dir);
+        },
+        filename: function (req, file, callback) {
+            callback(null, fileName);
+        }
+    });
+    return storage; 
+}
+
 function timestamptoDateConverter(timestamp)
 {
     var a = new Date(timestamp);
@@ -74,4 +91,4 @@ function timestamptoDateConverter(timestamp)
 }
 
 
-module.exports = {loadUserInformation, timestamptoDateConverter}
+module.exports = {loadUserInformation, timestamptoDateConverter, storage}
