@@ -1100,31 +1100,50 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
 app.post('/sendFile', authenticateAccessToken, function(req, res){
     try
     {
-        let sender = req.headers.sender;
-        let receiver = req.headers.receiver;
-        let docType = req.headers.doctype; console.log(req.body);
         
-        let fileName = 'file'+sender+ receiver+ docType+ Date.now().toString()
-        var storage = multer.diskStorage({
-            destination: function (req, file, callback) {
-                var dir = './fileServer';
-                if (!fs.existsSync(dir)){
-                    fs.mkdirSync(dir);
+        let docType = req.headers.doctype; 
+        
+        if(docType=='private_message')
+        {
+            let sender_name = req.headers.sender_name;
+            let sender = req.headers.sender;
+            let receiver = req.headers.receiver;
+            let fileName = 'file'+sender+ receiver+ docType+ Date.now().toString()
+            var storage = multer.diskStorage({
+                destination: function (req, file, callback) {
+                    var dir = './fileServer';
+                    if (!fs.existsSync(dir)){
+                        fs.mkdirSync(dir);
+                    }
+                    callback(null, dir);
+                },
+                filename: function (req, file, callback) {
+                    callback(null, fileName);
                 }
-                callback(null, dir);
-            },
-            filename: function (req, file, callback) {
-                callback(null, fileName);
-            }
-        });
+            });
 
-        var upload = multer({ storage : storage}).single('files');
-        upload(req,res,function(err) {
-            if(err) {
-                return res.end("Error uploading file.");
-            }
-            res.send({'data':'ok', 'fileName': fileName, 'sender': sender, 'receiver': receiver, 'docType': docType});
-        });
+            var upload = multer({ storage : storage}).single('files');
+            upload(req,res,function(err) {
+                if(err) {
+                    return res.end("Error uploading file.");
+                }
+                res.send({'data':'ok', 'fileName': fileName, 'sender': sender, 'receiver': receiver, 'docType': docType});
+                    socketIo.to(users[parseInt(sender)]).to(users[parseInt(receiver)]).emit('incoming_mess', {
+                        'messID': 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString(),
+                        'sender': sender, 
+                        'receiver': receiver, 
+                        'message': fileName, 
+                        'sender_name': decodeURIComponent(sender_name),
+                        'docType': 'private_message',
+                        'isFile': 'true'
+                });
+            });
+        }
+        else if(docType=='group_message')
+        {
+
+        }
+        
     
     }
     catch(error)

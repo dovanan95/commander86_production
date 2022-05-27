@@ -673,12 +673,21 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.sender == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                // messContainer.scrollTop = messContainer.scrollHeight;
-                message_zone.scrollTop = message_zone.scrollHeight;
-                reloadLeftTab(tab_partner_prefix+ data.sender);
-
+                if(data.isFile && data.isFile=='true')
+                {
+                    var message = messageFile(data.message)
+                    //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                }
+                else
+                {
+                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
+                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                    // messContainer.scrollTop = messContainer.scrollHeight;
+                    message_zone.scrollTop = message_zone.scrollHeight;
+                    reloadLeftTab(tab_partner_prefix+ data.sender);
+                }
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.sender != current_partner)
@@ -696,8 +705,17 @@ body {font-family: "Lato", sans-serif;}
                 }
                 if(flag==0)
                 {
-                    var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
-                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    if(data.isFile && data.isFile=='true')
+                    {
+                        var message = messageFile(data.message)
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, 'false', data.docType);
+                        message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                    }
+                    else
+                    {
+                        var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
+                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    }
                 }
                 else if(flag==1)
                 {
@@ -706,8 +724,8 @@ body {font-family: "Lato", sans-serif;}
                         var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
                         console.log(partner_tab);
                         partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                        reloadLeftTab(tab_partner_prefix+ data.sender);
                     }
-                    reloadLeftTab(tab_partner_prefix+ data.sender);
                 }
                 
             }
@@ -717,7 +735,7 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.groupID == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
@@ -862,6 +880,13 @@ body {font-family: "Lato", sans-serif;}
         `
         return element_partner_selection_element;
     }
+    function messageFile(fileID) { 
+        var message=
+        `
+            <button onclick="console.log('${fileID}')" fileID="${fileID}">FILE DOWNLOAD</button>
+        `
+        return message;
+    };
 
     function leftTabOption(obj){
         var leftTab = obj.closest('.tablinks');
@@ -1254,24 +1279,54 @@ body {font-family: "Lato", sans-serif;}
  
             if(current_partner && file)
             {
-                xhr.open("POST", uri, true);
-                xhr.setRequestHeader('authorization', 'token '+ accessToken);
-                xhr.setRequestHeader('sender',myID.toString());
-                xhr.setRequestHeader('receiver', current_partner);
-                xhr.setRequestHeader('docType', docType);
-                //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        console.log(JSON.parse(xhr.responseText)); // handle response.
-                    }
-                };
-                
-                console.log(file);
-                fd.append('files', file);
-                fd.append('data','test');
-                // Initiate a multipart/form-data upload
-                xhr.send(fd);
-                document.getElementById("myFile").value = "";
+                if(docType=='private_message')
+                {
+                    xhr.open("POST", uri, true);
+                    xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                    xhr.setRequestHeader('sender',myID.toString());
+                    xhr.setRequestHeader('receiver', current_partner);
+                    xhr.setRequestHeader('docType', docType);
+                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
+                    //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(JSON.parse(xhr.responseText)); // handle response.
+                        }
+                    };
+                    
+                    console.log(file);
+                    fd.append('files', file);
+                    fd.append('data','test');
+                    // Initiate a multipart/form-data upload
+                    xhr.send(fd);
+                    document.getElementById("myFile").value = "";
+                }
+                else if(docType=='group_message')
+                {
+                    var groupName_parent = document.getElementById(tab_partner_prefix+ current_partner).querySelector('.acc-status').querySelector('.acc');
+ 
+                    var groupName = groupName_parent.innerHTML;
+                    xhr.open("POST", uri, true);
+                    xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                    xhr.setRequestHeader('sender',myID.toString());
+                    xhr.setRequestHeader('groupID', current_partner);
+                    xhr.setRequestHeader('docType', docType);
+                    xhr.setRequestHeader('groupName', encodeURIComponent(groupName));
+                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
+                    //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(JSON.parse(xhr.responseText)); // handle response.
+                        }
+                    };
+                    
+                    console.log(file);
+                    fd.append('files', file);
+                    fd.append('data','test');
+                    // Initiate a multipart/form-data upload
+                    xhr.send(fd);
+                    document.getElementById("myFile").value = "";
+                }
             }
         }
         catch(error)
