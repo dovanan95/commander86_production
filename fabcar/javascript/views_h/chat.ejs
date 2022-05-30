@@ -1,501 +1,526 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
 <style>
-* {box-sizing: border-box}
-body {font-family: "Lato", sans-serif;}
+    * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.chat-container {
-    display: flex;
-    width: 94%;
-    float: right;
-    transition: all 0.4s ease;
-    min-height: 100vh;
-}
+    body {
+        font-family: "Lato", sans-serif;
+    }
 
-.chat-container.scaledown {
-    width: 80%;
-}
+    .chat-container {
+        display: flex;
+        margin-left: 80px;
+        transition: all 0.4s ease;
+        height: 100vh;
+    }
 
-/* Style the tab */
-.tab {
-  display: flex;
-  flex-direction: column;
-  width: 25%;
-  /* min-height: 100vh; */
-  background-color: rgba(121, 199, 197, 0.2);
-  border-right: 1px solid rgba(121, 199, 197, 0.2);
-  height: 94vh;
-}
+    .chat-container.scaledown {
+        margin-left: 380px;
+    }
 
-.tablinks {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0 20px 22px;
-    font-family: 'Poppins', sans-serif;
-    background-color: transparent;
-    transition: all 0.2s ease-in-out;
-    margin: 0;
-    border: 0px rgb(121, 199, 197);
-    position: relative;
-}
+    /* Style the tab */
+    .tab {
+        display: flex;
+        flex-direction: column;
+        width: 25%;
+        /* min-height: 100vh; */
+        background-color: #f8f8f8;
+        border-right: none;
+        height: 100%;
 
-.tablinks:hover {
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid rgb(121, 199, 197);
-}
+    }
 
-.tablinks .acc{
-    text-transform: uppercase;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-    margin-bottom: 5px;
-}
+    #hist_tab {
+        height: 100%;
+        overflow-y: auto;
+        background-color: #f8f8f8;
+        padding-left: 20px;
+    }
 
-.tablinks .status-offline {
-    color: red;
-}
+    .tablinks {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        padding: 20px 18px 20px 22px;
+        font-family: 'Poppins', sans-serif;
+        background-color: transparent;
+        transition: all 0.1s ease-in-out;
+        margin: 0;
+        border: 0px rgb(121, 199, 197);
+        position: relative;
+        z-index: 999;
+        margin-bottom: 10px;
+    }
 
-.dots-offline {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: red;
-    margin-right: 15px;
-}
+    .tablinks:hover {
+        cursor: pointer;
+        background-color: #ffffff;
+        border-right: 4px solid #635f84;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
 
+    .tablinks.active-users {
+        background-color: #ffffff;
+        border-right: 4px solid #635f84;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
 
-.tablinks .status-online {
-    color: red;
-}
+    .tablinks .acc-avatar {
+        width: 20%;
+    }
 
-.dots-online {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: green;
-    margin-right: 15px;
-}
+    .tablinks .acc-status {
+        width: 90%;
+    }
 
-/* Style the tab content */
-.chat-box {
-    display: flex;
-    width: 75%;
-    flex-direction: column;
-    font-family: 'Poppins', sans-serif;
-}
+    .tablinks .acc {
+        /* text-transform: uppercase; */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
 
-.chat-box .top-bar {
-    width: 100%;
-    max-height: 9vh;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 30px;
-    align-items: center;
-}
+    .tablinks .status-offline {
+        color: red;
+    }
 
-.chat-box .top-bar .user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+    .tablinks .status-info {
+        display: flex;
+        align-items: center;
+    }
 
-.chat-box .top-bar .user-info .avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: rgb(47, 197, 254); 
-    position: relative;
-}
+    .tablinks .status-online {
+        color: red;
+    }
 
-.chat-box .top-bar .user-info .avatar p {
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    position: absolute;
-    /* left: 50%; */
-    text-align: center;
-    color: white;
-    font-weight: 400;
-}
+    .dots-offline {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: red;
+        margin-right: 15px;
+    }
 
-.chat-box .top-bar .user-info .name-chat {
-    letter-spacing: 1px;
-    font-weight: 500;
-    font-size: 20px;
-}
+    .dots-online {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: green;
+        margin-right: 15px;
+    }
 
+    /* Style the tab content */
+    .chat-box {
+        display: flex;
+        width: 75%;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        height: 100%;
+        background-color: #f1f3f4;
+    }
 
-.chat-box .top-bar button {
-    outline: none;
-    border: none;
-}
+    .chat-box .top-bar {
+        width: auto;
+        height: 8%;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 30px;
+        border: none;
+        margin: 20px 15px;
+        align-items: center;
+        box-sizing: border-box;
+        border-radius: 8px;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
 
-.chat-box .top-bar i.bxs-phone-call {
-    color: rgb(47, 197, 254);
-    font-size: 30px;
-    background-color: #fff;
-    cursor: pointer;
-}
+    .chat-box .top-bar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
 
-#chat-content {
-    min-width: 100%;
-    height: 82vh;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    background-color: #f9fbff;
-    padding: 20px;
-}
+    .chat-box .top-bar .user-info .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #5364ee;
+        position: relative;
+    }
 
-.incoming {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2px;
-    width: 50%;
-}
+    .chat-box .top-bar .user-info .avatar p {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        position: absolute;
+        /* left: 50%; */
+        text-align: center;
+        color: white;
+        font-weight: 400;
+    }
 
-.incoming .bubble {
-    padding: 10px 10px 10px 12px;
-    background:  #777777;
-    border-radius: 0px 12px 12px 12px;
-    color: white;
-    font-size: 19px;
-    margin-right: 5px;
-}
-
-.outgoing {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    margin-bottom: 2px;
-    width: 100%;
-}
-
-.outgoing .bubble {
-    padding: 10px 10px 10px 12px;
-    background:  #79C7C5;
-    border-radius: 12px 0px 12px 12px;
-    color: white;
-    font-size: 19px;
-    margin-left: 5px;
-}
-
-.block_func_btn {
-    position: relative;
-    display: inline-block;
-}
-
-.expand-func-icon {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    cursor: pointer;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-}
+    .chat-box .top-bar .user-info .name-chat {
+        letter-spacing: 1px;
+        font-weight: 500;
+        font-size: 20px;
+    }
 
 
-.expand-func-icon:hover {
-    background-color: #C7C9CC;
-}
+    .chat-box .top-bar button {
+        outline: none;
+        border: none;
+    }
 
-.expand-func-icon .dots {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: #777777;
-}
+    .chat-box .top-bar i.bxs-phone-call {
+        color: #5364ee;
+        font-size: 26px;
+        background-color: #fff;
+        cursor: pointer;
+    }
 
-.expand-func-icon_left {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    cursor: pointer;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-}
+    #chat-content {
+        min-width: 100%;
+        height: 85%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        background-color: #f1f3f4;
+        padding: 20px;
+    }
+
+    .incoming {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    .incoming .bubble {
+        padding: 15px 15px 15px 18px;
+        background: #fdfdfd;
+        border-radius: 0px 12px 12px 12px;
+        color: 'black';
+        font-size: 18px;
+        margin-right: 5px;
+        word-break: break-all;
+        max-width: 75%;
+        margin-bottom: 10px;
+    }
+
+    .outgoing {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    .outgoing .bubble {
+        padding: 15px 15px 15px 18px;
+        background: #3b3ea2;
+        border-radius: 12px 0px 12px 12px;
+        color: white;
+        font-size: 18px;
+        margin-left: 5px;
+        word-break: break-all;
+        max-width: 75%;
+        margin-bottom: 10px;
+    }
+
+    .userName {
+        font-size: 16px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .block_func_btn {
+        position: relative;
+        display: inline-block;
+    }
+
+    .expand-func-icon {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        cursor: pointer;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+    }
 
 
-.expand-func-icon_left:hover {
-    background-color: #C7C9CC;
-}
+    .expand-func-icon:hover {
+        background-color: #C7C9CC;
+    }
 
-.expand-func-icon_left .dots {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: #777777;
-}
+    .expand-func-icon .dots {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #777777;
+    }
 
-.incoming .block_func_btn .dropdown-button {
-    min-width: 110px;
-    min-height: 60px;
-    position: absolute;
-    left: 20%;
-    top: 25px;
-    padding: 8px 11px;
-    background-color: #C7C9CC;
-    border-radius: 0px 8px 10px 8px;
-    display: none;
-}
+    .expand-func-icon_left {
+        display: flex;
+        cursor: pointer;
+        padding: 7px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+    }
 
-.incoming.active-dropdown .block_func_btn .dropdown-button{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    z-index: 99;
-}
+    .expand-func-icon_left:hover {
+        background-color: #C7C9CC;
+    }
 
-.block_func_btn .dropdown-button button {
-    outline: none;
-    border: none;
-    background: transparent;
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
-    width: 100%;
-    font-weight: 400;
-}
+    .expand-func-icon_left .fa-list-check {
+        font-size: 15px;
+    }
+
+    .incoming .block_func_btn .dropdown-button {
+        min-width: 110px;
+        min-height: 60px;
+        position: absolute;
+        left: 20%;
+        top: 25px;
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 0px 8px 10px 8px;
+        display: none;
+    }
+
+    .incoming.active-dropdown .block_func_btn .dropdown-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        z-index: 99;
+    }
+
+    .block_func_btn .dropdown-button button {
+        outline: none;
+        border: none;
+        background: transparent;
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        width: 100%;
+        font-weight: 400;
+    }
+
+    .block_func_btn .dropdown-button button:hover {
+        cursor: pointer;
+        background-color: #f2f2f2;
+        padding: 5px 8px;
+        border-radius: 4px;
+    }
+
+    .outgoing .block_func_btn .dropdown-button {
+        min-width: 110px;
+        min-height: 60px;
+        position: absolute;
+        /*neu muon dung hover thi phair an cai nay di*/
+        right: 20%;
+        top: 25px;
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 10px 0px 10px 10px;
+        display: none;
+    }
+
+    .outgoing.active-dropdown .block_func_btn .dropdown-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        z-index: 99;
+    }
 
 
-.block_func_btn .dropdown-button button:hover {
-    cursor: pointer;
-    background-color: #f2f2f2;
-    padding: 5px 8px;
-    border-radius: 4px;
-}
-
-.outgoing .block_func_btn .dropdown-button {
-    min-width: 110px;
-    min-height: 60px;
-    position: absolute; /*neu muon dung hover thi phair an cai nay di*/
-    right: 20%;
-    top: 25px;
-    padding: 8px 11px;
-    background-color: #C7C9CC;
-    border-radius: 10px 0px 10px 10px;
-    display: none;
-}
-
-.outgoing.active-dropdown .block_func_btn .dropdown-button{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    z-index: 99;
-}
-
-/* .input_form{
+    /* .input_form{
     position: absolute;
     position: sticky;
     bottom: 50;
     top: 430px;
 } */
 
-/* .input_mess{
+    /* .input_mess{
     float: right;
     width: 50%;
     height: 50px;
     margin-top: auto;
 } */
-/* .send_button{
+    /* .send_button{
     margin-top: auto;
     float: right;
     height: 50px;
 } */
 
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
+    .darker {
+        border-color: #ccc;
+        background-color: #ddd;
+    }
 
 
-.msger-inputarea {
-    border-top: 1px solid #f2f2f2;
-  display:flex;
-  padding: 10px;
-  background: #fff;
-  max-height: 9vh;
-}
+    .msger-inputarea {
+        margin: 15px 10px;
+        display: flex;
+        padding: 10px;
+        background: #fff;
+        border-radius: 6px;
+    }
 
-.msger-input {
-    border: none;
-    outline: none;
-    margin: 0px 10px 0px 10px;
-  width: 100%;
-  background: #fff;
-  display: block;
-  padding-top: 10px;
-  font-size: 18px;
-  font-family: 'Poppins', sans-serif;
-}
-.msger-send-btn {
-    border:none;
-    outline: none;
-  margin-left: 10px;
-  background: #fff;
-  color: #79C7C5;
-  cursor: pointer;
-  transition: background 0.23s;
-}
+    .msger-input {
+        border: none;
+        outline: none;
+        margin: 0px 10px 0px 10px;
+        width: 100%;
+        background: #fff;
+        display: block;
+        /* padding-top: 10px; */
+        font-size: 20px;
+        font-family: 'Poppins', sans-serif;
+        padding-left: 30px;
+    }
 
-.msger-send-btn i {
-    padding: 5px;
-    font-size: 30px;
-}
+    .msger-send-btn {
+        border: none;
+        outline: none;
+        margin-left: 10px;
+        background: #5759e8;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 10%;
+    }
 
-.msger-send-btn:hover {
-  background: #C7C9CC;
-}
+    .msger-send-btn i {
+        padding: 10px 12px;
+        font-size: 28px;
+        cursor: pointer;
+    }
 
-.netstat{
-    color:green;
-}
+    .netstat {
+        color: green;
+    }
 
-.button_menu {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-.button_messType_add {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #008CBA;
-}
+    .button_menu {
+        background-color: #4CAF50;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
 
-.button2 {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #008CBA;
-  height: 90%;
-  min-height: 2pc;
-  position: relative;
-  width: 100%;
-  text-align: center;
-}
-.button2:hover {
-  background-color: #008CBA;
-  color: white;
-  cursor: pointer;
-}
+    .show {
+        display: block;
+    }
 
-.dropdown-group-btn {
-  display: inline-block;
-  height: auto;
-  background-color: rgba(121, 199, 197, 0.2);
-  min-height: max-content;
-  position: absolute; bottom: 0;display: flex;flex-direction: column;
-                        width: 23.5%; padding: 10px; align-items: center;
-}
+    /* The Modal (background) */
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1000;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
 
-.dropdown-group-btn:hover .dropdown-content-grbtn{display: block;}
-.dropdown-content-grbtn {
-  display: none;
-  position: absolute;
-  background-color: rgb(255, 255, 255);
-  width: 90%;
-  bottom: 50px;
-  z-index: 1;
-  flex-direction: column;
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s
+    }
 
-}
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
 
-.dropdown-content-grbtn a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-.show {display: block;}
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
 
-.dropdown-group-btn a:hover {background-color: #ddd; cursor: pointer;}
+    @keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
 
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
 
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
+    /* The Close Button */
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-/* Add Animation */
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
-  to {top:0; opacity:1}
-}
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
 
-/* The Close Button */
-.close {
-  color: white;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
+    .modal-body {
+        padding: 2px 16px;
+    }
 
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-header {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
-
-.modal-body {padding: 2px 16px;}
-
-.modal-footer {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
-
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
 </style>
 <html>
     <head>
@@ -505,46 +530,49 @@ body {font-family: "Lato", sans-serif;}
         <%- include('./header')%>
         <div class="chat-container">
             <div class="tab">
-                <div  id='hist_tab' style="overflow: auto;position: relative;">
+                <div id='hist_tab'>
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
-                <div class="dropdown-group-btn">
+                <!-- <div class="dropdown-group-btn">
                     <div class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">
-                        <div style="align-items: center;padding-top: 1vh; padding-bottom: 1vh;">OPTIONS</div> 
+                        <div>OPTIONS</div>
                     </div>
                     <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
                         <a onclick="newGroup()">ADD GROUP</a>
                         <a href="#addChannel">ADD CHANNEL</a>
-                    </div>                  
-                </div>       
+                    </div>
+                </div> -->
             </div>
-     
+
             <div class="chat-box">
-                <div class="top-bar" >
+                <div class="top-bar">
                     <!-- <div id="message_bubble">
                         <h3>Message</h3>
                         p>Chat Content</p
                     </div> -->
                     <div class="user-info">
-                        <div class="avatar"><p>H</p></div>
+                        <div class="avatar">
+                            <p>H</p>
+                        </div>
                         <div class="name-chat"></div>
                     </div>
-                    <button><i class='bx bxs-phone-call'></i></button>
+                    <button><i class="fa-solid fa-phone bxs-phone-call"></i></button>
                 </div>
                 <div id="chat-content">
                     <!-- contentchat -->
                 </div>
-                <div class="msger-inputarea">  
-                    <input id='inputMess'  class="msger-input" placeholder="Type a message..."/>
+                <div class="msger-inputarea">
+                    <input id='inputMess' class="msger-input" placeholder="Type a message..." />
                     <div class="msger-send-btn">
-                        <label for="myFile"  >
-                            
-                            <i class='bx bx-file'></i>
+                        <label for="myFile">
+                            <i class="fa-solid fa-paperclip"></i>
                         </label>
-                        <input type="file" style="display: none;" id="myFile" name="files">
+                        <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
                     </div>
-                   
-                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn"><i class='bx bxs-send' ></i></button> 
+
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -675,7 +703,7 @@ body {font-family: "Lato", sans-serif;}
             {
                 if(data.isFile && data.isFile=='true')
                 {
-                    var message = messageFile(data.message)
+                    var message = messageFile(data.message, data.originalFilename)
                     //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
                     var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
                     message_zone.insertAdjacentHTML("beforeend", mess_block_t);
@@ -707,9 +735,11 @@ body {font-family: "Lato", sans-serif;}
                 {
                     if(data.isFile && data.isFile=='true')
                     {
-                        var message = messageFile(data.message)
+                        var message = messageFile(data.message, data.originalFilename)
                         var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, 'false', data.docType);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                        message_zone.scrollTop = message_zone.scrollHeight;
+                        reloadLeftTab(tab_partner_prefix+ data.receiver);
                     }
                     else
                     {
@@ -723,7 +753,7 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
                         console.log(partner_tab);
-                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
                         reloadLeftTab(tab_partner_prefix+ data.sender);
                     }
                 }
@@ -737,7 +767,7 @@ body {font-family: "Lato", sans-serif;}
             {
                 if(data.isFile && data.isFile=='true')
                 {
-                    var message = messageFile(data.message)
+                    var message = messageFile(data.message, data.originalFilename)
                     //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
                     if(data.sender==myID)
                     {
@@ -781,7 +811,7 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.groupID);
                         console.log(partner_tab);
-                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
                     }
                     reloadLeftTab(tab_partner_prefix+ data.groupID);
                 }
@@ -864,18 +894,19 @@ body {font-family: "Lato", sans-serif;}
     {
         var left_private_block =
         `
-            <div class="tablinks" docType=${docType} id="${tab_partner_prefix+id}"
+        <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
                 onclick=choosePartner_2(this) id_sender="${id}">
-                <div class="acc-status" style=" width: 50%;">
+                <div class="acc-avatar"></div>
+                <div class="acc-status">
                     <div class="acc">${name}</div>
-                    <div class="status-online">${network_status}</div>
+                    <div class="status-info">
+                        <div class="dots-offline"></div>
+                        <div class="status-online">${network_status}</div>
+                    </div>
                 </div>
-                <div class="dots-offline"></div>
                 <div class="expand-func-icon_left" onclick=leftTabOption(this)>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>    
-                                    </div>
+                    <i class="fa-solid fa-list-check"></i>   
+                </div>
             </div>
             <hr class="solid">
         `
@@ -896,10 +927,11 @@ body {font-family: "Lato", sans-serif;}
         `
         return element_partner_selection_element;
     }
-    function messageFile(fileID) { 
+    function messageFile(fileID, fileName) { 
         var message=
         `
-            <button onclick="console.log('${fileID}')" fileID="${fileID}">FILE DOWNLOAD</button>
+            <div class="fileName">${fileName}</div>
+            <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
         `
         return message;
     };
@@ -1190,7 +1222,10 @@ body {font-family: "Lato", sans-serif;}
         // debugger;
         console.log(obj.getAttribute('id_sender'));
         console.log(obj, obj.nextSibling.nextSibling);
-        obj.querySelector('.dots-offline').innerHTML='';
+        if(obj.querySelector('.dots-offline').style.backgroundColor=='orange')
+        {
+            obj.querySelector('.dots-offline').style.backgroundColor='green';
+        }
         message_zone.innerHTML=``;
         var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');
@@ -1210,7 +1245,7 @@ body {font-family: "Lato", sans-serif;}
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        var message = messageFile(block[i].message);
+                        var message = messageFile(block[i].message, block[i].originalFilename);
                     }
                     else
                     {
@@ -1226,7 +1261,7 @@ body {font-family: "Lato", sans-serif;}
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        var message = messageFile(block[i].message);
+                        var message = messageFile(block[i].message, block[i].originalFilename);
                     }
                     else
                     {
@@ -1258,7 +1293,7 @@ body {font-family: "Lato", sans-serif;}
                 {
                     if(blockG[j].isFile && blockG[j].isFile=='true')
                     {
-                        var message = messageFile(blockG[j].message);
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
                     }
                     else
                     {
@@ -1270,7 +1305,7 @@ body {font-family: "Lato", sans-serif;}
                 {
                     if(blockG[j].isFile && blockG[j].isFile=='true')
                     {
-                        var message = messageFile(blockG[j].message);
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
                     }
                     else
                     {
@@ -1311,6 +1346,24 @@ body {font-family: "Lato", sans-serif;}
 
         message_zone.scrollTop = message_zone.scrollHeight;
         var res = await fetch('/seenUpdate', options);
+    }
+
+    async function downloadFile(fileID)
+    {
+        
+        console.log(fileID)
+        const options ={
+            method: 'GET',
+            headers:{
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res= await fetch('/downloadFile?fileName='+fileID, options);
+        var res_blob = await res.blob();
+        console.log(res_blob)
+        var url = URL.createObjectURL(res_blob);
+        window.location.href=url
+        //window.location.href= '/downloadFile?fileName='+fileID;
     }
 
     async function sendFile()

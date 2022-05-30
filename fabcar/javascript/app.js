@@ -1022,78 +1022,86 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
 })
 
 app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
-    var userID = req.user.id;
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    if(req.query.docType=='private_message')
+    try
     {
-        let seenTime;
-        var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID});
-        
-        if(message.seen && message.seen.length>0)
+        var userID = req.user.id;
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        if(req.query.docType=='private_message')
         {
-            seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
-        }
-        else if(!message.seen)
-        {
-            seenTime = 0;
-        }
-        let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
-        res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenTime});
-    }
-    else if(req.query.docType=='group_message')
-    {
-        var message = await dbo.collection('groupMessage').findOne({'messID':req.query.messID});
-        let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
-        let seenTime = [];
-        if(message.seen && message.seen.length>0)
-        {
-            let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
-            for (let i=0;i<message.seen.length;i++)
+            let seenTime;
+            var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID});
+            
+            if(message.seen && message.seen.length>0)
             {
-                queryString += "'"+ message.seen[i].userID + "'"+",";
+                seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
             }
-            queryString += "1)";
-            sql.connect(sql_config, function(err){
-                if(err){
-                    console.log(err);
-                    res.send({'result':'connect to database failed!'})
+            else if(!message.seen)
+            {
+                seenTime = 0;
+            }
+            let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenTime});
+        }
+        else if(req.query.docType=='group_message')
+        {
+            var message = await dbo.collection('groupMessage').findOne({'messID':req.query.messID});
+            let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+            let seenTime = [];
+            if(message.seen && message.seen.length>0)
+            {
+                let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
+                for (let i=0;i<message.seen.length;i++)
+                {
+                    queryString += "'"+ message.seen[i].userID + "'"+",";
                 }
-                var request = new sql.Request();
-                request.query(queryString, function(err, recordSet){
+                queryString += "1)";
+                sql.connect(sql_config, function(err){
                     if(err){
                         console.log(err);
-                        //res.send(JSON.stringify({'data': 'no_data'}));
+                        res.send({'result':'connect to database failed!'})
                     }
-                    if(recordSet)
-                    {
-                        let seenArray =[];
-                        for(let k=0; k<recordSet.recordset.length;k++)
+                    var request = new sql.Request();
+                    request.query(queryString, function(err, recordSet){
+                        if(err){
+                            console.log(err);
+                            //res.send(JSON.stringify({'data': 'no_data'}));
+                        }
+                        if(recordSet)
                         {
-                            for(let l=0; l<message.seen.length;l++)
+                            let seenArray =[];
+                            for(let k=0; k<recordSet.recordset.length;k++)
                             {
-                                if(k==l)
+                                for(let l=0; l<message.seen.length;l++)
                                 {
-                                    let seenObj = {
-                                        'userID': message.seen[l].userID,
-                                        'userName': recordSet.recordset[k].TenDayDu,
-                                        'dateTime': app_helper.timestamptoDateConverter(message.seen[l].timestamp)
+                                    if(k==l)
+                                    {
+                                        let seenObj = {
+                                            'userID': message.seen[l].userID,
+                                            'userName': recordSet.recordset[k].TenDayDu,
+                                            'dateTime': app_helper.timestamptoDateConverter(message.seen[l].timestamp)
+                                        }
+                                        seenArray.push(seenObj);
                                     }
-                                    seenArray.push(seenObj);
                                 }
                             }
+                            console.log(seenArray);
+                            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenArray})
                         }
-                        console.log(seenArray);
-                        res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenArray})
-                    }
+                    })
                 })
-            })
-        }
-        else if((message.seen && message.seen.length==0) || !message.seen)
-        {
-            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': 0})
+            }
+            else if((message.seen && message.seen.length==0) || !message.seen)
+            {
+                res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': 0})
+            }
         }
     }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
 })
 
 
@@ -1101,7 +1109,6 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
     try
     {
         let docType = req.headers.doctype; 
-        
         if(docType=='private_message')
         {
             let sender_name = req.headers.sender_name;
@@ -1113,21 +1120,24 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                 if(err) {
                     return res.end("Error uploading file.");
                 }
+                console.log(req.file.originalname);
+                res.send({'data':'ok'});
                 let messID = 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString()
                 var privMessObj = {
                     'messID': messID,
                     'docType': 'private_message',
-                    'sender': sender,
+                    'sender': parseInt(sender),
                     'receiver': parseInt(receiver),
                     'message': fileName,
                     'sender_name': decodeURIComponent(sender_name),
                     'timestamp':parseInt(Date.now()),
                     'isImportant': 'false',
                     'seen':[],
-                    'isFile': 'true'
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
                 }
                 await savePrivateMessage(privMessObj);
-                res.send({'data':'ok', 'fileName': fileName, 'sender': sender, 'receiver': receiver, 'docType': docType});
+             
                     socketIo.to(users[parseInt(sender)]).to(users[parseInt(receiver)]).emit('incoming_mess', {
                         'messID': 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString(),
                         'sender': sender, 
@@ -1135,7 +1145,8 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                         'message': fileName, 
                         'sender_name': decodeURIComponent(sender_name),
                         'docType': 'private_message',
-                        'isFile': 'true'
+                        'isFile': 'true',
+                        'originalFilename': req.file.originalname
                 });
             });
         }
@@ -1156,14 +1167,15 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                 var groupMessObj = {
                     'messID': messID,
                     'docType': 'group_message',
-                    'sender': sender,
+                    'sender': parseInt(sender),
                     'groupID': groupID,
                     'message': fileName,
                     'sender_name': decodeURIComponent(sender_name),
                     'timestamp':parseInt(Date.now()),
                     'isImportant': 'false',
                     'seen':[],
-                    'isFile': 'true'
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
                 }
                 await saveGroupMessage(groupMessObj);
                 socketIo.in(groupID).emit('incoming_mess',{
@@ -1174,7 +1186,8 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                     'message': fileName, 
                     'sender_name': decodeURIComponent(sender_name),
                     'docType': 'group_message',
-                    'isFile': 'true'
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
                 })
             })
         }
@@ -1186,6 +1199,12 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
         console.log(error);
         res.send({'data':'error'});
     }
+})
+
+app.get('/downloadFile', authenticateAccessToken, async function(req, res){
+    res.download(`./fileServer/`+ req.query.fileName, function(error){
+        console.log(error)
+    });
 })
 
 server.listen(8082, () => {
