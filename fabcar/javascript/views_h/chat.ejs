@@ -521,6 +521,28 @@
         background-color: #5cb85c;
         color: white;
     }
+
+    .loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid blue;
+    border-bottom: 16px solid blue;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    display: none;
+    }
+
+    @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+    }
 </style>
 <html>
     <head>
@@ -556,6 +578,7 @@
                         </div>
                         <div class="name-chat"></div>
                     </div>
+                    <div class="loader"></div>
                     <button><i class="fa-solid fa-phone bxs-phone-call"></i></button>
                 </div>
                 <div id="chat-content">
@@ -576,7 +599,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="infoModal" class="modal">
 
             <!-- Modal content -->
@@ -930,6 +953,7 @@
     function messageFile(fileID, fileName) { 
         var message=
         `
+            <i class="fa-solid fa-file-lines"></i>
             <div class="fileName">${fileName}</div>
             <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
         `
@@ -1370,6 +1394,7 @@
     {
         try
         {
+            document.getElementsByClassName('loader')[0].style.display='block';
             const uri = "/sendFile";
             const xhr = new XMLHttpRequest();
             const fd = new FormData();
@@ -1434,7 +1459,10 @@
         {
             console.log(error);
         }
-            
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
 
     }
     document.getElementById('myFile').addEventListener('change', sendFile);
@@ -1579,6 +1607,16 @@
                 dropdowns[0].classList.remove("active-dropdown");
             }
         }
+    })
+    $(document).on('click', '.tablinks', function () {
+        $('#hist_tab').find('.tablinks').removeClass('active-users')
+        $(this).each(function () {
+            if ($(this).hasClass('active-users')) {
+                $(this).removeClass('active-users');
+            } else {
+                $(this).addClass('active-users');
+            }
+        })
     })
     /*
     function openUpDropdownGrbtn() {
