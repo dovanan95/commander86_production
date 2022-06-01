@@ -536,6 +536,10 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
                             {
                                 list_chat.chat_history[k]['username'] = nameSet[j].TenDayDu;
                             }
+                            if(list_chat.chat_history[k].userID==000)
+                            {
+                                list_chat.chat_history[k]['username'] = 'SYSTEM';
+                            }
                         }
                     }
                     res.send(JSON.stringify(list_chat.chat_history));
@@ -1205,6 +1209,50 @@ app.get('/downloadFile', authenticateAccessToken, async function(req, res){
     res.download(`./fileServer/`+ req.query.fileName, function(error){
         console.log(error)
     });
+})
+
+app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var sender = req.query.senderID;
+        var receiver = req.query.receiverID;
+        var unregisterSecureList = await app_helper.checkE2ERegister(sender, receiver);
+        var message = 'vui long dang ky de lien lac bang tin nhan ma hoa';
+        if(unregisterSecureList.length==0){
+            res.send({'data':'ok'});
+        }
+        else if(unregisterSecureList.length>0)
+        {
+            for(let i=0;i<unregisterSecureList.length;i++)
+            {
+                if(unregisterSecureList[i].userID==sender)
+                {
+                    res.send({'data':'ng', 'status':'registerRequire'});
+                }
+                else if(unregisterSecureList[i].userID==receiver)
+                {
+                    var registerRequireObj={
+                        'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),
+                        'docType': 'private_message',
+                        'sender': parseInt(sender),
+                        'sender_name':'SYSTEM',
+                        'timestamp':parseInt(Date.now()),
+                        'receiver': parseInt(receiver),
+                        'isImportant': 'false',
+                        'seen':[],
+                        'message': message
+                    }
+                    await savePrivateMessage(registerRequireObj);
+                    socketIo.to(users[parseInt(receiver)]).emit('incoming_mess', registerRequireObj);
+                    res.send({'data':'ng', 'status':'waitingRequire'});
+                }
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
 })
 
 server.listen(8082, () => {

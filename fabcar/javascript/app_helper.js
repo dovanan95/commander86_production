@@ -3,6 +3,8 @@ const path = require('path');
 
 var multer = require('multer');
 
+var e2e = require('cryptico');
+
 var sql = require('mssql');
 var mongo = require('mongodb').MongoClient;
 const { Module } = require('module');
@@ -89,6 +91,81 @@ function timestamptoDateConverter(timestamp)
     var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
     return time;
 }
+async function checkE2ERegister(sender, receiver)
+{
+    var db = await mongo.connect(url_mongo);
+    var dbo = await db.db(db_mongo_name);
+    var myObj = await dbo.collection('user').find({'userID': {'$in':[sender, receiver]}}).toArray();
+    var unregisterSecure=[];
+    for(let i=0; i<myObj.length;i++)
+    {
+        if(!myObj[i].secureKey)
+        {
+            unregisterSecure.push({'userID':myObj[i].userID, 'username':myObj[i].username});
+        }
+    }
+    return(unregisterSecure);
+}
+
+async function systemMessage(message, receiver)
+{
+    try
+    {
+        var db = await mongo.connect(url_mongo);
+        var dbo = await db.db(db_mongo_name);
+        var messObj ={
+            'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),
+            'docType': 'private_message',
+            'sender': 000,
+            'sender_name':'SYSTEM',
+            'timestamp':parseInt(Date.now()),
+            'receiver': parseInt(receiver),
+            'isImportant': 'false',
+            'seen':[],
+            'message': message
+        }
+        dbo.collection('privateMessage').insertOne(messObj, function(err, res){
+            if(err){
+                console.log(err);
+            }
+            console.log("1 document inserted");
+        })
+        var myObj = await dbo.collection('user').findOne({'userID': parseInt(receiver)});
+        if(myObj.chat_history.length==0)
+        {
+            let prtnObj = {'userID':000, 'docType':'private_message', 'timestamp':Date.now()};
+            await dbo.collection('user').updateOne({'userID':parseInt(receiver)},{$push:{'chat_history':prtnObj}});
+        }
+        else if(myObj.chat_history.length>0)
+        {
+            let flag=0;
+            for(let j=0; j<myObj.chat_history.length;j++)
+            {
+                if(myObj.chat_history[j].userID==000)
+                {
+                    flag=1;
+                }
+            }
+            if(flag==0)
+            {
+                let prtnObj = {'userID':000, 'docType':'private_message', 'timestamp': Date.now()};
+                await dbo.collection('user').updateOne({'userID':parseInt(receiver)},{$push:{'chat_history':prtnObj}});
+            }
+            else if(flag==1)
+            {
+                await dbo.collection('user').updateOne({'userID':parseInt(receiver), 'chat_history.userID':000},
+                            {$set:{'chat_history.$.timestamp':Date.now()}});
+            }
+        }
+        await dbo.collection('user').updateOne({'userID': parseInt(receiver)}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 
 
-module.exports = {loadUserInformation, timestamptoDateConverter, storage}
+}
+
+module.exports = {loadUserInformation, timestamptoDateConverter, storage, checkE2ERegister, systemMessage}

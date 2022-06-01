@@ -973,33 +973,46 @@
 
     async function markImportantMess(obj)
     {
-        //console.log(obj.parentNode.parentNode.parentNode);
-        var parentObj = obj.closest('.messBlock');
-        var parentObj_id = parentObj.getAttribute('id'); 
-        var docType = parentObj.getAttribute('docType')
-        var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
-                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
-        console.log(parentObj);
-        var messItem = document.getElementById(parentObj_id);
-        const options = {
-            method: 'POST',
-            body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
-            }
-        };
-        var res_markBlockchain = await fetch('/markImportant', options);
-        var res_json = await res_markBlockchain.json();
-        console.log(res_json);
-        if(res_json.data=='ok')
+        try
         {
-            parentObj.querySelector('.dropdown-button').innerHTML= newItem;
-            parentObj.querySelector('.bubble').style.backgroundColor='red';
-            console.log(res_json.data)
-            messItem = parentObj;
+            document.getElementsByClassName('loader')[0].style.display='block';
+            //console.log(obj.parentNode.parentNode.parentNode);
+            var parentObj = obj.closest('.messBlock');
+            var parentObj_id = parentObj.getAttribute('id'); 
+            var docType = parentObj.getAttribute('docType')
+            var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
+                            <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+            console.log(parentObj);
+            var messItem = document.getElementById(parentObj_id);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_markBlockchain = await fetch('/markImportant', options);
+            var res_json = await res_markBlockchain.json();
+            console.log(res_json);
+            if(res_json.data=='ok')
+            {
+                parentObj.querySelector('.dropdown-button').innerHTML= newItem;
+                parentObj.querySelector('.bubble').style.backgroundColor='red';
+                console.log(res_json.data)
+                messItem = parentObj;
+            }
+            //messItem = parentObj;
+        
         }
-        //messItem = parentObj;
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
         
     }
 
