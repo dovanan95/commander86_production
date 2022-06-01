@@ -1018,38 +1018,50 @@
 
     async function verifyMessBlock(obj)
     {
-        var parentObj = obj.closest('.messBlock');
-        //var parentObj = obj.parentElement.parentNode.parentNode;
-        console.log(parentObj);
-        var id_block = parentObj.getAttribute('id');
-        var docType = parentObj.getAttribute('docType');
-        console.log(id_block);
-        const options = {
-            method: 'POST',
-            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            var parentObj = obj.closest('.messBlock');
+            //var parentObj = obj.parentElement.parentNode.parentNode;
+            console.log(parentObj);
+            var id_block = parentObj.getAttribute('id');
+            var docType = parentObj.getAttribute('docType');
+            console.log(id_block);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_block_verify = await fetch('/verifyMessBlockchain', options);
+            var res_block_verify_json = await res_block_verify.json();
+            console.log(res_block_verify_json);
+            if(res_block_verify_json.data=="error")
+            {
+                alert("du lieu da bi thay doi");
             }
-        };
-        var res_block_verify = await fetch('/verifyMessBlockchain', options);
-        var res_block_verify_json = await res_block_verify.json();
-        console.log(res_block_verify_json);
-        if(res_block_verify_json.data=="error")
-        {
-            alert("du lieu da bi thay doi");
-        }
-        else
-        {
-            var id_block = res_block_verify_json.messID;
-            var mess_block = document.getElementById(id_block);
-            mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
-            mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
-            //console.log(mess_block);
-            //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
-            //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
-        }
+            else
+            {
+                var id_block = res_block_verify_json.messID;
+                var mess_block = document.getElementById(id_block);
+                mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
+                mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
+                //console.log(mess_block);
+                //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
+                //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
+            }
         
+        }
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
 
     }
     //----------Modal---------------------
