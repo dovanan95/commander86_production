@@ -34,6 +34,10 @@ var sql_config = {
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
 };
+const MongoClient = require('mongodb').MongoClient
+const uri = url_mongo
+const db = new MongoClient(uri);
+const connection = db.connect();
 
 var app_helper = require('./app_helper');
 const { dirname } = require('path');
@@ -152,26 +156,33 @@ async function queryNameUser(id){
 
 async function saveGroupMessage(data)
 {
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    dbo.collection('groupMessage').insertOne(data, function(err, res){
-        if(err){
-            console.log(err);
-        }
-    });
-    var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
-    console.log(groupChat['member'])
-    dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
-    {$set:{'chat_history.$.timestamp':data.timestamp}});
-    dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
-    {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    try
+    {
+        db.connect();
+        var dbo = await db.db(db_mongo_name);
+        dbo.collection('groupMessage').insertOne(data, function(err, res){
+            if(err){
+                console.log(err);
+            }
+        });
+        var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
+        console.log(groupChat['member'])
+        dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
+        {$set:{'chat_history.$.timestamp':data.timestamp}});
+        dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 }
 
 async function savePrivateMessage(data)
 {
     try
     {
-        var db = await mongo.connect(url_mongo);
+        db.connect();
         var dbo = await db.db(db_mongo_name);
         dbo.collection('privateMessage').insertOne(data, function(err, res){
             if(err){
@@ -258,7 +269,7 @@ async function savePrivateMessage(data)
     }
     
 }
-var users = [];
+var users = {};
 var online_account = [];
 var sockets = [];
 
@@ -267,12 +278,13 @@ var sockets = [];
     const ID = socket.id // id property on the socket Object
     socketIo.to(ID).emit("getId", socket.id);
     sockets.push(socket);
-    socket.on('connected', function(userID){
-        users[userID]=socket.id;
+    socket.on('connected', function(data){
+        users[data.userID]=socket.id;
+        console.log('user', users);
         let flag_online=0;
         for(let i=0;i<online_account.length;i++)
         {
-            if(online_account[i]['userID']==userID)
+            if(online_account[i]['userID']==data.userID)
             {
                 flag_online=1; //kiem tra trong danh sach user neu dang online nhung reload lai page hoac dang nhap o thiet bi khac thi cap nhat lai socketID
                 online_account[i]['socketID']=socket.id;
@@ -280,12 +292,12 @@ var sockets = [];
         }
         if(flag_online==0)
         {
-            online_account.push({'userID':userID, 'socketID':socket.id}); //neu user nay chua co trong danh sach online thi them vao
+            online_account.push({'userID':data.userID, 'socketID':socket.id}); //neu user nay chua co trong danh sach online thi them vao
         }
         
         console.log(online_account);
         socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
-        socketIo.emit('online_status', {'userID':userID, 'isOnline': true}) // thong bao user moi online cho tat ca user khac cap nhat
+        socketIo.emit('online_status', {'userID':data.userID, 'isOnline': true}) // thong bao user moi online cho tat ca user khac cap nhat
     })
     socket.on('joinRoom', function(data){
         socket.join(data.roomID);
@@ -494,15 +506,16 @@ app.get('/chat', function(req, res){
     res.render('./views_h/chat');
 })
 
+
 app.post('/load_chat_history', authenticateAccessToken, async function(req, res){
     try
     {
         /*const contract_ = await contract();
         const chat_history_raw = await contract_.evaluateTransaction('queryHistoryMessage', req.body.id); console.log(chat_history_raw);
         res.send(chat_history_raw.toString());*/
-
-        var db = await mongo.connect(url_mongo);
+        db.connect();
         var dbo = await db.db(db_mongo_name);
+
         var list_chat_arr = await dbo.collection('user')
             .find({'userID': req.body.id}).project({'chat_history':{$slice: req.body.limit}}).toArray();
         var list_chat = list_chat_arr[0];
@@ -1229,7 +1242,7 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
                 {
                     res.send({'data':'ng', 'status':'registerRequire'});
                 }
-                else if(unregisterSecureList[i].userID==receiver)
+                else if(unregisterSecureList[i].userID==receiver && unregisterSecureList[i].userID!=000)
                 {
                     var registerRequireObj={
                         'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),

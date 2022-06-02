@@ -13,6 +13,7 @@ const { request } = require('express');
 var url_mongo = "mongodb://localhost:27017/";
 var db_mongo_name = 'httcddh_2022';
 
+
 var sql_config = {
     user: 'SA',
     password: 'H@yvuilennao1',
@@ -94,17 +95,33 @@ function timestamptoDateConverter(timestamp)
 async function checkE2ERegister(sender, receiver)
 {
     var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    var myObj = await dbo.collection('user').find({'userID': {'$in':[sender, receiver]}}).toArray();
-    var unregisterSecure=[];
-    for(let i=0; i<myObj.length;i++)
-    {
-        if(!myObj[i].secureKey)
+    var dbo = await db.db(db_mongo_name); 
+    if(receiver!=000)
+    {  
+        var myObj = await dbo.collection('user').find({'userID': {'$in':[sender, receiver]}}).toArray();
+        var unregisterSecure=[];
+        for(let i=0; i<myObj.length;i++)
         {
-            unregisterSecure.push({'userID':myObj[i].userID, 'username':myObj[i].username});
+            if(!myObj[i].secureKey)
+            {
+                unregisterSecure.push({'userID':myObj[i].userID, 'username':myObj[i].username});
+            }
         }
+        return(unregisterSecure);
     }
-    return(unregisterSecure);
+    else if(receiver==000)
+    {
+        //check one
+        var myObj = await dbo.collection('user').findOne({'userID': sender});
+        var unregisterSecure=[];
+            if(!myObj.secureKey)
+            {
+                unregisterSecure.push({'userID':myObj.userID, 'username':myObj.username});
+            }
+        
+        return(unregisterSecure);
+    }
+
 }
 
 async function systemMessage(message, receiver)
