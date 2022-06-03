@@ -628,10 +628,6 @@
             sessionStorage.setItem('login_data', storeData);
         });*/
     
-
-    const END_POINT = 'https://127.0.0.1:8082';
-    var socket=io();
-    
     const left_tab = document.getElementById('hist_tab');
     var message_zone = document.getElementById('chat-content');
     const messContent = document.getElementById('inputMess');
@@ -644,6 +640,9 @@
         var my_name = JSON.parse(myID_json)['my_username'];
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
+
+    const END_POINT = 'https://127.0.0.1:8082';
+    var socket=io({auth:{'token': accessToken}});
 
     socket.emit('connected', {'userID':myID});
     socket.emit('joinRoom',{'roomID':'test'})

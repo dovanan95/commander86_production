@@ -273,6 +273,23 @@ var users = {};
 var online_account = [];
 var sockets = [];
 
+socketIo.use((socket, next)=>{
+    if(socket.handshake.auth && socket.handshake.auth.token)
+    {
+        var token = socket.handshake.auth.token; console.log(token);
+        jwt.verify(token, ACCESS_TOKEN_SECRET, (error, user)=>{
+            if(error){
+                res.sendStatus(403);
+            }
+            socket.user = user;
+            next();
+        })
+    }
+    else
+    {
+        socket.disconnect();
+    }
+})
  socketIo.on("connection", (socket) => {
     console.log("New client connected ->" + socket.id);
     const ID = socket.id // id property on the socket Object
