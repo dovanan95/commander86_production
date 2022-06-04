@@ -332,7 +332,6 @@
 
     document.getElementById('btnChangeName').addEventListener('click', async function(){
       var groupName = document.getElementById('groupName').value;
-      var groupID = sessionStorage.getItem('current_partner_id');
       console.log(groupName);
       const options = {
                 method: 'POST',
@@ -340,7 +339,7 @@
                     'authorization': 'token '+ accessToken,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({'groupName': groupName, 'groupID': groupID})
+                body: JSON.stringify({'groupName': groupName, 'groupID': id_group})
             }
       var res = await fetch('/changeGroupName', options);
       var json_res = await res.json();
