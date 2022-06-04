@@ -13,7 +13,7 @@ const { request } = require('express');
 var url_mongo = "mongodb://localhost:27017/";
 var db_mongo_name = 'httcddh_2022';
 
-
+var mongoUtil = require( './db' );
 var sql_config = {
     user: 'SA',
     password: 'H@yvuilennao1',
@@ -94,8 +94,7 @@ function timestamptoDateConverter(timestamp)
 }
 async function checkE2ERegister(sender, receiver)
 {
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name); 
+    var dbo = mongoUtil.getDb();
     if(receiver!=000)
     {  
         var myObj = await dbo.collection('user').find({'userID': {'$in':[sender, receiver]}}).toArray();
@@ -128,8 +127,7 @@ async function systemMessage(message, receiver)
 {
     try
     {
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var messObj ={
             'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),
             'docType': 'private_message',

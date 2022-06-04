@@ -34,14 +34,10 @@ var sql_config = {
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
 };
-const MongoClient = require('mongodb').MongoClient
-const uri = url_mongo
-const db = new MongoClient(uri);
-const connection = db.connect();
 
-var app_helper = require('./app_helper');
+var app_helper = require('./server/app_helper');
 const { dirname } = require('path');
-
+var mongoUtil = require( './server/db' );
 
 async function contract()
 {
@@ -158,8 +154,9 @@ async function saveGroupMessage(data)
 {
     try
     {
-        db.connect();
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         dbo.collection('groupMessage').insertOne(data, function(err, res){
             if(err){
                 console.log(err);
@@ -182,8 +179,9 @@ async function savePrivateMessage(data)
 {
     try
     {
-        db.connect();
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         dbo.collection('privateMessage').insertOne(data, function(err, res){
             if(err){
                 console.log(err);
@@ -262,10 +260,6 @@ async function savePrivateMessage(data)
     catch(error)
     {
         console.log(error);
-    }
-    finally
-    {
-        db.close()
     }
     
 }
@@ -399,8 +393,9 @@ socketIo.use((socket, next)=>{
         try
         {
             console.log(data);
-            var db = await mongo.connect(url_mongo);
-            var dbo = await db.db(db_mongo_name);
+            //var db = await mongo.connect(url_mongo);
+            //var dbo = await db.db(db_mongo_name);
+            var dbo = mongoUtil.getDb();
             if(data.docType=='private_message')
             {
                 await dbo.collection('privateMessage').updateOne({'messID':data.messID},{$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
@@ -530,9 +525,9 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
         /*const contract_ = await contract();
         const chat_history_raw = await contract_.evaluateTransaction('queryHistoryMessage', req.body.id); console.log(chat_history_raw);
         res.send(chat_history_raw.toString());*/
-        db.connect();
-        var dbo = await db.db(db_mongo_name);
-
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        const dbo = mongoUtil.getDb();
         var list_chat_arr = await dbo.collection('user')
             .find({'userID': req.body.id}).project({'chat_history':{$slice: req.body.limit}}).toArray();
         var list_chat = list_chat_arr[0];
@@ -596,8 +591,9 @@ app.post('/chat_peer', authenticateAccessToken, async function(req, res){
                             req.body.partner_ID, 'private_message', req.body.limit, req.body.skip);
         res.send(chat_data.toString());*/
 
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var chatBlocks = await dbo.collection('privateMessage').find({$or:[{'sender':req.body.my_ID,'receiver':req.body.partner_ID},
         {'sender':req.body.partner_ID,'receiver':req.body.my_ID}]}).sort({'timestamp':-1}).limit(req.body.limit).toArray();
         res.send(JSON.stringify(chatBlocks))
@@ -612,8 +608,9 @@ app.post('/chat_peer', authenticateAccessToken, async function(req, res){
 
 //for chat room 
 app.post('/chat_room', authenticateAccessToken, async function(req, res){
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
+    //var db = await mongo.connect(url_mongo);
+    //var dbo = await db.db(db_mongo_name);
+    var dbo = mongoUtil.getDb();
     var chatBlocks = await dbo.collection('groupMessage').find({'groupID': req.body.groupID}).sort({'timestamp': -1}).limit(req.body.limit).toArray();
     res.send(JSON.stringify(chatBlocks));
 })
@@ -704,8 +701,9 @@ app.post('/markImportant', authenticateAccessToken, async function(req, res){
     try
     {
         const contract_ = await contract();
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var chatBlock;
         if(req.body.docType=='private_message')
         {
@@ -752,8 +750,9 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
     try
     {
         const contract_ = await contract();
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         const updated_Mess = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, req.body.dateTime);
         var update_Mess_json = await JSON.parse(updated_Mess.toString()); console.log(update_Mess_json);
         if(update_Mess_json.docType=='private_message')
@@ -808,8 +807,9 @@ app.get('/medium', function(req, res){
 
 app.post('/generateGroup', authenticateAccessToken, async function(req,res){
     try{
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var groupID = 'groupComm'+ req.body.admin + req.body.groupName.replace(/\s/g, '') + Date.now().toString();
         var intUserList = [];
         for(let i=0; i<req.body.userID.length;i++){
@@ -860,12 +860,11 @@ app.post('/loadOptions', authenticateAccessToken, async function(req, res){
     try
     {
         var docType = req.body.docType;
+        var dbo = mongoUtil.getDb();
         if(docType=='group_message')
         {
             var id_group = req.body.id_group;
             var userID = parseInt(req.body.userID);
-            var db = await mongo.connect(url_mongo);
-            var dbo = await db.db(db_mongo_name);
             var group = await dbo.collection('groupCollection').findOne({'groupID': id_group});
             var listUserID = group.member;
             var groupName = group.groupName;
@@ -918,8 +917,7 @@ app.post('/changeGroupName', authenticateAccessToken, async function(req, res){
         var userID = req.user.id;
         var newGroupName = req.body.groupName;
         var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var memList = group['member'];
         if(group.admin==userID)
@@ -943,8 +941,7 @@ app.post('/updateGroup', authenticateAccessToken, async function(req, res){
         var groupName = req.body.groupName;
         var listMem = req.body.userListID;
         var groupID= req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var old_memList = group.member;
 
@@ -977,8 +974,7 @@ app.post('/leaveGroup', authenticateAccessToken, async function(req, res){
     {
         var userID = req.user.id;
         var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var memList = group.member;
         if(group.admin == userID)
@@ -1001,8 +997,7 @@ app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
     try{
         var userID = req.user.id;
         var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var memList = group.member;
         if(group.admin == userID)
@@ -1025,8 +1020,7 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
     try
     {
         var userID = req.user.id;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         if(req.body.docType=='private_message')
         {
             var messList = req.body.seenMessID;
@@ -1059,8 +1053,7 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
     try
     {
         var userID = req.user.id;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         if(req.query.docType=='private_message')
         {
             let seenTime;
@@ -1285,6 +1278,11 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
     }
 })
 
-server.listen(8082, () => {
-    console.log('Server đang chay tren cong 8082');
- });
+
+mongoUtil.connectToServer( function( err, client ) {
+    if (err) console.log(err);
+    // start the rest of your app here
+    server.listen(8082, () => {
+        console.log('Server đang chay tren cong 8082');
+    });
+} );
