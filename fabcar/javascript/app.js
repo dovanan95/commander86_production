@@ -916,10 +916,10 @@ app.post('/changeGroupName', authenticateAccessToken, async function(req, res){
     {
         var userID = req.user.id;
         var newGroupName = req.body.groupName;
-        var groupID = req.body.groupID;
+        var groupID = req.body.groupID; 
         var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
-        var memList = group['member'];
+        var memList = group.member;
         if(group.admin==userID)
         {
             await dbo.collection('groupCollection').updateOne({'groupID':groupID}, {$set:{'groupName': newGroupName}});
@@ -1285,4 +1285,4 @@ mongoUtil.connectToServer( function( err, client ) {
     server.listen(8082, () => {
         console.log('Server đang chay tren cong 8082');
     });
-} );
+  } );

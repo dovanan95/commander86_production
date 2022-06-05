@@ -278,7 +278,9 @@
     }
 
     async function sendSecure(){
-
+        modal.style.display="none";
+        var privKeyModal = document.getElementById("privKeyModal");
+        privKeyModal.style.display = "block";
     }
     var modal = document.getElementById("myModal");
 

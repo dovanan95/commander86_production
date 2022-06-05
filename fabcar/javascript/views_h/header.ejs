@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;200&display=swap" rel="stylesheet"> -->
   <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
+  <link rel="stylesheet" href="./css/privateKey.css">
   <style>
     * {
       box-sizing: border-box;
@@ -272,7 +273,7 @@
         </a>
       </li>
       <li>
-        <a href="">
+        <a onclick="openSecure()" >
           <i class="fa-solid fa-unlock-keyhole"></i>
           <span class="link-items">Encrypted</span>
         </a>
@@ -287,6 +288,49 @@
   </div>
   </div>
 
+  <div id="privKeyModal" class="privKey-modal">
+
+    <!-- Modal content -->
+    <div class="privKey-modal-content">
+      <div class="privKey-modal-header">
+        <span class="closeprivKeyModal" id="closeprivKeyModal">&times;</span>
+        <h2>INSERT PRIVATE KEY</h2>
+      </div>
+      <div class="privKey-modal-body" id="privKey-body">
+        <div>
+            <textarea id="PrivKeycontent" name="content" placeholder="Write Private Key.."></textarea>
+        </div>
+        <br />
+        <div>
+            <button onclick="console.log(this)" id="button_send_mess" style="  background-color: #04AA6D;
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;">SEND</button>
+        </div>
+      </div>
+
+    </div>
+  
+  </div>
 </body>
 
 </html>
+<script>
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    var privKeyModal = document.getElementById("privKeyModal");
+        if (event.target == privKeyModal) {
+          privKeyModal.style.display = "none";
+        }
+    }
+    document.getElementById('closeprivKeyModal').addEventListener('click', function(e){
+        privKeyModal.style.display = "none";
+    })
+
+    function openSecure(){
+      var privKeyModal = document.getElementById("privKeyModal");
+      privKeyModal.style.display = "block";
+    }
+</script>
