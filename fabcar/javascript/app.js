@@ -1237,8 +1237,8 @@ app.get('/downloadFile', authenticateAccessToken, async function(req, res){
 app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res){
     try
     {
-        var sender = req.query.senderID;
-        var receiver = req.query.receiverID;
+        var sender = parseInt(req.query.senderID);
+        var receiver = parseInt(req.query.receiverID);
         var unregisterSecureList = await app_helper.checkE2ERegister(sender, receiver);
         var message = 'vui long dang ky de lien lac bang tin nhan ma hoa';
         if(unregisterSecureList.length==0){
@@ -1254,6 +1254,7 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
                 }
                 else if(unregisterSecureList[i].userID==receiver && unregisterSecureList[i].userID!=000)
                 {
+                    console.log(unregisterSecureList[i].userID, receiver)
                     var registerRequireObj={
                         'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),
                         'docType': 'private_message',
@@ -1278,6 +1279,10 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
     }
 })
 
+app.get('/registerE2EService', function(req, res){
+    res.render('./views_h/secureChatRegister');
+})
+
 
 mongoUtil.connectToServer( function( err, client ) {
     if (err) console.log(err);
@@ -1285,4 +1290,4 @@ mongoUtil.connectToServer( function( err, client ) {
     server.listen(8082, () => {
         console.log('Server đang chay tren cong 8082');
     });
-  } );
+  });

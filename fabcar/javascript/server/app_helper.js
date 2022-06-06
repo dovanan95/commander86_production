@@ -111,9 +111,9 @@ async function checkE2ERegister(sender, receiver)
     else if(receiver==000)
     {
         //check one
-        var myObj = await dbo.collection('user').findOne({'userID': sender});
+        var myObj = await dbo.collection('user').findOne({'userID': sender}); 
         var unregisterSecure=[];
-            if(!myObj.secureKey)
+            if(myObj && !myObj.hasOwnProperty('secureKey'))
             {
                 unregisterSecure.push({'userID':myObj.userID, 'username':myObj.username});
             }

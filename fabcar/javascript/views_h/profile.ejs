@@ -196,13 +196,13 @@
                         </div>
                         <br />
                         <div>
-                            <button onclick="sendMess()" id="button_send_mess" style="  background-color: #04AA6D;
+                            <button onclick="sendMess()" id="button_send_mess_profile" style="  background-color: #04AA6D;
                                 color: white;
                                 padding: 12px 20px;
                                 border: none;
                                 border-radius: 4px;
                                 cursor: pointer;">SEND</button>
-                            <button onclick="sendSecure()" id="button_send_mess" style="  background-color: #5c1a5c;
+                            <button onclick="sendSecure()" id="button_send_secure_mess_profile" style="  background-color: #5c1a5c;
                                 color: white;
                                 padding: 12px 20px;
                                 border: none;
@@ -278,9 +278,36 @@
     }
 
     async function sendSecure(){
-        modal.style.display="none";
-        var privKeyModal = document.getElementById("privKeyModal");
-        privKeyModal.style.display = "block";
+        var myID_json = sessionStorage.getItem('login_data');
+        var myID = parseInt(JSON.parse(myID_json)['id']);
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+      if(sessionStorage.getItem('privKey'))
+      {
+        var privKey = sessionStorage.getItem('privKey');console.log(privKey);
+      }
+      else if(!sessionStorage.getItem('privKey'))
+      {
+        const options = {
+            method: 'GET',
+            headers: {
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res = await fetch('/checkE2ERegisterAPI?senderID='+myID+'&receiverID='+response_json.userID, options);
+        var json_res = await res.json();console.log(json_res)
+        if(json_res.data == 'ng')
+        {
+            window.open('/registerE2EService');
+        }
+        else if( json_res.data =='ok')
+        {
+            modal.style.display="none";
+            var privKeyModal = document.getElementById("privKeyModal");
+            privKeyModal.style.display = "block";
+        }
+      }
+
     }
     var modal = document.getElementById("myModal");
 

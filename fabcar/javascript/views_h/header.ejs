@@ -302,7 +302,7 @@
         </div>
         <br />
         <div>
-            <button onclick="console.log(this)" id="button_send_mess" style="  background-color: #04AA6D;
+            <button onclick="console.log(this)" id="button_send_privKey_header" style="  background-color: #04AA6D;
                 color: white;
                 padding: 12px 20px;
                 border: none;
@@ -317,6 +317,7 @@
 </body>
 
 </html>
+<script type="text/javascript" src="./js/cryptico.js"></script>
 <script>
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
@@ -329,8 +330,37 @@
         privKeyModal.style.display = "none";
     })
 
-    function openSecure(){
-      var privKeyModal = document.getElementById("privKeyModal");
-      privKeyModal.style.display = "block";
+    async function openSecure(){
+      var myID_json = sessionStorage.getItem('login_data');
+        var myID = parseInt(JSON.parse(myID_json)['id']);
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+      if(sessionStorage.getItem('privKey'))
+      {
+        var privKey = sessionStorage.getItem('privKey');console.log(privKey);
+      }
+      else if(!sessionStorage.getItem('privKey'))
+      {
+        const options = {
+            method: 'GET',
+            headers: {
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res = await fetch('/checkE2ERegisterAPI?senderID='+myID+'&receiverID='+000, options);
+        var json_res = await res.json();console.log(json_res)
+        if(json_res.data == 'ng')
+        {
+          window.open('/registerE2EService');
+        }
+        else if( json_res.data =='ok')
+        {
+          var privKeyModal = document.getElementById("privKeyModal");
+          privKeyModal.style.display = "block";
+        }
+
+
+      }
+
     }
 </script>
