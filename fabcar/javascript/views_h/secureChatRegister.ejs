@@ -18,8 +18,9 @@
         <textarea class="form-control" rows="5" placeholder="Input Key String" id="privKey"></textarea>
       </div>
       <div>
-        <button type="button" onclick="generateKey()" class="btn btn-primary input-btn">Generate Key</button>
-        <button type="button" onclick="saveSecretKey()" class="btn btn-success input-btn">Save Key</button>
+        <button type="button" onclick="generateKey()" class="btn btn-primary input-btn" >Generate Key</button>
+        <button type="button" onclick="registerKey()" class="btn btn-primary input-btn" >Register Key</button>
+        <button type="button" onclick="saveSecretKey()" class="btn btn-success input-btn" >Save Key</button>
       </div>
     </form>
   </div>
@@ -71,7 +72,7 @@
         }
         
     }
-    
+
     function download(filename, text) {
         var pom = document.createElement('a');
         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -96,9 +97,17 @@
 
       let serialKey = serializeRSAKey(MessRSAkey); 
       sessionStorage.setItem('privKeyRSA', serialKey);
-      let deserialKey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA')); console.log(deserialKey);
-      let publicKey_serial = cryptico.publicKeyString(deserialKey); console.log('serian public', publicKey_serial);
+      alert('generate Key successfully!');
+      
     }
+    async function registerKey(){
+      var keyString = document.getElementById('privKey').value; 
+      if(sessionStorage.getItem('privKeyRSA')){
+        let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+        let publicKey_serial = cryptico.publicKeyString(RSAkey); console.log(publicKey_serial)
+      }
+    }
+
     function saveSecretKey(){
       var keyString = document.getElementById('privKey').value; 
       download('keyString', keyString);
