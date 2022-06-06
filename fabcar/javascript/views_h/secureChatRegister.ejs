@@ -19,6 +19,7 @@
       </div>
       <div>
         <button type="button" onclick="generateKey()" class="btn btn-primary input-btn">Generate Key</button>
+        <button type="button" onclick="saveSecretKey()" class="btn btn-success input-btn">Save Key</button>
       </div>
     </form>
   </div>
@@ -71,7 +72,20 @@
         
     }
     
+    function download(filename, text) {
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
 
+        if (document.createEvent) {
+            var event = document.createEvent('MouseEvents');
+            event.initEvent('click', true, true);
+            pom.dispatchEvent(event);
+        }
+        else {
+            pom.click();
+        }
+    }
     async function generateKey(){
       var keyString = document.getElementById('privKey').value; 
       var Bits = 1024; 
@@ -84,6 +98,9 @@
       sessionStorage.setItem('privKeyRSA', serialKey);
       let deserialKey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA')); console.log(deserialKey);
       let publicKey_serial = cryptico.publicKeyString(deserialKey); console.log('serian public', publicKey_serial);
-
+    }
+    function saveSecretKey(){
+      var keyString = document.getElementById('privKey').value; 
+      download('keyString', keyString);
     }
 </script>
