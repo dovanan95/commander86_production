@@ -318,6 +318,7 @@
 
 </html>
 <script type="text/javascript" src="./js/cryptico.js"></script>
+<script type="text/javascript" src="./js/helper.js"></script>
 <script>
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
@@ -335,11 +336,12 @@
         var myID = parseInt(JSON.parse(myID_json)['id']);
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
-      if(sessionStorage.getItem('privKey'))
+      if(sessionStorage.getItem('privKeyRSA'))
       {
-        var privKey = sessionStorage.getItem('privKey');console.log(privKey);
+        var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
+        let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
       }
-      else if(!sessionStorage.getItem('privKey'))
+      else if(!sessionStorage.getItem('privKeyRSA'))
       {
         const options = {
             method: 'GET',

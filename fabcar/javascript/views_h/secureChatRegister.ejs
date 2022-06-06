@@ -18,7 +18,7 @@
         <textarea class="form-control" rows="5" placeholder="Input Key String" id="privKey"></textarea>
       </div>
       <div>
-        <button type="submit" onclick="generateKey()" class="btn btn-primary input-btn">Generate Key</button>
+        <button type="button" onclick="generateKey()" class="btn btn-primary input-btn">Generate Key</button>
       </div>
     </form>
   </div>
@@ -26,6 +26,9 @@
 </body>
 </html>
 <script type="text/javascript" src="./js/cryptico.js"></script>
+<script type="text/javascript" src="./js/rsa.js"></script>
+<script type="text/javascript" src="./js/jsbn.js"></script>
+<script type="text/javascript" src="./js/helper.js"></script>
 <script>
     var myID_json = sessionStorage.getItem('login_data');
     
@@ -67,8 +70,20 @@
         }
         
     }
+    
 
     async function generateKey(){
+      var keyString = document.getElementById('privKey').value; 
+      var Bits = 1024; 
+ 
+      var MessRSAkey = cryptico.generateRSAKey(keyString, Bits); console.log(MessRSAkey);
+
+      var MessRSAkeyPublic = cryptico.publicKeyString(MessRSAkey); console.log(MessRSAkeyPublic)
+
+      let serialKey = serializeRSAKey(MessRSAkey); 
+      sessionStorage.setItem('privKeyRSA', serialKey);
+      let deserialKey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA')); console.log(deserialKey);
+      let publicKey_serial = cryptico.publicKeyString(deserialKey); console.log('serian public', publicKey_serial);
 
     }
 </script>
