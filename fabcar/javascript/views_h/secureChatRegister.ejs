@@ -14,5 +14,44 @@
 </body>
 </html>
 <script>
-
+    var myID_json = sessionStorage.getItem('login_data');
+    
+    if(myID_json==null){
+        if(window.confirm('ban khong co quyen truy cap!!!')){
+            window.location.href='/';
+        }
+        else
+        {
+            window.location.href='/';
+        }
+    }
+    else
+    {
+      var myID = JSON.parse(myID_json)['id'];
+        var accessToken = JSON.parse(myID_json).accessToken;
+        var refreshToken = JSON.parse(myID_json).refreshToken;
+    }
+    
+    
+    window.onload = async function(){
+        const options = {
+            method: 'GET',
+            headers: {
+                'authorization': 'token '+ accessToken
+            }
+        };
+        var res= await fetch('/authenOnLoad', options);
+        var res_json = await res.json();
+        if(!res || res.status!=200)
+        {
+            if(window.confirm('ban khong co quyen truy cap!!!')){
+                window.location.href='/';
+            }
+            else
+            {
+                window.location.href='/';
+            }
+        }
+        
+    }
 </script>
