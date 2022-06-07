@@ -1306,7 +1306,16 @@ app.post('/registerSecureChat', authenticateAccessToken, async function(req, res
         var publicKeyRSA = req.body.publicKeyRSA;
         var dbo = mongoUtil.getDb();
         var newPublicKey = {'publicKeyRSA': publicKeyRSA};
-        await dbo.collection('user').updateOne({'userID': userID},{$push:{'secureKey': newPublicKey}});
+        var unregList = await app_helper.checkE2ERegister(userID, 000);
+        if(unregList.length==1)
+        {
+            await dbo.collection('user').updateOne({'userID': userID},{$push:{'secureKey': newPublicKey}});
+        }
+        else
+        {
+            //xoa tin nhan cu va tao key moi
+        }
+
         res.send({'data': 'ok'});
     }
     catch(error)
