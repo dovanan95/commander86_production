@@ -1284,6 +1284,38 @@ app.get('/registerE2EService', function(req, res){
     res.render('./views_h/secureChatRegister');
 })
 
+app.get('/verifyPrivKeyRSA', authenticateAccessToken, async function(req,res){
+    try
+    {
+        var userID = req.user.id;
+        var publicKeyRSA = req.body.publicKeyRSA;
+        var result = await app_helper.verifyPrivKeyRSA(userID, publicKeyRSA);
+        res.send(result);
+    }
+    catch(error)
+    {
+        console.log({'data': 'ng'});
+    }
+
+})
+
+app.post('/registerSecureChat', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id;
+        var publicKeyRSA = req.body.publicKeyRSA;
+        var dbo = mongoUtil.getDb();
+        var newPublicKey = {'publicKeyRSA': publicKeyRSA};
+        await dbo.collection('user').updateOne({'userID': userID},{$push:{'secureKey': newPublicKey}});
+        res.send({'data': 'ok'});
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data':'ng', 'status':error});
+    }
+
+})
 
 mongoUtil.connectToServer( function( err, client ) {
     if (err) console.log(err);

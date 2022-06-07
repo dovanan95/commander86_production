@@ -123,6 +123,27 @@ async function checkE2ERegister(sender, receiver)
 
 }
 
+async function verifyPrivKeyRSA(userID, publicKey){
+    var dbo = mongoUtil.getDb();
+    var myObj = await dbo.collection('user').findOne({'userID': userID});
+    if(myObj && myObj.hasOwnProperty('secureKey'))
+    {
+        let rsaPublicKey = myObj.secureKey.publicKeyRSA;
+        if(publicKey==rsaPublicKey)
+        {
+            return({'data':'ok'});
+        }
+        else if(publicKey!=rsaPublicKey)
+        {
+            return({'data':'ng'});
+        }
+    }
+    else
+    {
+        return({'data':'ng'});
+    }
+}
+
 async function systemMessage(message, receiver)
 {
     try
@@ -183,4 +204,5 @@ async function systemMessage(message, receiver)
 
 }
 
-module.exports = {loadUserInformation, timestamptoDateConverter, storage, checkE2ERegister, systemMessage}
+module.exports = {loadUserInformation, timestamptoDateConverter, 
+    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA}
