@@ -1250,7 +1250,7 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
             {
                 if(unregisterSecureList[i].userID==sender)
                 {
-                    res.send({'data':'ng', 'status':'registerRequire'});
+                    //res.send({'data':'ng', 'status':'registerRequire'});
                 }
                 else if(unregisterSecureList[i].userID==receiver && unregisterSecureList[i].userID!=000)
                 {
@@ -1268,9 +1268,10 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
                     }
                     await savePrivateMessage(registerRequireObj);
                     socketIo.to(users[parseInt(receiver)]).emit('incoming_mess', registerRequireObj);
-                    res.send({'data':'ng', 'status':'waitingRequire'});
+                    //res.send({'data':'ng', 'status':'waitingRequire'});
                 }
             }
+            res.send({'data':'ng', 'status':'registerRequire', 'unregList': unregisterSecureList});
         }
     }
     catch(error)

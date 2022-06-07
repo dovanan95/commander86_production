@@ -339,7 +339,7 @@
       if(sessionStorage.getItem('privKeyRSA'))
       {
         var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
-        let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+        let privKeyRSA = deserializeRSAKey(privKey);
       }
       else if(!sessionStorage.getItem('privKeyRSA'))
       {

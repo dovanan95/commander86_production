@@ -282,13 +282,6 @@
         var myID = parseInt(JSON.parse(myID_json)['id']);
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
-      if(sessionStorage.getItem('privKeyRSA'))
-      {
-        var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
-        let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
-      }
-      else if(!sessionStorage.getItem('privKeyRSA'))
-      {
         const options = {
             method: 'GET',
             headers: {
@@ -296,18 +289,49 @@
             }
         }
         var res = await fetch('/checkE2ERegisterAPI?senderID='+myID+'&receiverID='+response_json.userID, options);
-        var json_res = await res.json();console.log(json_res)
-        if(json_res.data == 'ng')
+        var json_res = await res.json();console.log(json_res);
+        if(sessionStorage.getItem('privKeyRSA'))
         {
-            window.open('/registerE2EService');
+            if(json_res.data=='ok')
+            {
+                var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
+                let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+            }
+            else if(json_res.data=='ng')
+            {
+                alert('Yeu cau doi tac dang ky tin nhan ma hoa!');
+            }
+
         }
-        else if( json_res.data =='ok')
+        else if(!sessionStorage.getItem('privKeyRSA'))
         {
-            modal.style.display="none";
-            var privKeyModal = document.getElementById("privKeyModal");
-            privKeyModal.style.display = "block";
+
+            if(json_res.data == 'ng')
+            {   
+                if(json_res.unregList.length==1)
+                {
+                    if(json_res.unregList[0].userID==myID)
+                    {
+                        window.open('/registerE2EService');
+                    }
+                    else if(json_res.unregList[0].userID!=myID)
+                    {
+                        alert('Yeu cau doi tac dang ky tin nhan ma hoa!');
+                    }
+                }
+                else if(json_res.unregList.length==2)
+                {
+                    window.open('/registerE2EService');
+                }
+
+            }
+            else if( json_res.data =='ok')
+            {
+                modal.style.display="none";
+                var privKeyModal = document.getElementById("privKeyModal");
+                privKeyModal.style.display = "block";
+            }
         }
-      }
 
     }
     var modal = document.getElementById("myModal");
