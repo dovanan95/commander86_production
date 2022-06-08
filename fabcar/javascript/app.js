@@ -264,6 +264,7 @@ async function savePrivateMessage(data)
     
 }
 var users = {};
+var users_call={};
 var online_account = [];
 var sockets = [];
 
@@ -410,6 +411,41 @@ socketIo.use((socket, next)=>{
         {
             console.log(error);
         }
+    })
+    socket.on('call_connect', function(data){
+        users_call[data.userID]=socket.id;
+    })
+    socket.on('call', (data) => {
+        let callee = data.calleeID; 
+        let rtcMessage = data.rtcMessage;
+        console.log('user_call', users_call);
+        socket.to(users[callee]).emit("newCall", {
+            caller: data.caller,
+            rtcMessage: rtcMessage,
+            callerID: data.callerID
+        })
+
+    })
+
+    socket.on('answerCall', (data) => {
+        let callerID = data.callerID;
+        rtcMessage = data.rtcMessage;
+        console.log('answerCall', users_call, users_call[callerID]);
+
+        socket.to(users_call[callerID]).emit("callAnswered", {
+            rtcMessage: rtcMessage
+        })
+
+    })
+
+    socket.on('ICEcandidate', (data) => {
+        let otherUser = data.user;
+        let rtcMessage = data.rtcMessage;
+
+        socket.to(users_call[otherUser]).emit("ICEcandidate", {
+            sender: data.sender,
+            rtcMessage: rtcMessage
+        })
     })
   
     socket.on("disconnect", () => {
@@ -1325,6 +1361,17 @@ app.post('/registerSecureChat', authenticateAccessToken, async function(req, res
     }
 
 })
+
+
+//--------------Call--------------------//
+app.get('/call', function(req, res){
+    if(req.query.docType=='private_message')
+    {
+        res.render('./views_h/call',{'partnerID': req.query.partnerID, 'call':req.query.call});
+    }
+
+})
+//--------------End Call----------------//
 
 mongoUtil.connectToServer( function( err, client ) {
     if (err) console.log(err);

@@ -1,5 +1,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
+<link rel="stylesheet" href="./css/call.css">
 <style>
     * {
         box-sizing: border-box;
@@ -426,7 +427,28 @@
     .show {
         display: block;
     }
-
+    .modal_incoming_call {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1000;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
     /* The Modal (background) */
     .modal {
         display: none;
@@ -579,7 +601,7 @@
                         <div class="name-chat"></div>
                     </div>
                     <div class="loader"></div>
-                    <button><i class="fa-solid fa-phone bxs-phone-call"></i></button>
+                    <button onclick="call()"><i class="fa-solid fa-phone bxs-phone-call"></i></button>
                 </div>
                 <div id="chat-content">
                     <!-- contentchat -->
@@ -616,10 +638,31 @@
             </div>
           
           </div>
+
+            <!-- to show incommming call and accept -->
+            <div id="answer" class="modal_incoming_call"  >
+                <div class="incomingWrapper">
+                    <div class="itemWrapper">
+                        <h2>Incomming Call</h2>
+                    </div>
+                    <div class="itemWrapper">
+                        <img id="profileImageA" style="padding: 30px; width: 140px; height: 140px;"
+                            src="./img/profile.png" alt="">
+                    </div>
+                    <div class="itemWrapper">
+                        <h2 style="line-height: 0px;"><span id="callerName"></span></h2>
+                    </div>
+                    <div class="itemWrapper" style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 50px;">
+                        <button class="actionButton" onclick="answer()">Answer</button>
+                    </div>
+                </div>
+            </div>
+
     </body>
 </html>
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
 <script type="text/javascript" src="./socket.io.min.js"></script>
+<!--script type="text/javascript" src="./js/call.js"></script-->
 <script>
     /*
     var storeData = '';
@@ -647,6 +690,21 @@
     socket.emit('connected', {'userID':myID});
     socket.emit('joinRoom',{'roomID':'test'})
     socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
+
+    var incom_call_data;
+    socket.on('newCall', data=>{
+        //when other called you
+        console.log(data);
+        //show answer button
+        incom_call_data=data;
+        var otherUser = data.caller;
+        var remoteRTCMessage = data.rtcMessage;
+        sessionStorage.setItem('callerID', data.callerID);
+        document.getElementById("callerName").innerHTML = otherUser;
+        //document.getElementById("call").style.display = "none";
+        document.getElementById("answer").style.display = "block";
+    })
+    socket.on('callAnswered', (data)=> console.log('rtc', data));
 
     socket.on('kickoutGroup', function(data)
     {
@@ -690,7 +748,7 @@
         sessionStorage.setItem('online_partner', JSON.stringify({'live':data}));
     });
     socket.on('online_status', function(data){
-        console.log(data);
+        console.log(data); //yeu cau --> cap nhat danh sach online trong storage
         //console.log(document.getElementsByClassName('tablinks').length);
         var tablinks = document.getElementsByClassName('tablinks');
         for(var i=0;i<tablinks.length;i++)
@@ -1063,6 +1121,8 @@
         }
 
     }
+
+    
     //----------Modal---------------------
     var modal = document.getElementById("infoModal");
     async function viewDetailBlock(obj)
@@ -1651,5 +1711,51 @@
     function newGroup(){
         window.open("/newGroup");
     }
+    //------------------Call------------------//
+    function call()
+    {
+        if(sessionStorage.getItem('current_partner_id'))
+        {
+            var partnerID = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ partnerID);
+            var docType = partner_element.getAttribute('docType');
+            if(docType=='private_message'){
+                var online_list = JSON.parse(sessionStorage.getItem('online_partner'));
+                let flag_online=0;
+                for(let i=0;i<online_list.live.length;i++)
+                {
+                    if(online_list.live[i].userID==partnerID)
+                    {
+                        flag_online=1;
+                    }
+                }
+                if(flag_online==1)
+                {
+                    window.open('/call?partnerID='+partnerID+'&docType='+docType+'&call=caller');
+                }
+                else if(flag_online==0)
+                {
+                    alert('nguoi nhan cuoc goi dang ngoai tuyen');
+                }
+                
+            }
+        }
+        else if(!sessionStorage.getItem('current_partner_id'))
+        {
+            alert('chon nguoi goi');
+        }
+
+    }
+
+    function answer()
+    {
+        document.getElementById("answer").style.display = "none";
+        var callerID = sessionStorage.getItem('callerID');
+        console.log(incom_call_data);
+        var answerWindow= window.open('/call?partnerID='+callerID+'&docType=private_message&call=callee');
+        answerWindow.incom_call_data = incom_call_data;
+    }
+
+    //----------------End Call--------------------------//
 
 </script>
