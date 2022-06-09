@@ -728,7 +728,7 @@
         var docType = data.docType;
         var groupID = data.groupID;
         var groupName = data.groupName;
-        var tabGroup = private_message_left_tab(docType, groupID, groupName);
+        var tabGroup = group_message_left_tab(docType, groupID, groupName);
         left_tab.insertAdjacentHTML("afterbegin", tabGroup);
         socket.emit('joinRoom',{'roomID':groupID});
         Array.from(document.getElementsByClassName('tablinks')).forEach(tab => {
@@ -823,7 +823,7 @@
                     }
                     else
                     {
-                        var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
+                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
                         left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
                 }
@@ -882,7 +882,7 @@
                 }
                 if(flag==0)
                 {
-                    var tab_partner_el = private_message_left_tab(data.docType, data.groupID, data.groupName)
+                    var tab_partner_el = group_message_left_tab(data.docType, data.groupID, data.groupName)
                     left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                 }
                 else if(flag==1)
@@ -970,7 +970,7 @@
         }
         return mess_block
     }
-    function private_message_left_tab(docType, id, name)
+    function group_message_left_tab(docType, id, name)
     {
         var left_private_block =
         `
@@ -987,6 +987,36 @@
                 <div class="expand-func-icon_left" onclick=leftTabOption(this)>
                     <i class="fa-solid fa-list-check"></i>   
                 </div>
+            </div>
+            <hr class="solid">
+        `
+        return left_private_block
+    }
+
+    function private_message_left_user(docType, id, name)
+    {
+        var left_private_block =
+        `
+        <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
+                onclick=choosePartner_2(this) id_sender="${id}">
+                <div class="acc-avatar"></div>
+                <div class="acc-status">
+                    <div class="acc">${name}</div>
+                    <div class="status-info">
+                        <div class="dots-offline"></div>
+                        <div class="status-online">${network_status}</div>
+                    </div>
+                </div>
+                <div class="block_func_btn">
+                    <div class="expand-func-icon_left" onclick=leftTabOption(this)>
+                    <i class="fa-solid fa-list-check"></i>   
+                    </div>
+                    <div class="dropdown-button" style="display:none;">
+                        <button onclick="console.log(this)" > SECURED CHAT</button>
+                        <button onclick="console.log(this)" > CHAT SETTINGS</button>
+                    </div>
+                </div>
+                
             </div>
             <hr class="solid">
         `
@@ -1025,8 +1055,35 @@
         {
             window.open('/groupOptions?id='+id);
         }
+        else if(docType=='private_message')
+        {
+            var optionButtons = leftTab.querySelector('.dropdown-button');
+            if(optionButtons.style.display=='none')
+            {
+                optionButtons.style.display='block';
+            }
+            else
+            {
+                optionButtons.style.display='none';
+            }
+            
+        }
         
     }
+
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon_left'))
+        {
+            var dropdowns = document.getElementsByClassName("dropdown-button");
+            for(let i =0;i<dropdowns.length;i++)
+            {
+                if(dropdowns[i].style.display=='block')
+                {
+                    dropdowns[i].style.display='none';
+                }
+            }
+        }
+    })
 
     async function markImportantMess(obj)
     {
@@ -1236,11 +1293,11 @@
             console.log(response_init[i]);
             if(response_init[i].docType=='private_message')
             {
-                tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username);
+                tab_partner_el =  private_message_left_user(response_init[i].docType, response_init[i].userID, response_init[i].username);
             }
             else if(response_init[i].docType=='group_message')
             {
-                tab_partner_el = private_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
+                tab_partner_el = group_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
                 room_chat.push(response_init[i].groupID);
             }
             
@@ -1692,6 +1749,7 @@
             }
         }
     })
+
     $(document).on('click', '.tablinks', function () {
         $('#hist_tab').find('.tablinks').removeClass('active-users')
         $(this).each(function () {
