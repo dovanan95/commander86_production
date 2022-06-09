@@ -1,6 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
-<link rel="stylesheet" href="./css/call.css">
 <style>
     * {
         box-sizing: border-box;
@@ -424,28 +423,6 @@
     .show {
         display: block;
     }
-    .modal_incoming_call {
-        display: none;
-        /* Hidden by default */
-        position: fixed;
-        /* Stay in place */
-        z-index: 1000;
-        /* Sit on top */
-        padding-top: 100px;
-        /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%;
-        /* Full width */
-        height: 100%;
-        /* Full height */
-        overflow: auto;
-        /* Enable scroll if needed */
-        background-color: rgb(0, 0, 0);
-        /* Fallback color */
-        background-color: rgba(0, 0, 0, 0.4);
-        /* Black w/ opacity */
-    }
     /* The Modal (background) */
     .modal {
         display: none;
@@ -623,29 +600,10 @@
           
           </div>
 
-            <!-- to show incommming call and accept -->
-            <div id="answer" class="modal_incoming_call"  >
-                <div class="incomingWrapper">
-                    <div class="itemWrapper">
-                        <h2>Incomming Call</h2>
-                    </div>
-                    <div class="itemWrapper">
-                        <img id="profileImageA" style="padding: 30px; width: 140px; height: 140px;"
-                            src="./img/profile.png" alt="">
-                    </div>
-                    <div class="itemWrapper">
-                        <h2 style="line-height: 0px;"><span id="callerName"></span></h2>
-                    </div>
-                    <div class="itemWrapper" style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 50px;">
-                        <button class="actionButton" onclick="answer()">Answer</button>
-                    </div>
-                </div>
-            </div>
+
 
     </body>
 </html>
-<script type="text/javascript" src="./jquery-3.6.0.js"></script>
-<script type="text/javascript" src="./socket.io.min.js"></script>
 <!--script type="text/javascript" src="./js/call.js"></script-->
 <script>
     /*
@@ -669,25 +627,10 @@
         var refreshToken = JSON.parse(myID_json).refreshToken;
 
     const END_POINT = 'https://127.0.0.1:8082';
-    var socket=io({auth:{'token': accessToken}});
-
-    socket.emit('connected', {'userID':myID});
+    
     socket.emit('joinRoom',{'roomID':'test'})
     socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
 
-    var incom_call_data;
-    socket.on('newCall', data=>{
-        //when other called you
-        console.log(data);
-        //show answer button
-        incom_call_data=data;
-        var otherUser = data.caller;
-        var remoteRTCMessage = data.rtcMessage;
-        sessionStorage.setItem('callerID', data.callerID);
-        document.getElementById("callerName").innerHTML = otherUser;
-        //document.getElementById("call").style.display = "none";
-        document.getElementById("answer").style.display = "block";
-    })
     socket.on('callAnswered', (data)=> console.log('rtc', data));
 
     socket.on('kickoutGroup', function(data)
@@ -1787,15 +1730,6 @@
             alert('chon nguoi goi');
         }
 
-    }
-
-    function answer()
-    {
-        document.getElementById("answer").style.display = "none";
-        var callerID = sessionStorage.getItem('callerID');
-        console.log(incom_call_data);
-        var answerWindow= window.open('/call?partnerID='+callerID+'&docType=private_message&call=callee');
-        answerWindow.incom_call_data = incom_call_data;
     }
 
     //----------------End Call--------------------------//
