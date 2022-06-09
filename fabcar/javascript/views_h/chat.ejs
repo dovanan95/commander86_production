@@ -52,7 +52,7 @@
         margin: 0;
         border: 0px rgb(121, 199, 197);
         position: relative;
-        z-index: 999;
+        z-index: 9;
         margin-bottom: 10px;
     }
 
@@ -284,6 +284,23 @@
         font-size: 15px;
     }
 
+    .tablinks .block_func_btn .dropdown-button {
+        /*min-width: 110px;
+        min-height: 60px;*/
+        width: 15%;;
+        position: fixed;
+        /*left: 20%;
+        top: 25px;*/
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 3px 3px 3px 3px;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        z-index: 1000;
+    }
+
     .incoming .block_func_btn .dropdown-button {
         min-width: 110px;
         min-height: 60px;
@@ -341,26 +358,6 @@
         gap: 5px;
         z-index: 99;
     }
-
-
-    /* .input_form{
-    position: absolute;
-    position: sticky;
-    bottom: 50;
-    top: 430px;
-} */
-
-    /* .input_mess{
-    float: right;
-    width: 50%;
-    height: 50px;
-    margin-top: auto;
-} */
-    /* .send_button{
-    margin-top: auto;
-    float: right;
-    height: 50px;
-} */
 
     .darker {
         border-color: #ccc;
@@ -577,23 +574,10 @@
                 <div id='hist_tab'>
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
-                <!-- <div class="dropdown-group-btn">
-                    <div class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">
-                        <div>OPTIONS</div>
-                    </div>
-                    <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
-                        <a onclick="newGroup()">ADD GROUP</a>
-                        <a href="#addChannel">ADD CHANNEL</a>
-                    </div>
-                </div> -->
             </div>
 
             <div class="chat-box">
                 <div class="top-bar">
-                    <!-- <div id="message_bubble">
-                        <h3>Message</h3>
-                        p>Chat Content</p
-                    </div> -->
                     <div class="user-info">
                         <div class="avatar">
                             <p>H</p>
@@ -1009,9 +993,9 @@
                 </div>
                 <div class="block_func_btn">
                     <div class="expand-func-icon_left" onclick=leftTabOption(this)>
-                    <i class="fa-solid fa-list-check"></i>   
+                        <i class="fa-solid fa-list-check"></i>   
                     </div>
-                    <div class="dropdown-button" style="display:none;">
+                    <div class="dropdown-button">
                         <button onclick="console.log(this)" > SECURED CHAT</button>
                         <button onclick="console.log(this)" > CHAT SETTINGS</button>
                     </div>
