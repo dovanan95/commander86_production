@@ -326,7 +326,7 @@
         </div>
         <br />
         <div>
-            <button onclick="console.log(this)" id="button_send_privKey_header" style="  background-color: #04AA6D;
+            <button onclick="checkAndSaveKey()" id="button_send_privKey_header" style="  background-color: #04AA6D;
                 color: white;
                 padding: 12px 20px;
                 border: none;
@@ -421,6 +421,8 @@
       {
         var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
         let privKeyRSA = deserializeRSAKey(privKey);
+
+        window.location.href='/secureChat';
       }
       else if(!sessionStorage.getItem('privKeyRSA'))
       {
@@ -441,9 +443,40 @@
           var privKeyModal = document.getElementById("privKeyModal");
           privKeyModal.style.display = "block";
         }
-
-
       }
+    }
 
+    async function checkAndSaveKey()
+    {
+      var privKeyString = document.getElementById('PrivKeycontent').value; console.log(privKeyString);
+      var Bits = 1024; 
+ 
+      var MessRSAkey = cryptico.generateRSAKey(privKeyString, Bits); console.log(MessRSAkey);
+
+      var MessRSAkeyPublic = cryptico.publicKeyString(MessRSAkey); console.log(MessRSAkeyPublic)
+
+      let serialKey = serializeRSAKey(MessRSAkey); 
+     
+      const options ={
+              method:'POST',
+              body: JSON.stringify({'publicKeyRSA': MessRSAkeyPublic}),
+                      headers:{
+                          'Content-Type': 'application/json',
+                          'authorization': 'token '+ accessToken,
+                      }
+            }
+      var res = await fetch('/verifyPrivKeyRSA', options);
+      var json_res = await res.json();
+      if(json_res.data=='ok')
+      {
+        console.log('ok');
+        sessionStorage.setItem('privKeyRSA', serialKey);
+        privKeyModal.style.display = "none";
+        window.location.href='/secureChat';
+      }
+      else if(json_res.data=='ng')
+      {
+        alert('wrong private Key');
+      }
     }
 </script>

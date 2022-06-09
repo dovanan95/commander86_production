@@ -1320,7 +1320,7 @@ app.get('/registerE2EService', function(req, res){
     res.render('./views_h/secureChatRegister');
 })
 
-app.get('/verifyPrivKeyRSA', authenticateAccessToken, async function(req,res){
+app.post('/verifyPrivKeyRSA', authenticateAccessToken, async function(req,res){
     try
     {
         var userID = req.user.id;
@@ -1338,18 +1338,19 @@ app.get('/verifyPrivKeyRSA', authenticateAccessToken, async function(req,res){
 app.post('/registerSecureChat', authenticateAccessToken, async function(req, res){
     try
     {
-        var userID = req.user.id;
+        var userID = req.user.id; console.log(userID);
         var publicKeyRSA = req.body.publicKeyRSA;
         var dbo = mongoUtil.getDb();
         var newPublicKey = {'publicKeyRSA': publicKeyRSA};
         var unregList = await app_helper.checkE2ERegister(userID, 000);
         if(unregList.length==1)
         {
-            await dbo.collection('user').updateOne({'userID': userID},{$push:{'secureKey': newPublicKey}});
+            await dbo.collection('user').updateOne({'userID': userID},{$set:{'secureKey': newPublicKey}});
         }
         else
         {
             //xoa tin nhan cu va tao key moi
+            await dbo.collection('user').updateOne({'userID': userID},{$set:{'secureKey.publicKeyRSA': publicKeyRSA}});
         }
 
         res.send({'data': 'ok'});
@@ -1361,7 +1362,9 @@ app.post('/registerSecureChat', authenticateAccessToken, async function(req, res
     }
 
 })
-
+app.get('/secureChat', function(req, res){
+    res.render('./views_h/secureChat');
+})
 
 //--------------Call--------------------//
 app.get('/call', function(req, res){

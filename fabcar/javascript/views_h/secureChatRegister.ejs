@@ -89,16 +89,22 @@
     }
     async function generateKey(){
       var keyString = document.getElementById('privKey').value; 
-      var Bits = 1024; 
+      if(keyString!='')
+      {
+          var Bits = 1024; 
  
-      var MessRSAkey = cryptico.generateRSAKey(keyString, Bits); console.log(MessRSAkey);
+          var MessRSAkey = cryptico.generateRSAKey(keyString, Bits); console.log(MessRSAkey);
 
-      var MessRSAkeyPublic = cryptico.publicKeyString(MessRSAkey); console.log(MessRSAkeyPublic)
+          var MessRSAkeyPublic = cryptico.publicKeyString(MessRSAkey); console.log(MessRSAkeyPublic)
 
-      let serialKey = serializeRSAKey(MessRSAkey); 
-      sessionStorage.setItem('privKeyRSA', serialKey);
-      alert('generate Key successfully!');
-      
+          let serialKey = serializeRSAKey(MessRSAkey); 
+          sessionStorage.setItem('privKeyRSA', serialKey);
+          alert('generate Key successfully!');
+      }
+      else
+      {
+        alert('Hay nhap tu khoa bao mat cua ban!');
+      }
     }
     async function registerKey(){
       const options = {
@@ -107,6 +113,7 @@
                 'authorization': 'token '+ accessToken,
             }
         }
+
         var res = await fetch('/checkE2ERegisterAPI?senderID='+myID+'&receiverID='+000, options);
         var json_res = await res.json();console.log(json_res)
       var keyString = document.getElementById('privKey').value; 
@@ -115,7 +122,25 @@
         if(window.confirm('ban da dang ky tin nhan ma hoa dau cuoi.Neu dang ky lai ban se mat toan bo tin nhan ma hoa')){
           if(sessionStorage.getItem('privKeyRSA')){
             let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
-            let publicKey_serial = cryptico.publicKeyString(RSAkey); console.log(publicKey_serial)
+            let publicKey_serial = cryptico.publicKeyString(RSAkey); console.log(publicKey_serial);
+            const options_reg ={
+              method:'POST',
+              body: JSON.stringify({'publicKeyRSA': publicKey_serial}),
+                      headers:{
+                          'Content-Type': 'application/json',
+                          'authorization': 'token '+ accessToken,
+                      }
+            }
+            var resReg = await fetch('/registerSecureChat', options_reg);
+            var json_resReg=await resReg.json(); console.log(json_resReg)
+            if(json_resReg.data=='ok')
+            {
+              alert('dang ky thanh cong');
+            }
+            else if(json_resReg.data=='ng')
+            {
+              alert('dang ky khong thanh cong. vui long thu lai!');
+            }
           }
         }
         else
@@ -127,7 +152,25 @@
       {
         if(sessionStorage.getItem('privKeyRSA')){
             let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
-            let publicKey_serial = cryptico.publicKeyString(RSAkey); console.log(publicKey_serial)
+            let publicKey_serial = cryptico.publicKeyString(RSAkey); console.log(publicKey_serial);
+            const options_reg ={
+              method:'POST',
+              body: JSON.stringify({'publicKeyRSA': publicKey_serial}),
+                      headers:{
+                          'Content-Type': 'application/json',
+                          'authorization': 'token '+ accessToken,
+                      }
+            }
+            var resReg = await fetch('/registerSecureChat', options_reg);
+            var json_resReg=await resReg.json(); console.log(json_resReg)
+            if(json_resReg.data=='ok')
+            {
+              alert('dang ky thanh cong');
+            }
+            else if(json_resReg.data=='ng')
+            {
+              alert('dang ky khong thanh cong. vui long thu lai!');
+            }
           }
       }
     }

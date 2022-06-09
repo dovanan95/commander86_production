@@ -233,8 +233,6 @@
     var myID = JSON.parse(myID_json)['id'];
     var my_name = JSON.parse(myID_json)['my_username'];
 
-    var socket = io();
-
     var response_json = JSON.parse(response_init);
     //var response_json = response_init;
     function loadUI() {
@@ -263,7 +261,7 @@
     }
     function sendMess() {
         console.log(content.value);
-        socket.emit('connected', myID);
+        //socket.emit('connected', myID);
         var current_partner = response_json.userID;
         var messID = 'MessPriv.' + myID + '.' + current_partner + '.' + Date.now().toString();
         if (content.value != '' && myID != current_partner) {
