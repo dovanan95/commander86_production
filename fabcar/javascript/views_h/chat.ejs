@@ -293,7 +293,7 @@
         padding: 8px 11px;
         background-color: #C7C9CC;
         border-radius: 3px 3px 3px 3px;
-        display: none;
+        /*display: none;*/
         flex-direction: column;
         justify-content: center;
         gap: 10px;
@@ -696,6 +696,30 @@
                 tablinks[i].querySelector('.dots-offline').style.backgroundColor='red';
             }
         }
+        var online_list= JSON.parse(sessionStorage.getItem('online_partner'))['live']; console.log(online_list);
+        
+        if(data.isOnline==true)
+        {
+            let flag_online=0;
+            for(let j=0;j<online_list.length;j++){
+                if(data.userID==online_list[j].userID){
+                    flag_online=1;
+                }
+            }
+            if(flag_online==0){
+                online_list.push({'userID':data.userID, 'socketID': data.socketID});
+            }
+        }
+        else if(data.isOnline==false)
+        {
+            let flag_online=0;
+            for(let k=0;k<online_list.length;k++){
+                if(data.userID==online_list[k].userID){
+                    online_list.splice(k,1);
+                }
+            }
+        }
+        sessionStorage.setItem('online_partner', JSON.stringify({'live':online_list}));
     })
 
     socket.on('incoming_mess', function(data){
@@ -925,20 +949,20 @@
         var left_private_block =
         `
         <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
-                onclick=choosePartner_2(this) id_sender="${id}">
+                    onclick=choosePartner_2(this) id_sender="${id}">
                 <div class="acc-avatar"></div>
-                <div class="acc-status">
+                <div class="acc-status"  >
                     <div class="acc">${name}</div>
                     <div class="status-info">
                         <div class="dots-offline"></div>
                         <div class="status-online">${network_status}</div>
                     </div>
                 </div>
-                <div class="block_func_btn">
-                    <div class="expand-func-icon_left" onclick=leftTabOption(this)>
+                <div class="block_func_btn"  onclick=leftTabOption(this)>
+                    <div class="expand-func-icon_left">
                         <i class="fa-solid fa-list-check"></i>   
                     </div>
-                    <div class="dropdown-button">
+                    <div class="dropdown-button" style="display:none;">
                         <button onclick="console.log(this)" > SECURED CHAT</button>
                         <button onclick="console.log(this)" > CHAT SETTINGS</button>
                     </div>
@@ -984,14 +1008,14 @@
         }
         else if(docType=='private_message')
         {
-            var optionButtons = leftTab.querySelector('.dropdown-button');
+            var optionButtons = leftTab.querySelector('.dropdown-button'); console.log('optBtn', optionButtons)
             if(optionButtons.style.display=='none')
             {
                 optionButtons.style.display='block';
             }
-            else
+            else if(optionButtons.style.display=='block')
             {
-                optionButtons.style.display='none';
+                optionButtons.style.display=='none';
             }
             
         }
@@ -1696,42 +1720,6 @@
     function newGroup(){
         window.open("/newGroup");
     }
-    //------------------Call------------------//
-    function call()
-    {
-        if(sessionStorage.getItem('current_partner_id'))
-        {
-            var partnerID = sessionStorage.getItem('current_partner_id');
-            var partner_element = document.getElementById(tab_partner_prefix+ partnerID);
-            var docType = partner_element.getAttribute('docType');
-            if(docType=='private_message'){
-                var online_list = JSON.parse(sessionStorage.getItem('online_partner'));
-                let flag_online=0;
-                for(let i=0;i<online_list.live.length;i++)
-                {
-                    if(online_list.live[i].userID==partnerID)
-                    {
-                        flag_online=1;
-                    }
-                }
-                if(flag_online==1)
-                {
-                    window.open('/call?partnerID='+partnerID+'&docType='+docType+'&call=caller');
-                }
-                else if(flag_online==0)
-                {
-                    alert('nguoi nhan cuoc goi dang ngoai tuyen');
-                }
-                
-            }
-        }
-        else if(!sessionStorage.getItem('current_partner_id'))
-        {
-            alert('chon nguoi goi');
-        }
 
-    }
-
-    //----------------End Call--------------------------//
 
 </script>
