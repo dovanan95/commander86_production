@@ -306,7 +306,8 @@ socketIo.use((socket, next)=>{
         }
         
         console.log(online_account);
-        socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
+        app_helper.sendMessMultiSocket(socketIo,online_account,data.userID,'online_list', online_account);
+        //socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
         socketIo.emit('online_status', {'userID':data.userID, 'isOnline': true, 'socketID':socket.id}) // thong bao user moi online cho tat ca user khac cap nhat
     })
     socket.on('joinRoom', function(data){
@@ -352,18 +353,8 @@ socketIo.use((socket, next)=>{
     socket.on("sendMess", async function(data){
         try
         {
+
             console.log(data);
-            socketIo.to(users[data.receiver]).emit('incoming_mess',
-                {
-                    'messID': data.messID,
-                    'sender': data.sender, 
-                    'receiver': data.receiver, 
-                    'message': data.message, 
-                    'sender_name': data.sender_name,
-                    'docType': 'private_message'
-            });
-            //const contract_ = await contract();
-            
             var genDate='MessPriv.' + data.sender+'.'+data.receiver+'.' + Date.now().toString();
             var privMessObj = {
                 'messID': data.messID,
@@ -376,10 +367,10 @@ socketIo.use((socket, next)=>{
                 'isImportant': 'false',
                 'seen':[]
             }
+
+            app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver, 'incoming_mess', privMessObj);
             await savePrivateMessage(privMessObj);
-            /*await contract_.submitTransaction('savePrivateMessage', data.messID,
-                            data.sender, data.sender_name, data.receiver, data.message, parseInt(Date.now()));
-            await contract_.submitTransaction('verifyMessBlockchain', data.messID, Date.now().toString());*/
+
         }
         catch(error)
         {

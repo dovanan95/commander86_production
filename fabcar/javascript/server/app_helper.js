@@ -204,5 +204,13 @@ async function systemMessage(message, receiver)
 
 }
 
-module.exports = {loadUserInformation, timestamptoDateConverter, 
+function sendMessMultiSocket(socketIo, online_account, receiverID, socket_event, socket_object){
+    for(let i=0;i<online_account.length;i++){
+        if(online_account[i].userID==receiverID){
+            socketIo.to(online_account[i].socketID).emit(socket_event, socket_object);
+        }
+    }
+}
+
+module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket,
     storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA}
