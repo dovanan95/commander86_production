@@ -769,7 +769,7 @@
                         var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
                         left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
-                    else if(myID==data.sender){
+                    else if(myID==data.sender && current_partner==data.receiver){
                         if(data.isFile && data.isFile=='true'){
                             var message = messageFile(data.message, data.originalFilename);
                         }
