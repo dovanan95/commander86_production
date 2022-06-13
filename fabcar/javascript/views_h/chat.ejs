@@ -645,7 +645,7 @@
                 console.log(tablinks[i].nextSibling.nextSibling)
                 tablinks[i].nextSibling.nextSibling.remove();
                 tablinks[i].remove();
-                socket.emit('leaveRoom', data);
+                socket.emit('leaveRoom', data.groupID);
             }
         }
     })
