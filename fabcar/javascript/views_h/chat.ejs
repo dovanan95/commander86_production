@@ -696,30 +696,33 @@
                 tablinks[i].querySelector('.dots-offline').style.backgroundColor='red';
             }
         }
-        var online_list= JSON.parse(sessionStorage.getItem('online_partner'))['live']; console.log(online_list);
+        if(sessionStorage.getItem('online_partner')){
+            var online_list= JSON.parse(sessionStorage.getItem('online_partner'))['live']; console.log(online_list);
         
-        if(data.isOnline==true)
-        {
-            let flag_online=0;
-            for(let j=0;j<online_list.length;j++){
-                if(data.userID==online_list[j].userID){
-                    flag_online=1;
+            if(data.isOnline==true)
+            {
+                let flag_online=0;
+                for(let j=0;j<online_list.length;j++){
+                    if(data.userID==online_list[j].userID){
+                        flag_online=1;
+                    }
+                }
+                if(flag_online==0){
+                    online_list.push({'userID':data.userID, 'socketID': data.socketID});
                 }
             }
-            if(flag_online==0){
-                online_list.push({'userID':data.userID, 'socketID': data.socketID});
-            }
-        }
-        else if(data.isOnline==false)
-        {
-            let flag_online=0;
-            for(let k=0;k<online_list.length;k++){
-                if(data.userID==online_list[k].userID){
-                    online_list.splice(k,1);
+            else if(data.isOnline==false)
+            {
+                let flag_online=0;
+                for(let k=0;k<online_list.length;k++){
+                    if(data.userID==online_list[k].userID){
+                        online_list.splice(k,1);
+                    }
                 }
             }
+            sessionStorage.setItem('online_partner', JSON.stringify({'live':online_list}));
         }
-        sessionStorage.setItem('online_partner', JSON.stringify({'live':online_list}));
+
     })
 
     socket.on('incoming_mess', function(data){
@@ -736,15 +739,13 @@
                 {
                     var message = messageFile(data.message, data.originalFilename)
                     //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
-                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 }
                 else
                 {
-                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
-                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                    // messContainer.scrollTop = messContainer.scrollHeight;
+                    var message = data.message;
                 }
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
@@ -764,18 +765,21 @@
                 }
                 if(flag==0)
                 {
-                    if(data.isFile && data.isFile=='true')
-                    {
-                        var message = messageFile(data.message, data.originalFilename)
+                    if(myID!=data.sender){
+                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
+                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    }
+                    else if(myID==data.sender){
+                        if(data.isFile && data.isFile=='true'){
+                            var message = messageFile(data.message, data.originalFilename);
+                        }
+                        else{
+                            var message = data.message;
+                        }
                         var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, 'false', data.docType);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
                         reloadLeftTab(tab_partner_prefix+ data.receiver);
-                    }
-                    else
-                    {
-                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
-                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
                 }
                 else if(flag==1)
@@ -799,23 +803,20 @@
                 if(data.isFile && data.isFile=='true')
                 {
                     var message = messageFile(data.message, data.originalFilename)
-                    //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
-                    if(data.sender==myID)
-                    {
-                        var mess_block_t = myMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                    }
-                    else if(data.sender!=myID)
-                    {
-                        var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                    }
-                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 }
                 else
                 {
-                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, 'false', data.docType);
-                    message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                    // messContainer.scrollTop = messContainer.scrollHeight;
+                    var message = data.message
                 }
+                if(data.sender==myID)
+                {
+                    var mess_block_t = myMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                }
+                else if(data.sender!=myID)
+                {
+                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})

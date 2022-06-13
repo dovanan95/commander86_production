@@ -296,19 +296,19 @@ socketIo.use((socket, next)=>{
         {
             if(online_account[i]['userID']==data.userID)
             {
-                flag_online=1; //kiem tra trong danh sach user neu dang online nhung reload lai page hoac dang nhap o thiet bi khac thi cap nhat lai socketID
-                online_account[i]['socketID']=socket.id;
+                flag_online=1; //kiem tra ton tai trong danh sach user online
+                //online_account[i]['socketID']=socket.id;
             }
         }
         if(flag_online==0)
-        {
-            online_account.push({'userID':data.userID, 'socketID':socket.id}); //neu user nay chua co trong danh sach online thi them vao
+        {   
+            //socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
+            socketIo.emit('online_status', {'userID':data.userID, 'isOnline': true, 'socketID':socket.id}) // thong bao user moi online cho tat ca user khac cap nhat
         }
-        
+        online_account.push({'userID':data.userID, 'socketID':socket.id}); 
         console.log(online_account);
         app_helper.sendMessMultiSocket(socketIo,online_account,data.userID,'online_list', online_account);
-        //socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
-        socketIo.emit('online_status', {'userID':data.userID, 'isOnline': true, 'socketID':socket.id}) // thong bao user moi online cho tat ca user khac cap nhat
+        
     })
     socket.on('joinRoom', function(data){
         socket.join(data.roomID);
@@ -369,6 +369,7 @@ socketIo.use((socket, next)=>{
             }
 
             app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver, 'incoming_mess', privMessObj);
+            app_helper.sendMessMultiSocket(socketIo, online_account,data.sender, 'incoming_mess', privMessObj);
             await savePrivateMessage(privMessObj);
 
         }
@@ -441,13 +442,29 @@ socketIo.use((socket, next)=>{
   
     socket.on("disconnect", () => {
       console.log("Client disconnected:" + socket.id);
-      for(let i=0;i<online_account.length;i++)
+      let flag_online=0;
+      let live_user;
+      /*for(let i=0;i<online_account.length;i++)
       {
           if(online_account[i]['socketID']==socket.id)
           {
             socketIo.emit('online_status', {'userID':online_account[i]['userID'], 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
             online_account.splice(i,1); //xoa thong tin user offfline khoi danh sach online
           }
+      }*/
+      for(let i=0;i<online_account.length;i++){
+          if(online_account[i]['socketID']==socket.id){
+              live_user=online_account[i]['userID'];
+              online_account.splice(i,1);
+          }
+      }
+      for(let j=0;j<online_account.length;j++){
+          if(online_account[j]['userID']==live_user){
+              flag_online=1;
+          }
+      }
+      if(flag_online==0){
+        socketIo.emit('online_status', {'userID':live_user, 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
       }
       console.log(online_account);
     });
@@ -1182,17 +1199,8 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                     'originalFilename': req.file.originalname
                 }
                 await savePrivateMessage(privMessObj);
-             
-                    socketIo.to(users[parseInt(sender)]).to(users[parseInt(receiver)]).emit('incoming_mess', {
-                        'messID': 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString(),
-                        'sender': sender, 
-                        'receiver': receiver, 
-                        'message': fileName, 
-                        'sender_name': decodeURIComponent(sender_name),
-                        'docType': 'private_message',
-                        'isFile': 'true',
-                        'originalFilename': req.file.originalname
-                });
+                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(sender),'incoming_mess', privMessObj);
+                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(receiver),'incoming_mess', privMessObj);
             });
         }
         else if(docType=='group_message')
