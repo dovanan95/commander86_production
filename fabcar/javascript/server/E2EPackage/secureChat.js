@@ -117,6 +117,7 @@ async function sendSecurePrivMessIO(data, socketIo, online_account){
             'seen':[],
             'ownKey': parseInt(data.receiver),
         }
+        app_helper.sendMessMultiSocket(socketIo, online_account,data.sender,'secure_incoming_mess', secure_privMessObj_sender);
         app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver,'secure_incoming_mess', secure_privMessObj_receiver);
         await saveSecurePrivateMessage(secure_privMessObj_sender);
         await saveSecurePrivateMessage(secure_privMessObj_receiver);
