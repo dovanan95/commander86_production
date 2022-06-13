@@ -550,8 +550,179 @@
         <%- include('./header')%>
     </head>
     <body>
+        <div class="chat-container">
+            <div class="tab">
+                <div id='hist_tab'>
+                    <!--button class="tablinks" >Chat History</button-->
+                </div>
+            </div>
+
+            <div class="chat-box">
+                <div class="top-bar">
+                    <div class="user-info">
+                        <div class="avatar">
+                            <p>H</p>
+                        </div>
+                        <div class="name-chat"></div>
+                    </div>
+                    <div class="loader"></div>
+                    <!--<button onclick="call()"><i class="fa-solid fa-phone bxs-phone-call"></i></button>-->
+                </div>
+                <div id="chat-content">
+                    <!-- contentchat -->
+                </div>
+                <div class="msger-inputarea">
+                    <input id='inputMess' class="msger-input" placeholder="Type a message..." />
+                    <div class="msger-send-btn">
+                        <label for="myFile">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </label>
+                        <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
+                    </div>
+
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
         
+        <div id="infoModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <div class="modal-header">
+                <span class="close" id="closeInfoModal">&times;</span>
+                <h2> MESSAGE INFOMATION</h2>
+              </div>
+              <div class="modal-body" id="info-body">
+              </div>
+              <div class="modal-footer">
+                <h3>HTTCDDH 2022</h3>
+              </div>
+            </div>
+          
+          </div>
     </body>
 </html>
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
 <script type="text/javascript" src="./socket.io.min.js"></script>
+<script>
+    const left_tab = document.getElementById('hist_tab');
+    var message_zone = document.getElementById('chat-content');
+    const messContent = document.getElementById('inputMess');
+
+    function private_message_left_user(docType, id, name)
+    {
+        var left_private_block =
+        `
+        <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
+                    onclick=choosePartner_2(this) id_sender="${id}">
+                <div class="acc-avatar"></div>
+                <div class="acc-status"  >
+                    <div class="acc">${name}</div>
+                </div>
+                <div class="block_func_btn"  onclick=leftTabOption(this)>
+                    <div class="expand-func-icon_left">
+                        <i class="fa-solid fa-list-check"></i>   
+                    </div>
+                    <div class="dropdown-button" style="display:none;">
+                        <button onclick="console.log(this)" > SECURED CHAT</button>
+                        <button onclick="console.log(this)" > CHAT SETTINGS</button>
+                    </div>
+                </div>
+                
+            </div>
+            <hr class="solid">
+        `
+        return left_private_block
+    }
+    function myMessage(id_block, my_name, content, isImportant, docType)
+    {
+        var mess_block = `
+                            <div class="outgoing messBlock" id=${id_block} docType=${docType}>
+                                <div class="bubble">
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${my_name}</div>
+                                    <div class="mess-content">${content}</div>
+                                </div>
+                                <div class="block_func_btn">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+
+        }
+        return mess_block;
+    }
+    function prtnerMessage(id_block, sender_name, content, isImportant, docType)
+    {
+        var mess_block = `
+                            <div class="incoming messBlock" id=${id_block} docType=${docType}>
+                                <div class="bubble">
+                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${sender_name}</div>
+                                    <div class="mess-content">${content}</div>
+                                </div>
+                                <div class="block_func_btn" style="float:right;">
+                                    <div class="expand-func-icon">
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>
+                                        <div class="dots"></div>    
+                                    </div>
+                                    <div class="dropdown-button">
+                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                    </div>
+                                </div>
+                            </div>`
+        if(isImportant=='true')
+        {
+            var text_before = `class="bubble"`;
+            var postitionAdd = mess_block.search(text_before)+ text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+        }
+        return mess_block
+    }
+    function messageFile(fileID, fileName) { 
+        var message=
+        `
+            <i class="fa-solid fa-file-lines"></i>
+            <div class="fileName">${fileName}</div>
+            <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
+        `
+        return message;
+    };
+    function reloadLeftTab(id){
+        
+        var childLeftButton = left_tab.children;
+        var index; var tab;
+        for(let i=0; i<childLeftButton.length; i++)
+        {
+            var childItem = childLeftButton[i];
+            if(childItem.id==id)
+            {
+                index = i;
+                tab=childItem.outerHTML+ `<hr class="solid">`;
+            }
+        }
+        left_tab.removeChild(left_tab.children[index+1]);
+        left_tab.removeChild(document.getElementById(id));
+        left_tab.insertAdjacentHTML('afterbegin', tab);
+    }
+
+</script>

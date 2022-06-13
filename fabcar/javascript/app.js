@@ -36,6 +36,7 @@ var sql_config = {
 };
 
 var app_helper = require('./server/app_helper');
+var secureChat = require('./server/E2EPackage/secureChat');
 const { dirname } = require('path');
 var mongoUtil = require( './server/db' );
 
@@ -380,6 +381,10 @@ socketIo.use((socket, next)=>{
        
     })
 
+    socket.on('secure_sendMess', async function(data){
+        await secureChat.sendSecurePrivMessIO(data, socketIo, online_account);
+    })
+
     socket.on('seenUpdate', async function(data){
         try
         {
@@ -444,14 +449,7 @@ socketIo.use((socket, next)=>{
       console.log("Client disconnected:" + socket.id);
       let flag_online=0;
       let live_user;
-      /*for(let i=0;i<online_account.length;i++)
-      {
-          if(online_account[i]['socketID']==socket.id)
-          {
-            socketIo.emit('online_status', {'userID':online_account[i]['userID'], 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
-            online_account.splice(i,1); //xoa thong tin user offfline khoi danh sach online
-          }
-      }*/
+
       for(let i=0;i<online_account.length;i++){
           if(online_account[i]['socketID']==socket.id){
               live_user=online_account[i]['userID'];
@@ -1263,12 +1261,26 @@ app.get('/downloadFile', authenticateAccessToken, async function(req, res){
 app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res){
     try
     {
+        var dbo = mongoUtil.getDb();
         var sender = parseInt(req.query.senderID);
         var receiver = parseInt(req.query.receiverID);
         var unregisterSecureList = await app_helper.checkE2ERegister(sender, receiver);
         var message = 'vui long dang ky de lien lac bang tin nhan ma hoa';
         if(unregisterSecureList.length==0){
-            res.send({'data':'ok'});
+            if(receiver!=000)
+            {
+                let receiver_publicKeyRSA;
+                var myObj = await dbo.collection('user').findOne({'userID': receiver});
+                if(myObj && myObj.hasOwnProperty('secureKey')) {
+                    receiver_publicKeyRSA=myObj.secureKey.publicKeyRSA;
+                }
+                res.send({'data':'ok', 'receiver_publicKeyRSA': receiver_publicKeyRSA});
+            }
+            else if(receiver==000)
+            {
+                res.send({'data':'ok'});
+            }
+            
         }
         else if(unregisterSecureList.length>0)
         {
@@ -1355,6 +1367,7 @@ app.post('/registerSecureChat', authenticateAccessToken, async function(req, res
 app.get('/secureChat', function(req, res){
     res.render('./views_h/secureChat');
 })
+
 
 //--------------Call--------------------//
 app.get('/call', function(req, res){
