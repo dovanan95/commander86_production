@@ -7,39 +7,58 @@ async function saveSecurePrivateMessage(data)
     try
     {
         var dbo = mongoUtil.getDb();
+        /*var secure_privMessObj_sender = {
+            'messID': data.messID+'ownKey.'+data.sender,
+            'docType': 'secure_private_message',
+            'sender': parseInt(data.sender),
+            'receiver': parseInt(data.receiver),
+            //'message_to_receiver': data.message_to_receiver,
+            'message': data.message_to_sender,
+            'sender_name': data.sender_name,
+            'timestamp':parseInt(Date.now()),
+            'isImportant': 'false',
+            'seen':[],
+            'ownKey': parseInt(data.sender),
+        };
+
+        var secure_privMessObj_receiver = {
+            'messID': data.messID+'ownKey.'+data.receiver,
+            'docType': 'secure_private_message',
+            'sender': parseInt(data.sender),
+            'receiver': parseInt(data.receiver),
+            'message': data.message_to_receiver,
+            //'message_to_sender': data.message_to_sender,
+            'sender_name': data.sender_name,
+            'timestamp':parseInt(Date.now()),
+            'isImportant': 'false',
+            'seen':[],
+            'ownKey': parseInt(data.receiver),
+        }*/
+        
         dbo.collection('secure_privateMessage').insertOne(data, function(err, res){
             if(err){
                 console.log(err);
             }
             console.log("1 document inserted");
         })
-        var myObj = await dbo.collection('user').findOne({'userID': data.ownKey});
-  
-            console.log(myObj.secure_chat_history.length);
-            if(!myObj.secure_chat_history|| myObj.secure_chat_history.length==0) //kiem tra lich su tin nhan neu chua co gi thi them moi
-            {
-                if(data.ownKey==data.sender)
-                {
+        var myObj = await dbo.collection('user').find({'userID': {$in:[data.sender, data.receiver]} }).toArray();
+        for(let i=0;i<myObj.length;i++){
+            if(!myObj[i].secure_chat_history||myObj[i].secure_chat_history.length==0){
+                if(myObj[i].userID==data.sender){
                     let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
-                    await dbo.collection('user').updateOne({'userID': data.ownKey},{$push:{'secure_chat_history':prtnObj}});
+                    await dbo.collection('user').updateOne({'userID': myObj[i].userID},{$push:{'secure_chat_history':prtnObj}});
                 }
-                else if(data.ownKey==data.receiver)
-                {
+                else if(myObj[i].userID==data.receiver){
                     let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
-                    await dbo.collection('user').updateOne({'userID':data.ownKey},{$push:{'secure_chat_history':prtnObj}});
+                    await dbo.collection('user').updateOne({'userID': myObj[i].userID},{$push:{'secure_chat_history':prtnObj}});
                 }
-                
             }
-            else if(myObj.secure_chat_history && myObj.secure_chat_history.length>0)
-            {
-                //trong lich su tin nhan neu da co san thong tin thi kiem tra doi phuong dang chat da co trong danh sach chua.
-                //neu co roi thi cap nhat thoi gian. neu chua co thi them moi
-                if(data.ownKey==data.sender)
-                {
+            else if(myObj[i].secure_chat_history && myObj[i].secure_chat_history.length>0){
+                if(myObj[i].userID==data.sender){
                     let flag=0;
-                    for(let j=0; j<myObj.secure_chat_history.length;j++)
+                    for(let j=0; j<myObj[i].secure_chat_history.length;j++)
                     {
-                        if(myObj.secure_chat_history[j].userID==data.receiver)
+                        if(myObj[i].secure_chat_history[j].userID==data.receiver)
                         {
                             flag=1;
                         }
@@ -47,20 +66,19 @@ async function saveSecurePrivateMessage(data)
                     if(flag==0)
                     {
                         let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
-                        await dbo.collection('user').updateOne({'userID':data.ownKey},{$push:{'secure_chat_history':prtnObj}});
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'secure_chat_history':prtnObj}});
                     }
                     else if(flag==1)
                     {
-                        await dbo.collection('user').updateOne({'userID':data.ownKey, 'secure_chat_history.userID':data.receiver},
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID, 'secure_chat_history.userID':data.receiver},
                             {$set:{'secure_chat_history.$.timestamp':data.timestamp}});
                     }
                 }
-                else if(data.ownKey==data.receiver)
-                {
+                else if(myObj[i].userID==data.receiver){
                     let flag=0;
-                    for(let j=0; j<myObj.secure_chat_history.length;j++)
+                    for(let j=0; j<myObj[i].secure_chat_history.length;j++)
                     {
-                        if(myObj.secure_chat_history[j].userID==data.sender)
+                        if(myObj[i].secure_chat_history[j].userID==data.sender)
                         {
                             flag=1;
                         }
@@ -68,18 +86,20 @@ async function saveSecurePrivateMessage(data)
                     if(flag==0)
                     {
                         let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
-                        await dbo.collection('user').updateOne({'userID':data.ownKey},{$push:{'secure_chat_history':prtnObj}});
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'secure_chat_history':prtnObj}});
                     }
                     else if(flag==1)
                     {
-                        await dbo.collection('user').updateOne({'userID':data.ownKey, 'secure_chat_history.userID':data.sender},
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID, 'secure_chat_history.userID':data.sender},
                             {$set:{'secure_chat_history.$.timestamp':data.timestamp}});
                     }
                 }
             }
-        
-        await dbo.collection('user').updateOne({'userID': data.ownKey}, 
-        {$push:{'secure_chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+        }
+
+
+        await dbo.collection('user').updateMany({'userID': {$in:[data.sender, data.receiver]}}, 
+            {$push:{'secure_chat_history':{$each:[], $sort:{'timestamp': -1}}}})
     }
     catch(error)
     {
@@ -91,36 +111,21 @@ async function saveSecurePrivateMessage(data)
 async function sendSecurePrivMessIO(data, socketIo, online_account){
     try
     {
-        var secure_privMessObj_sender = {
+        var secure_data={
             'messID': data.messID,
             'docType': 'secure_private_message',
             'sender': parseInt(data.sender),
             'receiver': parseInt(data.receiver),
-            //'message_to_receiver': data.message_to_receiver,
-            'message_to_sender': data.message_to_sender,
+            'message': data.message, //ex:[{'userID': 123, encrypted_message: 'e393nd3823d'}] 
             'sender_name': data.sender_name,
             'timestamp':parseInt(Date.now()),
             'isImportant': 'false',
             'seen':[],
-            'ownKey': parseInt(data.sender),
-        };
-        var secure_privMessObj_receiver = {
-            'messID': data.messID,
-            'docType': 'secure_private_message',
-            'sender': parseInt(data.sender),
-            'receiver': parseInt(data.receiver),
-            'message_to_receiver': data.message_to_receiver,
-            //'message_to_sender': data.message_to_sender,
-            'sender_name': data.sender_name,
-            'timestamp':parseInt(Date.now()),
-            'isImportant': 'false',
-            'seen':[],
-            'ownKey': parseInt(data.receiver),
         }
-        app_helper.sendMessMultiSocket(socketIo, online_account,data.sender,'secure_incoming_mess', secure_privMessObj_sender);
-        app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver,'secure_incoming_mess', secure_privMessObj_receiver);
-        await saveSecurePrivateMessage(secure_privMessObj_sender);
-        await saveSecurePrivateMessage(secure_privMessObj_receiver);
+        app_helper.sendMessMultiSocket(socketIo, online_account,data.sender,'secure_incoming_mess', secure_data);
+        app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver,'secure_incoming_mess', secure_data);
+        await saveSecurePrivateMessage(secure_data);
+
     }
     catch(error)
     {
