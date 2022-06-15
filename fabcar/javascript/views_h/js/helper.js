@@ -21,6 +21,7 @@ function SecurePrivMessageTextObj(message, docType, senderID, receiverID, sender
     try
     {
         if(docType=='secure_private_message'){
+            message = encodeURIComponent(message);
             let privateKeyString = sessionStorage.getItem('privKeyRSA');
             let privKeyRSA = deserializeRSAKey(privateKeyString);
             let encrypted_sender_mess =cryptico.encrypt(message, sender_pubKey, privKeyRSA); console.log('encr_sender', encrypted_sender_mess);
@@ -64,7 +65,7 @@ function decryptMyMessage(message){
         var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
         console.log(decodedMessage);
         if(decodedMessage.signature=='verified'){
-            return decodedMessage.plaintext;
+            return decodeURIComponent(decodedMessage.plaintext);
         }
         else if(decodedMessage.signature=='unsigned'){
             return 'tin nhan khong an toan';
