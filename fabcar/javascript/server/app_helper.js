@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 var multer = require('multer');
-
+var crypto = require('crypto');
 var e2e = require('cryptico');
-
+var jwt = require('jsonwebtoken');
 var sql = require('mssql');
 var mongo = require('mongodb').MongoClient;
 const { Module } = require('module');
@@ -21,6 +21,9 @@ var sql_config = {
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
 };
+const ACCESS_TOKEN_SECRET = 'btl86_qdndvn';
+const REFRESH_TOKEN_SECRET = 'httcddh_blockchain_2022';
+
 
 async function loadUserInformation(listUserID)
 {
@@ -212,5 +215,51 @@ function sendMessMultiSocket(socketIo, online_account, receiverID, socket_event,
     }
 }
 
-module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket,
-    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA}
+function pwdEncryption(password)
+{
+    var secret_key = 'MAKV2SPBNI99254';
+    var salt = Buffer.from([0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76]) 
+    const iteration = 1000;
+    const length = 32+16;
+    const digest = 'sha1';
+    const keyIV = crypto.pbkdf2Sync(secret_key, salt, iteration, length, digest);
+    const key = keyIV.slice(0, 32);
+    const iv = keyIV.slice(32, 32 + 16);
+    const inputEncoding = 'utf16le';
+    const outputEncoding = 'base64';
+    const algorithm = 'aes-256-cbc';
+    let cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(password, inputEncoding, outputEncoding);
+    encrypted += cipher.final(outputEncoding);
+    console.log(encrypted);
+    return encrypted;
+}
+
+function generateAccessToken(id)
+{
+    return jwt.sign({id},ACCESS_TOKEN_SECRET,{expiresIn:"30 days"});
+}
+
+function generateRefreshToken(id)
+{
+    return jwt.sign({id}, REFRESH_TOKEN_SECRET, {expiresIn:"180 days"});
+}
+
+function authenticateAccessToken(req, res, next)
+{
+    let authHeader = req.headers['authorization'];
+    let token = authHeader&&authHeader.split(" ")[1];
+    if(!token){
+        return res.sendStatus(400);
+    }
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (error, user)=>{
+        if(error){
+            res.sendStatus(403);
+        }
+        req.user = user;
+        next();
+    })
+}
+
+module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
+    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, generateAccessToken, generateRefreshToken, authenticateAccessToken}

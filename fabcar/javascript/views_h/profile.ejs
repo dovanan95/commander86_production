@@ -280,6 +280,7 @@
         var myID = parseInt(JSON.parse(myID_json)['id']);
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
+        var current_partner = response_json.userID;
         const options = {
             method: 'GET',
             headers: {
@@ -292,8 +293,18 @@
         {
             if(json_res.data=='ok')
             {
+                console.log(myID);
                 var privKey = sessionStorage.getItem('privKeyRSA');console.log(privKey);
                 let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+                var my_publicKey = cryptico.publicKeyString(privKeyRSA); 
+                var partner_publicKey = json_res.receiver_publicKeyRSA;
+                console.log(my_publicKey, partner_publicKey);
+                if(content.value!=''&& myID != current_partner){
+                    SecurePrivMessageTextObj(content.value, 'secure_private_message', myID, current_partner, my_name,
+                        my_publicKey, partner_publicKey, socket, 'secure_sendMess');
+                        content.value = '';
+                    alert('Secured Message sent');
+                }
             }
             else if(json_res.data=='ng')
             {

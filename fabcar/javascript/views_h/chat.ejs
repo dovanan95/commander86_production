@@ -1136,51 +1136,61 @@
     var modal = document.getElementById("infoModal");
     async function viewDetailBlock(obj)
     {
-        var messObjID = obj.closest('.messBlock').getAttribute('id'); 
-        var messDocType = obj.closest('.messBlock').getAttribute('docType');console.log(messObjID, messDocType);
-        var modalBody = document.getElementById('info-body');
-        modalBody.innerHTML='';
-        const options = {
-                method: 'GET',
-                headers: {
-                    'authorization': 'token '+ accessToken,
+        try{
+            var messObjID = obj.closest('.messBlock').getAttribute('id'); 
+            var messDocType = obj.closest('.messBlock').getAttribute('docType');console.log(messObjID, messDocType);
+            var modalBody = document.getElementById('info-body');
+            modalBody.innerHTML='';
+            const options = {
+                    method: 'GET',
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                    }
                 }
-            }
-        var res = await fetch('/getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
-        var json_res = await res.json();
-        console.log(json_res); console.log(messObjID);
-        var sendTime = document.createElement('p');
-        sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
-        if(json_res.docType=='private_message')
-        {   
-            let seenTime = document.createElement('p');
-            modalBody.appendChild(sendTime);
-            if(json_res.seenTime!=0)
-            {
-                seenTime.innerHTML='Da xem: '+ json_res.seenTime;
-                modalBody.appendChild(seenTime);
-            }
-            else if(json_res.seenTime==0)
-            {
-                seenTime.innerHTML='Chua ai xem';
-                modalBody.appendChild(seenTime);
-            }
-        }
-        else if(json_res.docType=='group_message')
-        {
-            modalBody.appendChild(sendTime);
-            if(json_res.seenTime!=0)
-            {
-                for(let i=0;i<json_res.seenTime.length;i++)
+            var res = await fetch('/getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
+            var json_res = await res.json();
+            console.log(json_res); console.log(messObjID);
+            var sendTime = document.createElement('p');
+            sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
+            if(json_res.docType=='private_message')
+            {   
+                let seenTime = document.createElement('p');
+                modalBody.appendChild(sendTime);
+                if(json_res.seenTime!=0)
                 {
-                    let seenTime = document.createElement('p');
-                    seenTime.innerHTML=json_res.seenTime[i].userName + ' da xem luc: '+json_res.seenTime[i].dateTime;
+                    seenTime.innerHTML='Da xem: '+ json_res.seenTime;
+                    modalBody.appendChild(seenTime);
+                }
+                else if(json_res.seenTime==0)
+                {
+                    seenTime.innerHTML='Chua ai xem';
                     modalBody.appendChild(seenTime);
                 }
             }
+            else if(json_res.docType=='group_message')
+            {
+                modalBody.appendChild(sendTime);
+                if(json_res.seenTime!=0)
+                {
+                    for(let i=0;i<json_res.seenTime.length;i++)
+                    {
+                        let seenTime = document.createElement('p');
+                        seenTime.innerHTML=json_res.seenTime[i].userName + ' da xem luc: '+json_res.seenTime[i].dateTime;
+                        modalBody.appendChild(seenTime);
+                    }
+                }
+            }
+            // When the user clicks the button, open the modal 
+            modal.style.display = "block";
         }
-        // When the user clicks the button, open the modal 
-        modal.style.display = "block";
+        catch(error)
+        {
+            let seenTime = document.createElement('p');
+            seenTime.innerHTML='Tin nhan khong gui duoc hoac server dang duoc bao tri';
+            modalBody.appendChild(seenTime);
+            modal.style.display = "block";
+        }
+        
     }
 
     // When the user clicks anywhere outside of the modal, close it

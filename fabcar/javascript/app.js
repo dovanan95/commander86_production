@@ -36,9 +36,12 @@ var sql_config = {
 };
 
 var app_helper = require('./server/app_helper');
-var secureChat = require('./server/E2EPackage/secureChat');
+
 const { dirname } = require('path');
 var mongoUtil = require( './server/db' );
+const pwdEncryption =(password)=>app_helper.pwdEncryption(password);
+const secureChat = require('./server/E2EPackage/secureChat');
+
 
 async function contract()
 {
@@ -72,8 +75,9 @@ async function contract()
 }
 //------------Security Zone ------------------------//
 
-const ACCESS_TOKEN_SECRET = 'btl86_qdndvn';
-const REFRESH_TOKEN_SECRET = 'httcddh_blockchain_2022';
+const ACCESS_TOKEN_SECRET = app_helper.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = app_helper.REFRESH_TOKEN_SECRET;
+
 
 function generateAccessToken(id)
 {
@@ -115,7 +119,7 @@ app.post("/refreshtoken",(req,res)=>{
     })
 });
 
-function pwdEncryption(password)
+/*function pwdEncryption(password)
 {
     var secret_key = 'MAKV2SPBNI99254';
     var salt = Buffer.from([0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76]) 
@@ -133,7 +137,7 @@ function pwdEncryption(password)
     encrypted += cipher.final(outputEncoding);
     console.log(encrypted);
     return encrypted;
-}
+}*/
 
 //------------ End Security Zone ------------------------//
 
@@ -479,6 +483,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use(express.static(__dirname + '/views_h'));
+
+app.use('/secureChat', secureChat.router);
 
 //code
 

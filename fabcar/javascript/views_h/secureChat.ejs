@@ -549,7 +549,7 @@
         <title>He Thong Tin Chi Dao Dieu Hanh</title>
         <%- include('./header')%>
     </head>
-    <body>
+    <body onload="checkLogin()">
         <div class="chat-container">
             <div class="tab">
                 <div id='hist_tab'>
@@ -611,6 +611,8 @@
     const left_tab = document.getElementById('hist_tab');
     var message_zone = document.getElementById('chat-content');
     const messContent = document.getElementById('inputMess');
+    // const messContainer = document.getElementById('mess_container');
+    var tab_partner_prefix = 'partner_list.';
 
     function private_message_left_user(docType, id, name)
     {
@@ -724,5 +726,133 @@
         left_tab.removeChild(document.getElementById(id));
         left_tab.insertAdjacentHTML('afterbegin', tab);
     }
+    function checkLogin(){ 
+       var check = sessionStorage.getItem('login_data');
+       sessionStorage.removeItem('current_partner_id');
+
+       var check_json = JSON.parse(check);
+       if(check_json ==null || check_json.isLogin != true)
+       {
+           window.location.href='/';
+       }
+       else
+       {
+
+            fetchData();
+       }
+    }
+    var response_init;
+    async function fetchData(){
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({'id': parseInt(myID), 'limit':30}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+            }
+        }
+        var response_init_load = await fetch("/secureChat/secure_load_chat_history", options);
+        response_init = await response_init_load.json(); 
+        response_init = response_init.sort((a,b)=>b.timestamp-a.timestamp);
+        var tab_partner_el;
+        var room_chat=[];
+        for(var i in response_init)
+        {
+            console.log(response_init[i]);
+            if(response_init[i].docType=='secure_private_message')
+            {
+                tab_partner_el =  private_message_left_user(response_init[i].docType, response_init[i].userID, response_init[i].username);
+            }
+            
+            left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
+        }
+        //socket.emit('joinRoom',{'roomID':room_chat});
+        //console.log(document.getElementsByClassName('tablinks').length);
+    }
+    async function getBlockByID(partner_id, docType){
+        //code call API get to /chat_peer
+        var block;
+        if(docType=='secure_private_message')
+        {
+            //code
+            var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+            var getPrivMessBlock = await fetch('/chat_peer', options);
+            block = await getPrivMessBlock.json();
+        }
+        return(block);
+    }
+    async function choosePartner_2(obj){
+        // debugger;
+
+        message_zone.innerHTML=``;
+        var id_partner = obj.getAttribute('id_sender');
+        var docType = obj.getAttribute('docType');
+        sessionStorage.setItem('current_partner_id', id_partner);
+        var options;
+        //callAPI(id)
+        if(docType=='secure_private_message')
+        {   
+            id_partner=parseInt(id_partner);
+            var block_ = await getBlockByID(id_partner, docType); //API call result
+            var block =block_.reverse(); 
+            var seen = [];
+            for(let i=0;i<block.length;i++)
+            {
+                var mess_block;
+                if(block[i].sender==id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    if(block[i].seen && block[i].seen.length==0)
+                    {
+                        seen.push(block[i].messID);
+                    }
+                }
+                else if(block[i].sender != id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+     
+            }
+
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+
+        message_zone.scrollTop = message_zone.scrollHeight;
+        //var res = await fetch('/seenUpdate', options);
+    }
+
+
 
 </script>

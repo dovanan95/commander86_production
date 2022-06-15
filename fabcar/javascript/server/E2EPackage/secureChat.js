@@ -1,39 +1,17 @@
 var mongoUtil = require( '../db' );
 var multer = require('multer');
 var app_helper = require('../app_helper');
+const express = require('express');
+const router = express.Router();
+var sql = require('mssql');
+var sql_config = app_helper.sql_config;
+var jwt = require('jsonwebtoken');
 
 async function saveSecurePrivateMessage(data)
 {
     try
     {
         var dbo = mongoUtil.getDb();
-        /*var secure_privMessObj_sender = {
-            'messID': data.messID+'ownKey.'+data.sender,
-            'docType': 'secure_private_message',
-            'sender': parseInt(data.sender),
-            'receiver': parseInt(data.receiver),
-            //'message_to_receiver': data.message_to_receiver,
-            'message': data.message_to_sender,
-            'sender_name': data.sender_name,
-            'timestamp':parseInt(Date.now()),
-            'isImportant': 'false',
-            'seen':[],
-            'ownKey': parseInt(data.sender),
-        };
-
-        var secure_privMessObj_receiver = {
-            'messID': data.messID+'ownKey.'+data.receiver,
-            'docType': 'secure_private_message',
-            'sender': parseInt(data.sender),
-            'receiver': parseInt(data.receiver),
-            'message': data.message_to_receiver,
-            //'message_to_sender': data.message_to_sender,
-            'sender_name': data.sender_name,
-            'timestamp':parseInt(Date.now()),
-            'isImportant': 'false',
-            'seen':[],
-            'ownKey': parseInt(data.receiver),
-        }*/
         
         dbo.collection('secure_privateMessage').insertOne(data, function(err, res){
             if(err){
@@ -133,4 +111,90 @@ async function sendSecurePrivMessIO(data, socketIo, online_account){
     }
 }
 
-module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO}
+function authenticateAccessToken(req, res, next)
+{
+    let ACCESS_TOKEN_SECRET = app_helper.ACCESS_TOKEN_SECRET;
+    let authHeader = req.headers['authorization'];
+    let token = authHeader&&authHeader.split(" ")[1];
+    if(!token){
+        return res.sendStatus(400);
+    }
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (error, user)=>{
+        if(error){
+            res.sendStatus(403);
+        }
+        req.user = user;
+        next();
+    })
+}
+router.use((req, res, next) => {
+    console.log('Time: ', Date.now())
+    next()
+  })
+
+router.post('/secure_load_chat_history', authenticateAccessToken, async function(req, res){
+    try
+    {
+        console.log('id body', req.body.id);
+        const dbo = mongoUtil.getDb();
+        var list_chat_arr = await dbo.collection('user')
+            .find({'userID': req.body.id}).project({'secure_chat_history':{$slice: req.body.limit}}).toArray();
+        var list_chat = list_chat_arr[0].secure_chat_history;
+        sql.connect(sql_config, function(err){
+            if(err){
+                console.log(err);
+                res.send({'result':'connect to database failed!'})
+            }
+            var request = new sql.Request();
+            let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
+
+            let arrayQuery = [];
+            if(list_chat){
+                for (let i = 0; i < list_chat.length; i++) {
+                    request.input(`variable_${i}`, sql.Int, list_chat[i].userID);
+                   arrayQuery.push(`@variable_${i}`);
+    
+                }
+                queryString += arrayQuery.join(",");
+                queryString += ")";
+                request.query(queryString, function(err,recordSet){
+                    if(err){
+                        console.log(err);
+                        //res.send(JSON.stringify({'data': 'no_data'}));
+                    }
+                    if(recordSet)
+                    {
+                        var nameSet = recordSet.recordset;
+                        for (let j=0; j<nameSet.length; j++)
+                        {
+                            for(let k=0; k<list_chat.length; k++)
+                            {
+                                if(nameSet[j].id==list_chat[k].userID)
+                                {
+                                    list_chat[k]['username'] = nameSet[j].TenDayDu;
+                                }
+                                if(list_chat[k].userID==000)
+                                {
+                                    list_chat[k]['username'] = 'SYSTEM';
+                                }
+                            }
+                        }
+                        res.send(JSON.stringify(list_chat));
+                    }
+                })
+            }
+            else if(!list_chat){
+                res.send({'data':'ng', 'statusText': 'no history data'});
+            }
+
+        })
+
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
+
+module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, router}
+//module.exports=router;
