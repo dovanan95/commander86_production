@@ -1086,13 +1086,13 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
         if(req.query.docType=='private_message')
         {
             let seenTime;
-            var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID});
+            var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID}); 
             
             if(message.seen && message.seen.length>0)
             {
                 seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
             }
-            else if(!message.seen)
+            else if(!message.seen || message.seen.length==0)
             {
                 seenTime = 0;
             }

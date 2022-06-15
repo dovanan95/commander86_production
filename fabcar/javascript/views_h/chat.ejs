@@ -776,7 +776,7 @@
                         else{
                             var message = data.message;
                         }
-                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, 'false', data.docType);
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
                         reloadLeftTab(tab_partner_prefix+ data.receiver);
@@ -1136,8 +1136,8 @@
     var modal = document.getElementById("infoModal");
     async function viewDetailBlock(obj)
     {
-        var messObjID = obj.closest('.messBlock').getAttribute('id');
-        var messDocType = obj.closest('.messBlock').getAttribute('docType');
+        var messObjID = obj.closest('.messBlock').getAttribute('id'); 
+        var messDocType = obj.closest('.messBlock').getAttribute('docType');console.log(messObjID, messDocType);
         var modalBody = document.getElementById('info-body');
         modalBody.innerHTML='';
         const options = {
@@ -1148,7 +1148,7 @@
             }
         var res = await fetch('/getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
         var json_res = await res.json();
-        console.log(json_res);
+        console.log(json_res); console.log(messObjID);
         var sendTime = document.createElement('p');
         sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
         if(json_res.docType=='private_message')
@@ -1158,6 +1158,11 @@
             if(json_res.seenTime!=0)
             {
                 seenTime.innerHTML='Da xem: '+ json_res.seenTime;
+                modalBody.appendChild(seenTime);
+            }
+            else if(json_res.seenTime==0)
+            {
+                seenTime.innerHTML='Chua ai xem';
                 modalBody.appendChild(seenTime);
             }
         }
