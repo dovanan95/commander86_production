@@ -23,7 +23,7 @@ function SecurePrivMessageTextObj(message, docType, senderID, receiverID, sender
         if(docType=='secure_private_message'){
             let privateKeyString = sessionStorage.getItem('privKeyRSA');
             let privKeyRSA = deserializeRSAKey(privateKeyString);
-            let encrypted_sender_mess =cryptico.encrypt(message, sender_pubKey); console.log('encr_sender', encrypted_sender_mess);
+            let encrypted_sender_mess =cryptico.encrypt(message, sender_pubKey, privKeyRSA); console.log('encr_sender', encrypted_sender_mess);
             let encrypted_sender_receiver = cryptico.encrypt(message, receiver_pubKey, privKeyRSA); console.log('receiv', encrypted_sender_receiver);
             var encrypted_message = [
                 {'userID': senderID, 'encrypted_message': encrypted_sender_mess},
@@ -45,6 +45,32 @@ function SecurePrivMessageTextObj(message, docType, senderID, receiverID, sender
     
     }
     catch(error){
+        console.log(error);
+    }
+}
+
+function decryptMyMessage(message){
+    try{
+        var myID_json = sessionStorage.getItem('login_data');
+        var myID = parseInt(JSON.parse(myID_json)['id']);
+        let privateKeyString = sessionStorage.getItem('privKeyRSA');
+        let privKeyRSA = deserializeRSAKey(privateKeyString);
+        var myMessage;
+        for(let i=0;i<message.length;i++){
+            if(myID==message[i].userID){
+                myMessage=message[i].encrypted_message.cipher;
+            }
+        }
+        var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
+        console.log(decodedMessage);
+        if(decodedMessage.signature=='verified'){
+            return decodedMessage.plaintext;
+        }
+        else if(decodedMessage.signature=='unsigned'){
+            return 'tin nhan khong an toan';
+        }
+
+    }catch(error){
         console.log(error);
     }
 }

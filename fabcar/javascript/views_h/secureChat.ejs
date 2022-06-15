@@ -614,6 +614,84 @@
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
 
+    socket.on('secure_incoming_mess', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var tablinks = document.getElementsByClassName('tablinks');
+        if(data.docType=='secure_private_message')
+        {
+            if(data.sender == current_partner)
+            {
+                if(data.isFile && data.isFile=='true')
+                {
+                    let my_block_message = decryptMyMessage(data.message);
+                        let my_block_filename = decryptMyMessage(data.originalFilename);
+                        var message = messageFile(my_block_message, my_block_filename);
+                }
+                else
+                {
+                    let my_block_message = decryptMyMessage(data.message);
+                        var message = my_block_message;
+                }
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.sender);
+                //socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
+            }
+            else if(data.sender != current_partner)
+            {   
+                var flag =0;
+                for(var k=0;k<tablinks.length;k++)
+                {
+                    console.log(tablinks[k]);
+                    var id = tablinks[k].getAttribute('id_sender');
+                    console.log(id);
+                    if(data.sender==id)
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    if(myID!=data.sender){
+                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
+                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    }
+                    else if(myID==data.sender && current_partner==data.receiver){
+                        if(data.isFile && data.isFile=='true'){
+                            let my_block_message = decryptMyMessage(data.message);
+                            let my_block_filename = decryptMyMessage(data.originalFilename);
+                            var message = messageFile(my_block_message, my_block_filename);
+                        }
+                        else{
+                            let my_block_message = decryptMyMessage(data.message);
+                            var message = my_block_message;
+                        }
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                        message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                        message_zone.scrollTop = message_zone.scrollHeight;
+                        reloadLeftTab(tab_partner_prefix+ data.receiver);
+                    }
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                        console.log(partner_tab);
+                        //partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
+                        reloadLeftTab(tab_partner_prefix+ data.sender);
+                    }
+                }
+                
+            }
+            
+        }
+    })
+
     function private_message_left_user(docType, id, name)
     {
         var left_private_block =
@@ -626,6 +704,7 @@
                 </div>
                 <div class="block_func_btn"  onclick=leftTabOption(this)>
                     <div class="expand-func-icon_left">
+                        <i class="fa-solid fa-lock"></i>
                         <i class="fa-solid fa-list-check"></i>   
                     </div>
                     <div class="dropdown-button" style="display:none;">
@@ -784,10 +863,18 @@
                     'authorization': 'token '+ accessToken,
                 }
             }
-            var getPrivMessBlock = await fetch('/chat_peer', options);
-            block = await getPrivMessBlock.json();
+            var getPrivMessBlock = await fetch('/secureChat/secure_chat_peer', options);
+            block = await getPrivMessBlock.json(); console.log(block.partner_publicKeyRSA)
+            sessionStorage.setItem('partner_publicKeyRSA', 
+                JSON.stringify(
+                    [
+                        {'partnerID':sessionStorage.getItem('current_partner_id'),
+                        'partner_publicKeyRSA':block.partner_publicKeyRSA}
+                    ]
+                )
+            );
         }
-        return(block);
+        return(block.chatBlocks);
     }
     async function choosePartner_2(obj){
         // debugger;
@@ -811,11 +898,14 @@
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        let my_block_filename = decryptMyMessage(block[i].originalFilename);
+                        var message = messageFile(my_block_message, my_block_filename);
                     }
                     else
                     {
-                        var message = block[i].message;
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        var message = my_block_message;
                     }
                     mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
                     if(block[i].seen && block[i].seen.length==0)
@@ -827,11 +917,14 @@
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        let my_block_filename = decryptMyMessage(block[i].originalFilename);
+                        var message = messageFile(my_block_message, my_block_filename);
                     }
                     else
                     {
-                        var message = block[i].message;
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        var message = my_block_message;
                     }
                     mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
@@ -853,6 +946,85 @@
         //var res = await fetch('/seenUpdate', options);
     }
 
+    messContent.addEventListener('keyup', function(event){
+        if(event.keyCode===13)
+        {
+            document.getElementById('button_send_mess').click();
+        } 
+    })
 
+    function sendMess()
+    {
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+        var docType = partner_element.getAttribute('docType');
+        var isImportant = 'false';
+        if(current_partner != null && messContent.value!= '')
+        {
+            if(docType=='secure_private_message')
+            {
+                //message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+                let my_publicKey = cryptico.publicKeyString(RSAkey)
+                var partner_publicKey = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'))[0]['partner_publicKeyRSA'];
+                SecurePrivMessageTextObj(messContent.value, 'secure_private_message', myID, current_partner, my_name,
+                        my_publicKey, partner_publicKey, socket, 'secure_sendMess');
+                messContent.value='';
+                reloadLeftTab(tab_partner_prefix+ current_partner);
+            }
+        }    
+    }
+
+    $(document).on('click', '#menu-btn', function(){
+        //debugger;
+        if ($('.sidebar').hasClass('active')){
+            $('.sidebar').removeClass('active');
+            $('.chat-container').removeClass('scaledown');
+        } else {
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
+    })
+
+    $(document).on('click', '.bx-search-alt-2' , function(){
+        if (!$('.sidebar').hasClass('active')){
+            $('.sidebar').addClass('active');
+            $('.chat-container').addClass('scaledown');
+        }
+    })
+    
+    $(document).on('click', '.expand-func-icon', function(){
+        console.log(this);
+        // debugger;
+        if ($(this).closest('.incoming, .outgoing').hasClass('active-dropdown')){
+            $(this).closest('.incoming, .outgoing').removeClass('active-dropdown');
+        } else {
+            $('.incoming, .outgoing').removeClass('active-dropdown');
+            $(this).closest('.outgoing, .incoming').addClass('active-dropdown');
+        }
+    })
+
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon'))
+        {
+            var dropdowns = document.getElementsByClassName("active-dropdown");
+            if(dropdowns.length>0)
+            {
+                dropdowns[0].classList.remove("active-dropdown");
+            }
+        }
+    })
+
+    $(document).on('click', '.tablinks', function () {
+        $('#hist_tab').find('.tablinks').removeClass('active-users')
+        $(this).each(function () {
+            if ($(this).hasClass('active-users')) {
+                $(this).removeClass('active-users');
+            } else {
+                $(this).addClass('active-users');
+            }
+        })
+    })
 
 </script>

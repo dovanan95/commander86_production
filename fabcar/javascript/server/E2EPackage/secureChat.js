@@ -196,5 +196,22 @@ router.post('/secure_load_chat_history', authenticateAccessToken, async function
     }
 })
 
+router.post('/secure_chat_peer', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        var chatBlocks = await dbo.collection('secure_privateMessage').find({$or:[{'sender':req.body.my_ID,'receiver':req.body.partner_ID},
+        {'sender':req.body.partner_ID,'receiver':req.body.my_ID}]}).sort({'timestamp':-1}).limit(req.body.limit).toArray();
+        var userObj = await dbo.collection('user').findOne({'userID': req.body.partner_ID});
+        var partner_publicKeyRSA = userObj.secureKey.publicKeyRSA;
+        res.send(JSON.stringify({'chatBlocks':chatBlocks, 'partner_publicKeyRSA': partner_publicKeyRSA}));
+
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
+
 module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, router}
 //module.exports=router;
