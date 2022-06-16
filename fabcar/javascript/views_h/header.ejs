@@ -34,6 +34,7 @@
       display: flex;
       flex-direction: column;
       transition: all 0.4s ease;
+      z-index: 10;
     }
 
     .sidebar.active {
@@ -90,7 +91,39 @@
       position: relative;
       /* display: flex; */
     }
+    .sidebar li .tooltip {
+      position: absolute;
+      top: -20px;
+      left: calc(100% + 15px);
+      z-index: 100;
+      background: #fff;
+      font-size: 10px;
+      color: black;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      padding: 14px 15px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: 0s;
+      width: fit-content;
+      margin: 0;
+      line-height: 0;
+    }
 
+    .sidebar li:hover .tooltip {
+      opacity: 1;
+      pointer-events: auto;
+      transition: all 0.4s ease;
+      top: 40%;
+      transform: translateY(-50%);
+    }
+
+    .sidebar.active li .tooltip {
+      display: none;
+    }
     .sidebar ul li input {
       position: absolute;
       width: 0;
@@ -273,6 +306,8 @@
           <input type="text" id="input_ID" placeholder="Search...">
           <span id="exist"></span>
         </div>
+        <span class="tooltip">Search</span>
+
         <!-- <a href="/home">
         <i class='bx bx-search-alt-2'></i>
         <span class="link-items">Search</span>
@@ -283,24 +318,32 @@
           <i class="fa-solid fa-message"></i>
           <span class="link-items">Messages</span>
         </a>
+        <span class="tooltip">Messages</span>
+
       </li>
       <li>
         <a href="/newGroup">
           <i class="fa-solid fa-user-group"></i>
           <span class="link-items">Group</span>
         </a>
+        <span class="tooltip">Group</span>
+
       </li>
       <li>
         <a href="#channel">
           <i class="fa-solid fa-tv"></i>
           <span class="link-items">Channels</span>
         </a>
+        <span class="tooltip">Channels</span>
+
       </li>
       <li>
         <a onclick="openSecure()" >
           <i class="fa-solid fa-unlock-keyhole"></i>
           <span class="link-items">Encrypted</span>
         </a>
+        <span class="tooltip">Encrypted</span>
+
       </li>
     </ul>
     <div class="logout-form">

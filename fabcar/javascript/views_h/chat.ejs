@@ -14,7 +14,7 @@
         display: flex;
         margin-left: 80px;
         transition: all 0.4s ease;
-        height: 100vh;
+        height: 100vh;  
     }
 
     .chat-container.scaledown {
@@ -30,7 +30,8 @@
         background-color: #f8f8f8;
         border-right: none;
         height: 100%;
-
+        position: relative;
+        z-index: 1;
     }
 
     #hist_tab {
@@ -51,7 +52,7 @@
         margin: 0;
         border: 0px rgb(121, 199, 197);
         position: relative;
-        z-index: 9;
+        z-index: 20;
         margin-bottom: 10px;
     }
 
@@ -66,6 +67,8 @@
         background-color: #ffffff;
         border-right: 4px solid #635f84;
         box-shadow: -4px 10px 15px 0px #eee;
+        position: relative;
+        z-index: 21;
     }
 
     .tablinks .acc-avatar {
@@ -283,23 +286,6 @@
         font-size: 15px;
     }
 
-    .tablinks .block_func_btn .dropdown-button {
-        /*min-width: 110px;
-        min-height: 60px;*/
-        width: 15%;;
-        position: fixed;
-        /*left: 20%;
-        top: 25px;*/
-        padding: 8px 11px;
-        background-color: #C7C9CC;
-        border-radius: 3px 3px 3px 3px;
-        /*display: none;*/
-        flex-direction: column;
-        justify-content: center;
-        gap: 10px;
-        z-index: 1000;
-    }
-
     .incoming .block_func_btn .dropdown-button {
         min-width: 110px;
         min-height: 60px;
@@ -356,6 +342,10 @@
         justify-content: center;
         gap: 5px;
         z-index: 99;
+    }
+
+    .mess-content {
+        display: flex;
     }
 
     .darker {
@@ -516,6 +506,15 @@
         padding: 2px 16px;
         background-color: #5cb85c;
         color: white;
+    }
+
+    hr {
+        opacity: 0;
+    }
+
+    .fileName {
+        text-decoration: underline;
+        margin-right: 8px;
     }
 
     .loader {
@@ -992,9 +991,8 @@
     function messageFile(fileID, fileName) { 
         var message=
         `
-            <i class="fa-solid fa-file-lines"></i>
             <div class="fileName">${fileName}</div>
-            <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
+            <i class="fa-solid fa-download" style="cursor: pointer" onclick="downloadFile('${fileID}')" fileID="${fileID}"></i>
         `
         return message;
     };
