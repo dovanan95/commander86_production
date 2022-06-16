@@ -8,54 +8,58 @@
   <script src="./bootstrap-5.1.3-dist/js/jquery.slim.min.js"></script>
   <script src="./bootstrap-5.1.3-dist/js/popper.min.js"></script>
   <script src="./bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
+  <link rel="stylesheet" href="./css/newGroup.css">
 </head>
 <body>
-    <p class="h1">NEW CHAT GROUP</p>
-    <div class="modal-body row">
-        <div class="col-md-6">
-          <!-- Your first column here -->
-          <label>SEARCH MEMBER</label>
-          <div class="input-group">
-            <input type="search" id="searchBox" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-            <button type="button" onclick="searchUsers()" class="btn btn-outline-primary">search</button>
-          </div>
-          <table class="table" id="queryTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Mobile</th>
-                <th>Select</th>
-              </tr>
-            </thead>
-            <tbody>
-              
-            </tbody>
-          </table>
-        </div>
-        <div class="col-md-6">
-          <!-- Your second column here -->
-          <div class="form-group">
-            <label for="groupName">GROUP NAME</label>
-            <input type="text" class="form-control" id="groupName" placeholder="Group Name">
-          </div>
-          <table class="table" id="memberListTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Mobile</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-             
-            </tbody>
-          </table>
-          <button type="submit" onclick="generateGroup()" class="btn btn-primary">Submit</button>
-        </div>
-      </div>
+  <%- include('./header')%>
 
+    <div class="modal-body row" id="group-container">
+      <div class="col-md-6 group-form">
+        <!-- Your first column here -->
+        <label>SEARCH MEMBER</label>
+        <div class="input-group input-form">
+          <input type="search" id="searchBox" class="form-control rounded input-box" placeholder="Search"
+            aria-label="Search" aria-describedby="search-addon" />
+          <button type="button" onclick="searchUsers()" class="btn btn-outline-primary input-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <table class="table" id="queryTable">
+          <thead>
+            <tr>
+              <th class="name-tb">Ho Ten</th>
+              <th class="unit-tb">Don vi</th>
+              <th class="phone-tb">Dien thoai</th>
+              <th class="options-tb">Chuc nang</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="col-md-6 group-form" id="abc">
+        <!-- Your second column here -->
+        <label for="groupName">GROUP NAME</label>
+        <div class="form-group input-form">
+          <input type="text" class="form-control input-box" id="groupName" placeholder="Group Name">
+          <button type="submit" onclick="generateGroup()" class="btn btn-primary input-btn">Submit</button>
+        </div>
+        <table class="table" id="memberListTable">
+          <thead>
+            <tr>
+              <th class="name-tb">Ho Ten</th>
+              <th class="unit-tb">Don vi</th>
+              <th class="phone-tb">Dien thoai</th>
+              <th class="options-tb">Chuc nang</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
 </body>
 </html>
 <script>
@@ -215,5 +219,22 @@
         alert('vui long nhap ten nhom va chon thanh vien!!!')
       }
     }
+    $(document).on('click', '#menu-btn', function () {
+    //debugger;
+    if ($('.sidebar').hasClass('active')) {
+      $('.sidebar').removeClass('active');
+      $('#group-container').removeClass('scaledown');
+    } else {
+      $('.sidebar').addClass('active');
+      $('#group-container').addClass('scaledown');
+    }
+  })
+
+  $(document).on('click', '.bx-search-alt-2', function () {
+    if (!$('.sidebar').hasClass('active')) {
+      $('.sidebar').addClass('active');
+      $('#group-container').addClass('scaledown');
+    }
+  })
 
 </script>

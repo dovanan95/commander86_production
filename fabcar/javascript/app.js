@@ -35,7 +35,12 @@ var sql_config = {
     trustServerCertificate: true 
 };
 
-var app_helper = require('./app_helper');
+var app_helper = require('./server/app_helper');
+
+const { dirname } = require('path');
+var mongoUtil = require( './server/db' );
+const pwdEncryption =(password)=>app_helper.pwdEncryption(password);
+const secureChat = require('./server/E2EPackage/secureChat');
 
 
 async function contract()
@@ -70,8 +75,9 @@ async function contract()
 }
 //------------Security Zone ------------------------//
 
-const ACCESS_TOKEN_SECRET = 'btl86_qdndvn';
-const REFRESH_TOKEN_SECRET = 'httcddh_blockchain_2022';
+const ACCESS_TOKEN_SECRET = app_helper.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = app_helper.REFRESH_TOKEN_SECRET;
+
 
 function generateAccessToken(id)
 {
@@ -113,7 +119,7 @@ app.post("/refreshtoken",(req,res)=>{
     })
 });
 
-function pwdEncryption(password)
+/*function pwdEncryption(password)
 {
     var secret_key = 'MAKV2SPBNI99254';
     var salt = Buffer.from([0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76]) 
@@ -131,7 +137,7 @@ function pwdEncryption(password)
     encrypted += cipher.final(outputEncoding);
     console.log(encrypted);
     return encrypted;
-}
+}*/
 
 //------------ End Security Zone ------------------------//
 
@@ -151,27 +157,34 @@ async function queryNameUser(id){
 
 async function saveGroupMessage(data)
 {
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
-    dbo.collection('groupMessage').insertOne(data, function(err, res){
-        if(err){
-            console.log(err);
-        }
-    });
-    var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
-    console.log(groupChat['member'])
-    dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
-    {$set:{'chat_history.$.timestamp':data.timestamp}});
-    dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
-    {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        dbo.collection('groupMessage').insertOne(data, function(err, res){
+            if(err){
+                console.log(err);
+            }
+        });
+        var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
+        console.log(groupChat['member'])
+        dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
+        {$set:{'chat_history.$.timestamp':data.timestamp}});
+        dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 }
 
 async function savePrivateMessage(data)
 {
     try
     {
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         dbo.collection('privateMessage').insertOne(data, function(err, res){
             if(err){
                 console.log(err);
@@ -251,40 +264,56 @@ async function savePrivateMessage(data)
     {
         console.log(error);
     }
-    finally
-    {
-        db.close()
-    }
     
 }
-var users = [];
+var users = {};
+var users_call={};
 var online_account = [];
 var sockets = [];
 
+socketIo.use((socket, next)=>{
+    if(socket.handshake.auth && socket.handshake.auth.token)
+    {
+        var token = socket.handshake.auth.token; console.log(token);
+        jwt.verify(token, ACCESS_TOKEN_SECRET, (error, user)=>{
+            if(error){
+                res.sendStatus(403);
+            }
+            socket.user = user;
+            next();
+        })
+    }
+    else
+    {
+        socket.disconnect();
+    }
+})
  socketIo.on("connection", (socket) => {
     console.log("New client connected ->" + socket.id);
     const ID = socket.id // id property on the socket Object
     socketIo.to(ID).emit("getId", socket.id);
     sockets.push(socket);
-    socket.on('connected', function(userID){
-        users[userID]=socket.id;
+    socket.on('connected', function(data){
+        users[data.userID]=socket.id;
+        console.log('user', users);
         let flag_online=0;
         for(let i=0;i<online_account.length;i++)
         {
-            if(online_account[i]['userID']==userID)
+            if(online_account[i]['userID']==data.userID)
             {
-                flag_online=1; //kiem tra trong danh sach user neu dang online nhung reload lai page hoac dang nhap o thiet bi khac thi cap nhat lai socketID
-                online_account[i]['socketID']=socket.id;
+                flag_online=1; //kiem tra ton tai trong danh sach user online
+                //online_account[i]['socketID']=socket.id;
             }
         }
         if(flag_online==0)
-        {
-            online_account.push({'userID':userID, 'socketID':socket.id}); //neu user nay chua co trong danh sach online thi them vao
+        {   
+            //socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
+            socketIo.emit('online_status', {'userID':data.userID, 'isOnline': true, 'socketID':socket.id}) // thong bao user moi online cho tat ca user khac cap nhat
         }
-        
+        online_account.push({'userID':data.userID, 'socketID':socket.id}); 
         console.log(online_account);
-        socketIo.to(socket.id).emit('online_list', online_account); //gui toan bo danh sach user online cho user moi truy cap he thong
-        socketIo.emit('online_status', {'userID':userID, 'isOnline': true}) // thong bao user moi online cho tat ca user khac cap nhat
+        app_helper.sendMessMultiSocket(socketIo,online_account,data.userID,'online_list', online_account);
+        
     })
     socket.on('joinRoom', function(data){
         socket.join(data.roomID);
@@ -329,18 +358,8 @@ var sockets = [];
     socket.on("sendMess", async function(data){
         try
         {
+
             console.log(data);
-            socketIo.to(users[data.receiver]).emit('incoming_mess',
-                {
-                    'messID': data.messID,
-                    'sender': data.sender, 
-                    'receiver': data.receiver, 
-                    'message': data.message, 
-                    'sender_name': data.sender_name,
-                    'docType': 'private_message'
-            });
-            //const contract_ = await contract();
-            
             var genDate='MessPriv.' + data.sender+'.'+data.receiver+'.' + Date.now().toString();
             var privMessObj = {
                 'messID': data.messID,
@@ -353,10 +372,11 @@ var sockets = [];
                 'isImportant': 'false',
                 'seen':[]
             }
+
+            app_helper.sendMessMultiSocket(socketIo, online_account,data.receiver, 'incoming_mess', privMessObj);
+            app_helper.sendMessMultiSocket(socketIo, online_account,data.sender, 'incoming_mess', privMessObj);
             await savePrivateMessage(privMessObj);
-            /*await contract_.submitTransaction('savePrivateMessage', data.messID,
-                            data.sender, data.sender_name, data.receiver, data.message, parseInt(Date.now()));
-            await contract_.submitTransaction('verifyMessBlockchain', data.messID, Date.now().toString());*/
+
         }
         catch(error)
         {
@@ -365,20 +385,27 @@ var sockets = [];
        
     })
 
+    socket.on('secure_sendMess', async function(data){
+        await secureChat.sendSecurePrivMessIO(data, socketIo, online_account);
+    })
+
     socket.on('seenUpdate', async function(data){
         try
         {
             console.log(data);
-            var db = await mongo.connect(url_mongo);
-            var dbo = await db.db(db_mongo_name);
+            //var db = await mongo.connect(url_mongo);
+            //var dbo = await db.db(db_mongo_name);
+            var dbo = mongoUtil.getDb();
             if(data.docType=='private_message')
             {
-                await dbo.collection('privateMessage').updateOne({'messID':data.messID},{$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
+                await dbo.collection('privateMessage').updateOne({'messID':data.messID},
+                {$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
 
             }
             else if(data.docType=='group_message')
             {
-                await dbo.collection('groupMessage').updateOne({'messID':data.messID},{$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
+                await dbo.collection('groupMessage').updateOne({'messID':data.messID},
+                {$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
             }
         }
         catch(error)
@@ -386,16 +413,60 @@ var sockets = [];
             console.log(error);
         }
     })
+    socket.on('call_connect', function(data){
+        users_call[data.userID]=socket.id;
+    })
+    socket.on('call', (data) => {
+        let callee = data.calleeID; 
+        let rtcMessage = data.rtcMessage;
+        console.log('user_call', users_call);
+        socket.to(users[callee]).emit("newCall", {
+            caller: data.caller,
+            rtcMessage: rtcMessage,
+            callerID: data.callerID
+        })
+
+    })
+
+    socket.on('answerCall', (data) => {
+        let callerID = data.callerID;
+        rtcMessage = data.rtcMessage;
+        console.log('answerCall', users_call, users_call[callerID]);
+
+        socket.to(users_call[callerID]).emit("callAnswered", {
+            rtcMessage: rtcMessage
+        })
+
+    })
+
+    socket.on('ICEcandidate', (data) => {
+        let otherUser = data.user;
+        let rtcMessage = data.rtcMessage;
+
+        socket.to(users_call[otherUser]).emit("ICEcandidate", {
+            sender: data.sender,
+            rtcMessage: rtcMessage
+        })
+    })
   
     socket.on("disconnect", () => {
       console.log("Client disconnected:" + socket.id);
-      for(let i=0;i<online_account.length;i++)
-      {
-          if(online_account[i]['socketID']==socket.id)
-          {
-            socketIo.emit('online_status', {'userID':online_account[i]['userID'], 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
-            online_account.splice(i,1); //xoa thong tin user offfline khoi danh sach online
+      let flag_online=0;
+      let live_user;
+
+      for(let i=0;i<online_account.length;i++){
+          if(online_account[i]['socketID']==socket.id){
+              live_user=online_account[i]['userID'];
+              online_account.splice(i,1);
           }
+      }
+      for(let j=0;j<online_account.length;j++){
+          if(online_account[j]['userID']==live_user){
+              flag_online=1;
+          }
+      }
+      if(flag_online==0){
+        socketIo.emit('online_status', {'userID':live_user, 'isOnline': false}) //thong bao user da offline cho cac user khac cap nhat
       }
       console.log(online_account);
     });
@@ -407,12 +478,13 @@ var sockets = [];
 app.set('view engine', 'ejs');
 app.set('views', __dirname);
  
-app.use(upload.array()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(bodyParser.json());
 app.use(cors());
 
 app.use(express.static(__dirname + '/views_h'));
+
+app.use('/secureChat', secureChat.router);
 
 //code
 
@@ -494,33 +566,31 @@ app.get('/chat', function(req, res){
     res.render('./views_h/chat');
 })
 
+
 app.post('/load_chat_history', authenticateAccessToken, async function(req, res){
     try
     {
-        /*const contract_ = await contract();
-        const chat_history_raw = await contract_.evaluateTransaction('queryHistoryMessage', req.body.id); console.log(chat_history_raw);
-        res.send(chat_history_raw.toString());*/
-
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        const dbo = mongoUtil.getDb();
         var list_chat_arr = await dbo.collection('user')
             .find({'userID': req.body.id}).project({'chat_history':{$slice: req.body.limit}}).toArray();
         var list_chat = list_chat_arr[0];
-        var queryString_nameuser = 'select id, TenDayDu from DoIT_CanBo where id in (';
-        for(let i = 0; i<list_chat.chat_history.length; i++)
-        {
-            if(list_chat.chat_history[i]['docType']=='private_message'){
-                queryString_nameuser = queryString_nameuser + "'"+ list_chat.chat_history[i].userID + "'"+",";
-            }
-        }
-        queryString_nameuser=queryString_nameuser+ "1)";
         sql.connect(sql_config, function(err){
             if(err){
                 console.log(err);
                 res.send({'result':'connect to database failed!'})
             }
             var request = new sql.Request();
-            request.query(queryString_nameuser, function(err,recordSet){
+            let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
+
+            let arrayQuery = [];
+            for (let i = 0; i < list_chat.chat_history.length; i++) {
+                request.input(`variable_${i}`, sql.Int, list_chat.chat_history[i].userID);
+               arrayQuery.push(`@variable_${i}`);
+
+            }
+            queryString += arrayQuery.join(",");
+            queryString += ")";
+            request.query(queryString, function(err,recordSet){
                 if(err){
                     console.log(err);
                     //res.send(JSON.stringify({'data': 'no_data'}));
@@ -535,6 +605,10 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
                             if(nameSet[j].id==list_chat.chat_history[k].userID)
                             {
                                 list_chat.chat_history[k]['username'] = nameSet[j].TenDayDu;
+                            }
+                            if(list_chat.chat_history[k].userID==000)
+                            {
+                                list_chat.chat_history[k]['username'] = 'SYSTEM';
                             }
                         }
                     }
@@ -555,15 +629,7 @@ app.post('/load_chat_history', authenticateAccessToken, async function(req, res)
 app.post('/chat_peer', authenticateAccessToken, async function(req, res){
     try
     {
-        //db.privateMessage.find({$or:[{'sender':777,'receiver':783},{'sender':783,'receiver':777}]}).sort({'timestamp':-1}).limit(100)
-        /*const contract_ = await contract();
-        console.log({'partner_ID': req.body.partner_ID, 'my_ID': req.body.my_ID, 'limit': req.body.limit, 'skip': req.body.skip});
-        const chat_data = await contract_.evaluateTransaction('queryMessage', req.body.my_ID, 
-                            req.body.partner_ID, 'private_message', req.body.limit, req.body.skip);
-        res.send(chat_data.toString());*/
-
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var chatBlocks = await dbo.collection('privateMessage').find({$or:[{'sender':req.body.my_ID,'receiver':req.body.partner_ID},
         {'sender':req.body.partner_ID,'receiver':req.body.my_ID}]}).sort({'timestamp':-1}).limit(req.body.limit).toArray();
         res.send(JSON.stringify(chatBlocks))
@@ -578,8 +644,7 @@ app.post('/chat_peer', authenticateAccessToken, async function(req, res){
 
 //for chat room 
 app.post('/chat_room', authenticateAccessToken, async function(req, res){
-    var db = await mongo.connect(url_mongo);
-    var dbo = await db.db(db_mongo_name);
+    var dbo = mongoUtil.getDb();
     var chatBlocks = await dbo.collection('groupMessage').find({'groupID': req.body.groupID}).sort({'timestamp': -1}).limit(req.body.limit).toArray();
     res.send(JSON.stringify(chatBlocks));
 })
@@ -670,8 +735,7 @@ app.post('/markImportant', authenticateAccessToken, async function(req, res){
     try
     {
         const contract_ = await contract();
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var chatBlock;
         if(req.body.docType=='private_message')
         {
@@ -718,8 +782,7 @@ app.post('/verifyMessBlockchain', authenticateAccessToken, async function(req, r
     try
     {
         const contract_ = await contract();
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         const updated_Mess = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, req.body.dateTime);
         var update_Mess_json = await JSON.parse(updated_Mess.toString()); console.log(update_Mess_json);
         if(update_Mess_json.docType=='private_message')
@@ -774,8 +837,7 @@ app.get('/medium', function(req, res){
 
 app.post('/generateGroup', authenticateAccessToken, async function(req,res){
     try{
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var groupID = 'groupComm'+ req.body.admin + req.body.groupName.replace(/\s/g, '') + Date.now().toString();
         var intUserList = [];
         for(let i=0; i<req.body.userID.length;i++){
@@ -826,31 +888,35 @@ app.post('/loadOptions', authenticateAccessToken, async function(req, res){
     try
     {
         var docType = req.body.docType;
+        var dbo = mongoUtil.getDb();
         if(docType=='group_message')
         {
             var id_group = req.body.id_group;
             var userID = parseInt(req.body.userID);
-            var db = await mongo.connect(url_mongo);
-            var dbo = await db.db(db_mongo_name);
             var group = await dbo.collection('groupCollection').findOne({'groupID': id_group});
             var listUserID = group.member;
             var groupName = group.groupName;
             var admin = group.admin;
             var inforSet=0;
-            var queryString_nameuser = 'select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
-            'from DoIT_CanBo as a inner join DoIT_DMDonVi as b on a.id_DonVi = b.id inner join DoIT_DMChucVu as c on a.id_ChucVu = c.id '+
-            'inner join DoIT_DMCapBac as d on a.id_CapBac = d.id  where a.id in (';
-            for(let i =0; i<listUserID.length;i++){
-                queryString_nameuser=queryString_nameuser+ "'"+ listUserID[i] + "'"+",";
-            };
-            queryString_nameuser=queryString_nameuser+ "1)";
             sql.connect(sql_config, function(err){
                 if(err){
                     console.log(err);
                     res.send({'result':'connect to database failed!'})
                 }
                 var request = new sql.Request();
-                request.query(queryString_nameuser, function(err,recordSet){
+                let queryString = 'select a.id, a.TenDayDu, a.Mobile, a.Phone, b.TenDonVi, c.Title as chuc_vu, d.Title as cap_bac '+ 
+                'from DoIT_CanBo as a inner join DoIT_DMDonVi as b on a.id_DonVi = b.id inner join DoIT_DMChucVu as c on a.id_ChucVu = c.id '+
+                'inner join DoIT_DMCapBac as d on a.id_CapBac = d.id  where a.id in (';
+
+                let arrayQuery = [];
+                for (let i = 0; i < listUserID.length; i++) {
+                    request.input(`variable_${i}`, sql.Int, listUserID[i]);
+                   arrayQuery.push(`@variable_${i}`);
+    
+                }
+                queryString += arrayQuery.join(",");
+                queryString += ")";
+                request.query(queryString, function(err,recordSet){
                     if(err){
                         console.log(err);
                         //res.send(JSON.stringify({'data': 'no_data'}));
@@ -883,11 +949,10 @@ app.post('/changeGroupName', authenticateAccessToken, async function(req, res){
     {
         var userID = req.user.id;
         var newGroupName = req.body.groupName;
-        var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var groupID = req.body.groupID; 
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
-        var memList = group['member'];
+        var memList = group.member;
         if(group.admin==userID)
         {
             await dbo.collection('groupCollection').updateOne({'groupID':groupID}, {$set:{'groupName': newGroupName}});
@@ -909,8 +974,7 @@ app.post('/updateGroup', authenticateAccessToken, async function(req, res){
         var groupName = req.body.groupName;
         var listMem = req.body.userListID;
         var groupID= req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var old_memList = group.member;
 
@@ -943,8 +1007,7 @@ app.post('/leaveGroup', authenticateAccessToken, async function(req, res){
     {
         var userID = req.user.id;
         var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var memList = group.member;
         if(group.admin == userID)
@@ -967,8 +1030,7 @@ app.post('/deleteGroup', authenticateAccessToken, async function(req, res){
     try{
         var userID = req.user.id;
         var groupID = req.body.groupID;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         var group= await dbo.collection('groupCollection').findOne({'groupID':groupID});
         var memList = group.member;
         if(group.admin == userID)
@@ -991,8 +1053,7 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
     try
     {
         var userID = req.user.id;
-        var db = await mongo.connect(url_mongo);
-        var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
         if(req.body.docType=='private_message')
         {
             var messList = req.body.seenMessID;
@@ -1000,7 +1061,8 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
             if(req.body.seenMessID.length>0)
             {
                 console.log(req.body);
-                await dbo.collection('privateMessage').updateMany({'messID':{$in: messList}},{$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
+                await dbo.collection('privateMessage').updateMany({'messID':{$in: messList}},
+                {$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
             }
         }
         else if(req.body.docType=='group_message')
@@ -1009,7 +1071,8 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
             let timestamp = req.body.timestamp;
             if(req.body.seenMessID.length>0)
             {
-                await dbo.collection('groupMessage').updateMany({'messID':{$in: messList}},{$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
+                await dbo.collection('groupMessage').updateMany({'messID':{$in: messList}},
+                {$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
             }
         }
         res.send({'data': 'ok'});
@@ -1021,7 +1084,311 @@ app.post('/seenUpdate', authenticateAccessToken, async function(req, res){
 
 })
 
+app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id;
+        var dbo = mongoUtil.getDb();
+        if(req.query.docType=='private_message')
+        {
+            let seenTime;
+            var message = await dbo.collection('privateMessage').findOne({'messID':req.query.messID}); 
+            
+            if(message.seen && message.seen.length>0)
+            {
+                seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
+            }
+            else if(!message.seen || message.seen.length==0)
+            {
+                seenTime = 0;
+            }
+            let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenTime});
+        }
+        else if(req.query.docType=='group_message')
+        {
+            var message = await dbo.collection('groupMessage').findOne({'messID':req.query.messID});
+            let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+            let seenTime = [];
+            if(message.seen && message.seen.length>0)
+            { 
+                sql.connect(sql_config, function(err){
+                    if(err){
+                        console.log(err);
+                        res.send({'result':'connect to database failed!'})
+                    }
+                    var request = new sql.Request();
+                    let queryString = 'select id, TenDayDu from DoIT_CanBo where id in(';
 
-server.listen(8082, () => {
-    console.log('Server đang chay tren cong 8082');
- });
+                    let arrayQuery = [];
+                    for (let i = 0; i < message.seen.length; i++) {
+                        request.input(`variable_${i}`, sql.Int, message.seen[i].userID);
+                       arrayQuery.push(`@variable_${i}`);
+    
+                    }
+                    queryString += arrayQuery.join(",");
+                    queryString += ")";
+                    request.query(queryString, function(err, recordSet){
+                        if(err){
+                            console.log(err);
+                            //res.send(JSON.stringify({'data': 'no_data'}));
+                        }
+                        if(recordSet)
+                        {
+                            let seenArray =[];
+                            for(let k=0; k<recordSet.recordset.length;k++)
+                            {
+                                for(let l=0; l<message.seen.length;l++)
+                                {
+                                    if(k==l)
+                                    {
+                                        let seenObj = {
+                                            'userID': message.seen[l].userID,
+                                            'userName': recordSet.recordset[k].TenDayDu,
+                                            'dateTime': app_helper.timestamptoDateConverter(message.seen[l].timestamp)
+                                        }
+                                        seenArray.push(seenObj);
+                                    }
+                                }
+                            }
+                            console.log(seenArray);
+                            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenArray})
+                        }
+                    })
+                })
+            }
+            else if((message.seen && message.seen.length==0) || !message.seen)
+            {
+                res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': 0})
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
+})
+
+
+app.post('/sendFile', authenticateAccessToken, async function(req, res){
+    try
+    {
+        let docType = req.headers.doctype; 
+        if(docType=='private_message')
+        {
+            let sender_name = req.headers.sender_name;
+            let sender = req.headers.sender;
+            let receiver = req.headers.receiver;
+            let fileName = 'file'+sender+ receiver+ docType+ Date.now().toString()
+            var upload = multer({ storage : app_helper.storage(fileName)}).single('files');
+            upload(req,res, async function(err) {
+                if(err) {
+                    return res.end("Error uploading file.");
+                }
+                console.log(req.file.originalname);
+                res.send({'data':'ok'});
+                let messID = 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString()
+                var privMessObj = {
+                    'messID': messID,
+                    'docType': 'private_message',
+                    'sender': parseInt(sender),
+                    'receiver': parseInt(receiver),
+                    'message': fileName,
+                    'sender_name': decodeURIComponent(sender_name),
+                    'timestamp':parseInt(Date.now()),
+                    'isImportant': 'false',
+                    'seen':[],
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
+                }
+                await savePrivateMessage(privMessObj);
+                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(sender),'incoming_mess', privMessObj);
+                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(receiver),'incoming_mess', privMessObj);
+            });
+        }
+        else if(docType=='group_message')
+        {
+            let sender_name = req.headers.sender_name;
+            let sender = req.headers.sender;
+            let groupID = req.headers.groupid; console.log(groupID);
+            let groupName = req.headers.groupname;
+            let fileName = 'file'+sender+groupID+docType+Date.now().toString();
+            var upload = multer({storage: app_helper.storage(fileName)}).single('files');
+            upload(req, res, async function(err){
+                if(err){
+                    return res.end("Error uploading file.");
+                }
+                res.send({'data':'ok'});
+                var messID = 'MessGroup.'+sender+'.'+groupID+'.'+Date.now().toString();
+                var groupMessObj = {
+                    'messID': messID,
+                    'docType': 'group_message',
+                    'sender': parseInt(sender),
+                    'groupID': groupID,
+                    'message': fileName,
+                    'sender_name': decodeURIComponent(sender_name),
+                    'timestamp':parseInt(Date.now()),
+                    'isImportant': 'false',
+                    'seen':[],
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
+                }
+                await saveGroupMessage(groupMessObj);
+                socketIo.in(groupID).emit('incoming_mess',{
+                    'messID': 'MessGroup.'+sender+'.'+groupID+'.'+Date.now().toString(),
+                    'sender': sender, 
+                    'groupID': groupID, 
+                    'groupName': decodeURIComponent(groupName),
+                    'message': fileName, 
+                    'sender_name': decodeURIComponent(sender_name),
+                    'docType': 'group_message',
+                    'isFile': 'true',
+                    'originalFilename': req.file.originalname
+                })
+            })
+        }
+        
+    
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data':'error'});
+    }
+})
+
+app.get('/downloadFile', authenticateAccessToken, async function(req, res){
+    res.download(`./fileServer/`+ req.query.fileName, function(error){
+        console.log(error)
+    });
+})
+
+app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        var sender = parseInt(req.query.senderID);
+        var receiver = parseInt(req.query.receiverID);
+        var unregisterSecureList = await app_helper.checkE2ERegister(sender, receiver);
+        var message = 'vui long dang ky de lien lac bang tin nhan ma hoa';
+        if(unregisterSecureList.length==0){
+            if(receiver!=000)
+            {
+                let receiver_publicKeyRSA;
+                var myObj = await dbo.collection('user').findOne({'userID': receiver});
+                if(myObj && myObj.hasOwnProperty('secureKey')) {
+                    receiver_publicKeyRSA=myObj.secureKey.publicKeyRSA;
+                }
+                res.send({'data':'ok', 'receiver_publicKeyRSA': receiver_publicKeyRSA});
+            }
+            else if(receiver==000)
+            {
+                res.send({'data':'ok'});
+            }
+            
+        }
+        else if(unregisterSecureList.length>0)
+        {
+            for(let i=0;i<unregisterSecureList.length;i++)
+            {
+                if(unregisterSecureList[i].userID==sender)
+                {
+                    //res.send({'data':'ng', 'status':'registerRequire'});
+                }
+                else if(unregisterSecureList[i].userID==receiver && unregisterSecureList[i].userID!=000)
+                {
+                    console.log(unregisterSecureList[i].userID, receiver)
+                    var registerRequireObj={
+                        'messID': 'MessPriv.'+'000.'+receiver+'.'+Date.now().toString(),
+                        'docType': 'private_message',
+                        'sender': parseInt(sender),
+                        'sender_name':'SYSTEM',
+                        'timestamp':parseInt(Date.now()),
+                        'receiver': parseInt(receiver),
+                        'isImportant': 'false',
+                        'seen':[],
+                        'message': message
+                    }
+                    await savePrivateMessage(registerRequireObj);
+                    socketIo.to(users[parseInt(receiver)]).emit('incoming_mess', registerRequireObj);
+                    //res.send({'data':'ng', 'status':'waitingRequire'});
+                }
+            }
+            res.send({'data':'ng', 'status':'registerRequire', 'unregList': unregisterSecureList});
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+})
+
+app.get('/registerE2EService', function(req, res){
+    res.render('./views_h/secureChatRegister');
+})
+
+app.post('/verifyPrivKeyRSA', authenticateAccessToken, async function(req,res){
+    try
+    {
+        var userID = req.user.id;
+        var publicKeyRSA = req.body.publicKeyRSA;
+        var result = await app_helper.verifyPrivKeyRSA(userID, publicKeyRSA);
+        res.send(result);
+    }
+    catch(error)
+    {
+        console.log({'data': 'ng'});
+    }
+
+})
+
+app.post('/registerSecureChat', authenticateAccessToken, async function(req, res){
+    try
+    {
+        var userID = req.user.id; console.log(userID);
+        var publicKeyRSA = req.body.publicKeyRSA;
+        var dbo = mongoUtil.getDb();
+        var newPublicKey = {'publicKeyRSA': publicKeyRSA};
+        var unregList = await app_helper.checkE2ERegister(userID, 000);
+        if(unregList.length==1)
+        {
+            await dbo.collection('user').updateOne({'userID': userID},{$set:{'secureKey': newPublicKey}});
+        }
+        else
+        {
+            //xoa tin nhan cu va tao key moi
+            await dbo.collection('user').updateOne({'userID': userID},{$set:{'secureKey.publicKeyRSA': publicKeyRSA}});
+        }
+
+        res.send({'data': 'ok'});
+    }
+    catch(error)
+    {
+        console.log(error);
+        res.send({'data':'ng', 'status':error});
+    }
+
+})
+app.get('/secureChat', function(req, res){
+    res.render('./views_h/secureChat');
+})
+
+
+//--------------Call--------------------//
+app.get('/call', function(req, res){
+    if(req.query.docType=='private_message')
+    {
+        res.render('./views_h/call',{'partnerID': req.query.partnerID, 'call':req.query.call});
+    }
+
+})
+//--------------End Call----------------//
+
+mongoUtil.connectToServer( function( err, client ) {
+    if (err) console.log(err);
+    // start the rest of your app here
+    server.listen(8082, () => {
+        console.log('Server đang chay tren cong 8082');
+    });
+  });

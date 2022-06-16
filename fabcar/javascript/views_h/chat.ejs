@@ -1,501 +1,544 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
 <style>
-* {box-sizing: border-box}
-body {font-family: "Lato", sans-serif;}
+    * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.chat-container {
-    display: flex;
-    width: 94%;
-    float: right;
-    transition: all 0.4s ease;
-    min-height: 100vh;
-}
+    body {
+        font-family: "Lato", sans-serif;
+    }
 
-.chat-container.scaledown {
-    width: 80%;
-}
+    .chat-container {
+        display: flex;
+        margin-left: 80px;
+        transition: all 0.4s ease;
+        height: 100vh;
+    }
 
-/* Style the tab */
-.tab {
-  display: flex;
-  flex-direction: column;
-  width: 25%;
-  /* min-height: 100vh; */
-  background-color: rgba(121, 199, 197, 0.2);
-  border-right: 1px solid rgba(121, 199, 197, 0.2);
-  height: 94vh;
-}
+    .chat-container.scaledown {
+        margin-left: 380px;
+    }
 
-.tablinks {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0 20px 22px;
-    font-family: 'Poppins', sans-serif;
-    background-color: transparent;
-    transition: all 0.2s ease-in-out;
-    margin: 0;
-    border: 0px rgb(121, 199, 197);
-    position: relative;
-}
+    /* Style the tab */
+    .tab {
+        display: flex;
+        flex-direction: column;
+        width: 25%;
+        /* min-height: 100vh; */
+        background-color: #f8f8f8;
+        border-right: none;
+        height: 100%;
 
-.tablinks:hover {
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid rgb(121, 199, 197);
-}
+    }
 
-.tablinks .acc{
-    text-transform: uppercase;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-    margin-bottom: 5px;
-}
+    #hist_tab {
+        height: 100%;
+        overflow-y: auto;
+        background-color: #f8f8f8;
+        padding-left: 20px;
+    }
 
-.tablinks .status-offline {
-    color: red;
-}
+    .tablinks {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        padding: 20px 18px 20px 22px;
+        font-family: 'Poppins', sans-serif;
+        background-color: transparent;
+        transition: all 0.1s ease-in-out;
+        margin: 0;
+        border: 0px rgb(121, 199, 197);
+        position: relative;
+        z-index: 9;
+        margin-bottom: 10px;
+    }
 
-.dots-offline {
-    width: 10px;
-    height: 10px;
+    .tablinks:hover {
+        cursor: pointer;
+        background-color: #ffffff;
+        border-right: 4px solid #635f84;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
+
+    .tablinks.active-users {
+        background-color: #ffffff;
+        border-right: 4px solid #635f84;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
+
+    .tablinks .acc-avatar {
+        width: 20%;
+    }
+
+    .tablinks .acc-status {
+        width: 90%;
+    }
+
+    .tablinks .acc {
+        /* text-transform: uppercase; */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .tablinks .status-offline {
+        color: red;
+    }
+
+    .tablinks .status-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .tablinks .status-online {
+        color: red;
+    }
+
+    .dots-offline {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: red;
+        margin-right: 15px;
+    }
+
+    .dots-online {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: green;
+        margin-right: 15px;
+    }
+
+    /* Style the tab content */
+    .chat-box {
+        display: flex;
+        width: 75%;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        height: 100%;
+        background-color: #f1f3f4;
+    }
+
+    .chat-box .top-bar {
+        width: auto;
+        height: 8%;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 30px;
+        border: none;
+        margin: 20px 15px;
+        align-items: center;
+        box-sizing: border-box;
+        border-radius: 8px;
+        box-shadow: -4px 10px 15px 0px #eee;
+    }
+
+    .chat-box .top-bar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .chat-box .top-bar .user-info .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #5364ee;
+        position: relative;
+    }
+
+    .chat-box .top-bar .user-info .avatar p {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        position: absolute;
+        /* left: 50%; */
+        text-align: center;
+        color: white;
+        font-weight: 400;
+    }
+
+    .chat-box .top-bar .user-info .name-chat {
+        letter-spacing: 1px;
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+
+    .chat-box .top-bar button {
+        outline: none;
+        border: none;
+    }
+
+    .chat-box .top-bar i.bxs-phone-call {
+        color: #5364ee;
+        font-size: 26px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+    #chat-content {
+        min-width: 100%;
+        height: 85%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        background-color: #f1f3f4;
+        padding: 20px;
+    }
+
+    .incoming {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    .incoming .bubble {
+        padding: 15px 15px 15px 18px;
+        background: #fdfdfd;
+        border-radius: 0px 12px 12px 12px;
+        color: 'black';
+        font-size: 18px;
+        margin-right: 5px;
+        word-break: break-all;
+        max-width: 75%;
+        margin-bottom: 10px;
+    }
+
+    .outgoing {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    .outgoing .bubble {
+        padding: 15px 15px 15px 18px;
+        background: #3b3ea2;
+        border-radius: 12px 0px 12px 12px;
+        color: white;
+        font-size: 18px;
+        margin-left: 5px;
+        word-break: break-all;
+        max-width: 75%;
+        margin-bottom: 10px;
+    }
+
+    .userName {
+        font-size: 16px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .block_func_btn {
+        position: relative;
+        display: inline-block;
+    }
+
+    .expand-func-icon {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        cursor: pointer;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    .expand-func-icon:hover {
+        background-color: #C7C9CC;
+    }
+
+    .expand-func-icon .dots {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #777777;
+    }
+
+    .expand-func-icon_left {
+        display: flex;
+        cursor: pointer;
+        padding: 7px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .expand-func-icon_left:hover {
+        background-color: #C7C9CC;
+    }
+
+    .expand-func-icon_left .fa-list-check {
+        font-size: 15px;
+    }
+
+    .tablinks .block_func_btn .dropdown-button {
+        /*min-width: 110px;
+        min-height: 60px;*/
+        width: 15%;;
+        position: fixed;
+        /*left: 20%;
+        top: 25px;*/
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 3px 3px 3px 3px;
+        /*display: none;*/
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        z-index: 1000;
+    }
+
+    .incoming .block_func_btn .dropdown-button {
+        min-width: 110px;
+        min-height: 60px;
+        position: absolute;
+        left: 20%;
+        top: 25px;
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 0px 8px 10px 8px;
+        display: none;
+    }
+
+    .incoming.active-dropdown .block_func_btn .dropdown-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        z-index: 99;
+    }
+
+    .block_func_btn .dropdown-button button {
+        outline: none;
+        border: none;
+        background: transparent;
+        font-family: 'Poppins', sans-serif;
+        font-size: 12px;
+        width: 100%;
+        font-weight: 400;
+    }
+
+    .block_func_btn .dropdown-button button:hover {
+        cursor: pointer;
+        background-color: #f2f2f2;
+        padding: 5px 8px;
+        border-radius: 4px;
+    }
+
+    .outgoing .block_func_btn .dropdown-button {
+        min-width: 110px;
+        min-height: 60px;
+        position: absolute;
+        /*neu muon dung hover thi phair an cai nay di*/
+        right: 20%;
+        top: 25px;
+        padding: 8px 11px;
+        background-color: #C7C9CC;
+        border-radius: 10px 0px 10px 10px;
+        display: none;
+    }
+
+    .outgoing.active-dropdown .block_func_btn .dropdown-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        z-index: 99;
+    }
+
+    .darker {
+        border-color: #ccc;
+        background-color: #ddd;
+    }
+
+
+    .msger-inputarea {
+        margin: 15px 10px;
+        display: flex;
+        padding: 10px;
+        background: #fff;
+        border-radius: 6px;
+    }
+
+    .msger-input {
+        border: none;
+        outline: none;
+        margin: 0px 10px 0px 10px;
+        width: 100%;
+        background: #fff;
+        display: block;
+        /* padding-top: 10px; */
+        font-size: 20px;
+        font-family: 'Poppins', sans-serif;
+        padding-left: 30px;
+    }
+
+    .msger-send-btn {
+        border: none;
+        outline: none;
+        margin-left: 10px;
+        background: #5759e8;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 10%;
+    }
+
+    .msger-send-btn i {
+        padding: 10px 12px;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    .netstat {
+        color: green;
+    }
+
+    .button_menu {
+        background-color: #4CAF50;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .show {
+        display: block;
+    }
+    /* The Modal (background) */
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1000;
+        /* Sit on top */
+        padding-top: 100px;
+        /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s
+    }
+
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
+
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
+
+    @keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
+
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
+
+    /* The Close Button */
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 2px 16px;
+    }
+
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    .loader {
+    border: 16px solid #f3f3f3;
     border-radius: 50%;
-    background-color: red;
-    margin-right: 15px;
-}
-
-
-.tablinks .status-online {
-    color: red;
-}
-
-.dots-online {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: green;
-    margin-right: 15px;
-}
-
-/* Style the tab content */
-.chat-box {
-    display: flex;
-    width: 75%;
-    flex-direction: column;
-    font-family: 'Poppins', sans-serif;
-}
-
-.chat-box .top-bar {
-    width: 100%;
-    max-height: 9vh;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 30px;
-    align-items: center;
-}
-
-.chat-box .top-bar .user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.chat-box .top-bar .user-info .avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: rgb(47, 197, 254); 
-    position: relative;
-}
-
-.chat-box .top-bar .user-info .avatar p {
-    width: 35px;
-    height: 35px;
-    line-height: 35px;
-    position: absolute;
-    /* left: 50%; */
-    text-align: center;
-    color: white;
-    font-weight: 400;
-}
-
-.chat-box .top-bar .user-info .name-chat {
-    letter-spacing: 1px;
-    font-weight: 500;
-    font-size: 20px;
-}
-
-
-.chat-box .top-bar button {
-    outline: none;
-    border: none;
-}
-
-.chat-box .top-bar i.bxs-phone-call {
-    color: rgb(47, 197, 254);
-    font-size: 30px;
-    background-color: #fff;
-    cursor: pointer;
-}
-
-#chat-content {
-    min-width: 100%;
-    height: 82vh;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    background-color: #f9fbff;
-    padding: 20px;
-}
-
-.incoming {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2px;
-    width: 50%;
-}
-
-.incoming .bubble {
-    padding: 10px 10px 10px 12px;
-    background:  #777777;
-    border-radius: 0px 12px 12px 12px;
-    color: white;
-    font-size: 19px;
-    margin-right: 5px;
-}
-
-.outgoing {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    margin-bottom: 2px;
-    width: 100%;
-}
-
-.outgoing .bubble {
-    padding: 10px 10px 10px 12px;
-    background:  #79C7C5;
-    border-radius: 12px 0px 12px 12px;
-    color: white;
-    font-size: 19px;
-    margin-left: 5px;
-}
-
-.block_func_btn {
-    position: relative;
-    display: inline-block;
-}
-
-.expand-func-icon {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    cursor: pointer;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.expand-func-icon:hover {
-    background-color: #C7C9CC;
-}
-
-.expand-func-icon .dots {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: #777777;
-}
-
-.expand-func-icon_left {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    cursor: pointer;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.expand-func-icon_left:hover {
-    background-color: #C7C9CC;
-}
-
-.expand-func-icon_left .dots {
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: #777777;
-}
-
-.incoming .block_func_btn .dropdown-button {
-    min-width: 110px;
-    min-height: 60px;
-    position: absolute;
-    left: 20%;
-    top: 25px;
-    padding: 8px 11px;
-    background-color: #C7C9CC;
-    border-radius: 0px 8px 10px 8px;
+    border-top: 16px solid blue;
+    border-bottom: 16px solid blue;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
     display: none;
-}
+    }
 
-.incoming.active-dropdown .block_func_btn .dropdown-button{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    z-index: 99;
-}
+    @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+    }
 
-.block_func_btn .dropdown-button button {
-    outline: none;
-    border: none;
-    background: transparent;
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
-    width: 100%;
-    font-weight: 400;
-}
-
-
-.block_func_btn .dropdown-button button:hover {
-    cursor: pointer;
-    background-color: #f2f2f2;
-    padding: 5px 8px;
-    border-radius: 4px;
-}
-
-.outgoing .block_func_btn .dropdown-button {
-    min-width: 110px;
-    min-height: 60px;
-    position: absolute; /*neu muon dung hover thi phair an cai nay di*/
-    right: 20%;
-    top: 25px;
-    padding: 8px 11px;
-    background-color: #C7C9CC;
-    border-radius: 10px 0px 10px 10px;
-    display: none;
-}
-
-.outgoing.active-dropdown .block_func_btn .dropdown-button{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    z-index: 99;
-}
-
-/* .input_form{
-    position: absolute;
-    position: sticky;
-    bottom: 50;
-    top: 430px;
-} */
-
-/* .input_mess{
-    float: right;
-    width: 50%;
-    height: 50px;
-    margin-top: auto;
-} */
-/* .send_button{
-    margin-top: auto;
-    float: right;
-    height: 50px;
-} */
-
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
-
-
-.msger-inputarea {
-    border-top: 1px solid #f2f2f2;
-  display:flex;
-  padding: 10px;
-  background: #fff;
-  max-height: 9vh;
-}
-
-.msger-input {
-    border: none;
-    outline: none;
-    margin: 0px 10px 0px 10px;
-  width: 100%;
-  background: #fff;
-  display: block;
-  padding-top: 10px;
-  font-size: 18px;
-  font-family: 'Poppins', sans-serif;
-}
-.msger-send-btn {
-    border:none;
-    outline: none;
-  margin-left: 10px;
-  background: #fff;
-  color: #79C7C5;
-  cursor: pointer;
-  transition: background 0.23s;
-}
-
-.msger-send-btn i {
-    padding: 5px;
-    font-size: 30px;
-}
-
-.msger-send-btn:hover {
-  background: #C7C9CC;
-}
-
-.netstat{
-    color:green;
-}
-
-.button_menu {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-.button_messType_add {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #008CBA;
-}
-
-.button2 {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #008CBA;
-  height: 90%;
-  min-height: 2pc;
-  position: relative;
-  width: 100%;
-  text-align: center;
-}
-.button2:hover {
-  background-color: #008CBA;
-  color: white;
-  cursor: pointer;
-}
-
-.dropdown-group-btn {
-  display: inline-block;
-  height: auto;
-  background-color: rgba(121, 199, 197, 0.2);
-  min-height: max-content;
-  position: absolute; bottom: 0;display: flex;flex-direction: column;
-                        width: 23.5%; padding: 10px; align-items: center;
-}
-
-.dropdown-group-btn:hover .dropdown-content-grbtn{display: block;}
-.dropdown-content-grbtn {
-  display: none;
-  position: absolute;
-  background-color: rgb(255, 255, 255);
-  width: 90%;
-  bottom: 50px;
-  z-index: 1;
-  flex-direction: column;
-
-}
-
-.dropdown-content-grbtn a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-.show {display: block;}
-
-.dropdown-group-btn a:hover {background-color: #ddd; cursor: pointer;}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
-
-/* Add Animation */
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0} 
-  to {top:0; opacity:1}
-}
-
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
-
-/* The Close Button */
-.close {
-  color: white;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-header {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
-
-.modal-body {padding: 2px 16px;}
-
-.modal-footer {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-}
-
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+    }
 </style>
 <html>
     <head>
@@ -505,72 +548,63 @@ body {font-family: "Lato", sans-serif;}
         <%- include('./header')%>
         <div class="chat-container">
             <div class="tab">
-                <div  id='hist_tab' style="overflow: auto;position: relative;">
+                <div id='hist_tab'>
                     <!--button class="tablinks" >Chat History</button-->
                 </div>
-                <div class="dropdown-group-btn">
-                    <div class="button_messType_add button2 " onclick="openUpDropdownGrbtn()">
-                        <div style="align-items: center;padding-top: 1vh; padding-bottom: 1vh;">OPTIONS</div> 
-                    </div>
-                    <div id="dropdown-item-grbtn" class="dropdown-content-grbtn">
-                        <a onclick="newGroup()">ADD GROUP</a>
-                        <a href="#addChannel">ADD CHANNEL</a>
-                    </div>                  
-                </div>       
             </div>
-     
+
             <div class="chat-box">
-                <div class="top-bar" >
-                    <!-- <div id="message_bubble">
-                        <h3>Message</h3>
-                        p>Chat Content</p
-                    </div> -->
+                <div class="top-bar">
                     <div class="user-info">
-                        <div class="avatar"><p>H</p></div>
+                        <div class="avatar">
+                            <p>H</p>
+                        </div>
                         <div class="name-chat"></div>
                     </div>
-                    <button><i class='bx bxs-phone-call'></i></button>
+                    <div class="loader"></div>
+                    <button onclick="call()"><i class="fa-solid fa-phone bxs-phone-call"></i></button>
                 </div>
                 <div id="chat-content">
                     <!-- contentchat -->
                 </div>
-                <div class="msger-inputarea">  
-                    <input id='inputMess'  class="msger-input" placeholder="Type a message..."/>
+                <div class="msger-inputarea">
+                    <input id='inputMess' class="msger-input" placeholder="Type a message..." />
                     <div class="msger-send-btn">
-                        <label for="myFile"  >
-                            
-                            <i class='bx bx-file'></i>
+                        <label for="myFile">
+                            <i class="fa-solid fa-paperclip"></i>
                         </label>
                         <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
                     </div>
-                   
-                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn"><i class='bx bxs-send' ></i></button> 
+
+                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
-
+        
         <div id="infoModal" class="modal">
 
             <!-- Modal content -->
             <div class="modal-content">
               <div class="modal-header">
                 <span class="close" id="closeInfoModal">&times;</span>
-                <h2>Modal Header</h2>
+                <h2> MESSAGE INFOMATION</h2>
               </div>
-              <div class="modal-body">
-                <p>Some text in the Modal Body</p>
-                <p>Some other text...</p>
+              <div class="modal-body" id="info-body">
               </div>
               <div class="modal-footer">
-                <h3>Modal Footer</h3>
+                <h3>HTTCDDH 2022</h3>
               </div>
             </div>
           
           </div>
+
+
+
     </body>
 </html>
-<script type="text/javascript" src="./jquery-3.6.0.js"></script>
-<script type="text/javascript" src="./socket.io.min.js"></script>
+<!--script type="text/javascript" src="./js/call.js"></script-->
 <script>
     /*
     var storeData = '';
@@ -578,10 +612,6 @@ body {font-family: "Lato", sans-serif;}
             storeData = event.data;
             sessionStorage.setItem('login_data', storeData);
         });*/
-    
-
-    const END_POINT = 'http://localhost:8082';
-    var socket=io();
     
     const left_tab = document.getElementById('hist_tab');
     var message_zone = document.getElementById('chat-content');
@@ -596,9 +626,12 @@ body {font-family: "Lato", sans-serif;}
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
 
-    socket.emit('connected', myID);
+    const END_POINT = 'https://127.0.0.1:8082';
+    
     socket.emit('joinRoom',{'roomID':'test'})
     socket.emit('sendRoom', {'roomID':'test', 'content': 'groupTest'+ myID})
+
+    socket.on('callAnswered', (data)=> console.log('rtc', data));
 
     socket.on('kickoutGroup', function(data)
     {
@@ -612,7 +645,7 @@ body {font-family: "Lato", sans-serif;}
                 console.log(tablinks[i].nextSibling.nextSibling)
                 tablinks[i].nextSibling.nextSibling.remove();
                 tablinks[i].remove();
-                socket.emit('leaveRoom', data);
+                socket.emit('leaveRoom', data.groupID);
             }
         }
     })
@@ -622,7 +655,7 @@ body {font-family: "Lato", sans-serif;}
         var docType = data.docType;
         var groupID = data.groupID;
         var groupName = data.groupName;
-        var tabGroup = private_message_left_tab(docType, groupID, groupName);
+        var tabGroup = group_message_left_tab(docType, groupID, groupName);
         left_tab.insertAdjacentHTML("afterbegin", tabGroup);
         socket.emit('joinRoom',{'roomID':groupID});
         Array.from(document.getElementsByClassName('tablinks')).forEach(tab => {
@@ -642,7 +675,7 @@ body {font-family: "Lato", sans-serif;}
         sessionStorage.setItem('online_partner', JSON.stringify({'live':data}));
     });
     socket.on('online_status', function(data){
-        console.log(data);
+        console.log(data); //yeu cau --> cap nhat danh sach online trong storage
         //console.log(document.getElementsByClassName('tablinks').length);
         var tablinks = document.getElementsByClassName('tablinks');
         for(var i=0;i<tablinks.length;i++)
@@ -663,6 +696,33 @@ body {font-family: "Lato", sans-serif;}
                 tablinks[i].querySelector('.dots-offline').style.backgroundColor='red';
             }
         }
+        if(sessionStorage.getItem('online_partner')){
+            var online_list= JSON.parse(sessionStorage.getItem('online_partner'))['live']; console.log(online_list);
+        
+            if(data.isOnline==true)
+            {
+                let flag_online=0;
+                for(let j=0;j<online_list.length;j++){
+                    if(data.userID==online_list[j].userID){
+                        flag_online=1;
+                    }
+                }
+                if(flag_online==0){
+                    online_list.push({'userID':data.userID, 'socketID': data.socketID});
+                }
+            }
+            else if(data.isOnline==false)
+            {
+                let flag_online=0;
+                for(let k=0;k<online_list.length;k++){
+                    if(data.userID==online_list[k].userID){
+                        online_list.splice(k,1);
+                    }
+                }
+            }
+            sessionStorage.setItem('online_partner', JSON.stringify({'live':online_list}));
+        }
+
     })
 
     socket.on('incoming_mess', function(data){
@@ -675,12 +735,19 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.sender == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
+                if(data.isFile && data.isFile=='true')
+                {
+                    var message = messageFile(data.message, data.originalFilename)
+                    //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                }
+                else
+                {
+                    var message = data.message;
+                }
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
-
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.sender != current_partner)
@@ -698,8 +765,22 @@ body {font-family: "Lato", sans-serif;}
                 }
                 if(flag==0)
                 {
-                    var tab_partner_el = private_message_left_tab(data.docType, data.sender, data.sender_name)
-                    left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    if(myID!=data.sender){
+                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
+                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    }
+                    else if(myID==data.sender && current_partner==data.receiver){
+                        if(data.isFile && data.isFile=='true'){
+                            var message = messageFile(data.message, data.originalFilename);
+                        }
+                        else{
+                            var message = data.message;
+                        }
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                        message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                        message_zone.scrollTop = message_zone.scrollHeight;
+                        reloadLeftTab(tab_partner_prefix+ data.receiver);
+                    }
                 }
                 else if(flag==1)
                 {
@@ -707,9 +788,9 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
                         console.log(partner_tab);
-                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
+                        reloadLeftTab(tab_partner_prefix+ data.sender);
                     }
-                    reloadLeftTab(tab_partner_prefix+ data.sender);
                 }
                 
             }
@@ -719,12 +800,25 @@ body {font-family: "Lato", sans-serif;}
         {
             if(data.groupID == current_partner)
             {
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, data.message, data.docType);
+                if(data.isFile && data.isFile=='true')
+                {
+                    var message = messageFile(data.message, data.originalFilename)
+                }
+                else
+                {
+                    var message = data.message
+                }
+                if(data.sender==myID)
+                {
+                    var mess_block_t = myMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                }
+                else if(data.sender!=myID)
+                {
+                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                // messContainer.scrollTop = messContainer.scrollHeight;
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
-
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.groupID != current_partner)
@@ -740,7 +834,7 @@ body {font-family: "Lato", sans-serif;}
                 }
                 if(flag==0)
                 {
-                    var tab_partner_el = private_message_left_tab(data.docType, data.groupID, data.groupName)
+                    var tab_partner_el = group_message_left_tab(data.docType, data.groupID, data.groupName)
                     left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                 }
                 else if(flag==1)
@@ -749,7 +843,7 @@ body {font-family: "Lato", sans-serif;}
                     {
                         var partner_tab = document.getElementById(tab_partner_prefix+data.groupID);
                         console.log(partner_tab);
-                        partner_tab.querySelector('.dots-offline').innerHTML='new message';
+                        partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
                     }
                     reloadLeftTab(tab_partner_prefix+ data.groupID);
                 }
@@ -828,22 +922,53 @@ body {font-family: "Lato", sans-serif;}
         }
         return mess_block
     }
-    function private_message_left_tab(docType, id, name)
+    function group_message_left_tab(docType, id, name)
     {
         var left_private_block =
         `
-            <div class="tablinks" docType=${docType} id="${tab_partner_prefix+id}"
+        <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
                 onclick=choosePartner_2(this) id_sender="${id}">
-                <div class="acc-status" style=" width: 50%;">
+                <div class="acc-avatar"></div>
+                <div class="acc-status">
                     <div class="acc">${name}</div>
-                    <div class="status-online">${network_status}</div>
+                    <div class="status-info">
+                        <div class="dots-offline"></div>
+                        <div class="status-online">${network_status}</div>
+                    </div>
                 </div>
-                <div class="dots-offline"></div>
                 <div class="expand-func-icon_left" onclick=leftTabOption(this)>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>    
-                                    </div>
+                    <i class="fa-solid fa-list-check"></i>   
+                </div>
+            </div>
+            <hr class="solid">
+        `
+        return left_private_block
+    }
+
+    function private_message_left_user(docType, id, name)
+    {
+        var left_private_block =
+        `
+        <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
+                    onclick=choosePartner_2(this) id_sender="${id}">
+                <div class="acc-avatar"></div>
+                <div class="acc-status"  >
+                    <div class="acc">${name}</div>
+                    <div class="status-info">
+                        <div class="dots-offline"></div>
+                        <div class="status-online">${network_status}</div>
+                    </div>
+                </div>
+                <div class="block_func_btn"  onclick=leftTabOption(this)>
+                    <div class="expand-func-icon_left">
+                        <i class="fa-solid fa-list-check"></i>   
+                    </div>
+                    <div class="dropdown-button" style="display:none;">
+                        <button onclick="console.log(this)" > SECURED CHAT</button>
+                        <button onclick="console.log(this)" > CHAT SETTINGS</button>
+                    </div>
+                </div>
+                
             </div>
             <hr class="solid">
         `
@@ -864,6 +989,15 @@ body {font-family: "Lato", sans-serif;}
         `
         return element_partner_selection_element;
     }
+    function messageFile(fileID, fileName) { 
+        var message=
+        `
+            <i class="fa-solid fa-file-lines"></i>
+            <div class="fileName">${fileName}</div>
+            <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
+        `
+        return message;
+    };
 
     function leftTabOption(obj){
         var leftTab = obj.closest('.tablinks');
@@ -873,84 +1007,190 @@ body {font-family: "Lato", sans-serif;}
         {
             window.open('/groupOptions?id='+id);
         }
+        else if(docType=='private_message')
+        {
+            var optionButtons = leftTab.querySelector('.dropdown-button'); console.log('optBtn', optionButtons)
+            if(optionButtons.style.display=='none')
+            {
+                optionButtons.style.display='block';
+            }
+            else if(optionButtons.style.display=='block')
+            {
+                optionButtons.style.display=='none';
+            }
+            
+        }
         
     }
 
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon_left'))
+        {
+            var dropdowns = document.getElementsByClassName("dropdown-button");
+            for(let i =0;i<dropdowns.length;i++)
+            {
+                if(dropdowns[i].style.display=='block')
+                {
+                    dropdowns[i].style.display='none';
+                }
+            }
+        }
+    })
+
     async function markImportantMess(obj)
     {
-        //console.log(obj.parentNode.parentNode.parentNode);
-        var parentObj = obj.closest('.messBlock');
-        var parentObj_id = parentObj.getAttribute('id'); 
-        var docType = parentObj.getAttribute('docType')
-        var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
-                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
-        console.log(parentObj);
-        var messItem = document.getElementById(parentObj_id);
-        const options = {
-            method: 'POST',
-            body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
-            }
-        };
-        var res_markBlockchain = await fetch('/markImportant', options);
-        var res_json = await res_markBlockchain.json();
-        console.log(res_json);
-        if(res_json.data=='ok')
+        try
         {
-            parentObj.querySelector('.dropdown-button').innerHTML= newItem;
-            parentObj.querySelector('.bubble').style.backgroundColor='red';
-            console.log(res_json.data)
-            messItem = parentObj;
+            document.getElementsByClassName('loader')[0].style.display='block';
+            //console.log(obj.parentNode.parentNode.parentNode);
+            var parentObj = obj.closest('.messBlock');
+            var parentObj_id = parentObj.getAttribute('id'); 
+            var docType = parentObj.getAttribute('docType')
+            var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
+                            <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+            console.log(parentObj);
+            var messItem = document.getElementById(parentObj_id);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_markBlockchain = await fetch('/markImportant', options);
+            var res_json = await res_markBlockchain.json();
+            console.log(res_json);
+            if(res_json.data=='ok')
+            {
+                parentObj.querySelector('.dropdown-button').innerHTML= newItem;
+                parentObj.querySelector('.bubble').style.backgroundColor='red';
+                console.log(res_json.data)
+                messItem = parentObj;
+            }
+            //messItem = parentObj;
+        
         }
-        //messItem = parentObj;
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
         
     }
 
     async function verifyMessBlock(obj)
     {
-        var parentObj = obj.closest('.messBlock');
-        //var parentObj = obj.parentElement.parentNode.parentNode;
-        console.log(parentObj);
-        var id_block = parentObj.getAttribute('id');
-        var docType = parentObj.getAttribute('docType');
-        console.log(id_block);
-        const options = {
-            method: 'POST',
-            body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            var parentObj = obj.closest('.messBlock');
+            //var parentObj = obj.parentElement.parentNode.parentNode;
+            console.log(parentObj);
+            var id_block = parentObj.getAttribute('id');
+            var docType = parentObj.getAttribute('docType');
+            console.log(id_block);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_block_verify = await fetch('/verifyMessBlockchain', options);
+            var res_block_verify_json = await res_block_verify.json();
+            console.log(res_block_verify_json);
+            if(res_block_verify_json.data=="error")
+            {
+                alert("du lieu da bi thay doi");
             }
-        };
-        var res_block_verify = await fetch('/verifyMessBlockchain', options);
-        var res_block_verify_json = await res_block_verify.json();
-        console.log(res_block_verify_json);
-        if(res_block_verify_json.data=="error")
-        {
-            alert("du lieu da bi thay doi");
-        }
-        else
-        {
-            var id_block = res_block_verify_json.messID;
-            var mess_block = document.getElementById(id_block);
-            mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
-            mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
-            //console.log(mess_block);
-            //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
-            //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
-        }
+            else
+            {
+                var id_block = res_block_verify_json.messID;
+                var mess_block = document.getElementById(id_block);
+                mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
+                mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
+                //console.log(mess_block);
+                //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
+                //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
+            }
         
+        }
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
 
     }
+
+    
     //----------Modal---------------------
     var modal = document.getElementById("infoModal");
-    function viewDetailBlock(obj)
+    async function viewDetailBlock(obj)
     {
-        console.log(obj.tagName);
-        // When the user clicks the button, open the modal 
-        modal.style.display = "block";
+        try{
+            var messObjID = obj.closest('.messBlock').getAttribute('id'); 
+            var messDocType = obj.closest('.messBlock').getAttribute('docType');console.log(messObjID, messDocType);
+            var modalBody = document.getElementById('info-body');
+            modalBody.innerHTML='';
+            const options = {
+                    method: 'GET',
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                    }
+                }
+            var res = await fetch('/getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
+            var json_res = await res.json();
+            console.log(json_res); console.log(messObjID);
+            var sendTime = document.createElement('p');
+            sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
+            if(json_res.docType=='private_message')
+            {   
+                let seenTime = document.createElement('p');
+                modalBody.appendChild(sendTime);
+                if(json_res.seenTime!=0)
+                {
+                    seenTime.innerHTML='Da xem: '+ json_res.seenTime;
+                    modalBody.appendChild(seenTime);
+                }
+                else if(json_res.seenTime==0)
+                {
+                    seenTime.innerHTML='Chua ai xem';
+                    modalBody.appendChild(seenTime);
+                }
+            }
+            else if(json_res.docType=='group_message')
+            {
+                modalBody.appendChild(sendTime);
+                if(json_res.seenTime!=0)
+                {
+                    for(let i=0;i<json_res.seenTime.length;i++)
+                    {
+                        let seenTime = document.createElement('p');
+                        seenTime.innerHTML=json_res.seenTime[i].userName + ' da xem luc: '+json_res.seenTime[i].dateTime;
+                        modalBody.appendChild(seenTime);
+                    }
+                }
+            }
+            // When the user clicks the button, open the modal 
+            modal.style.display = "block";
+        }
+        catch(error)
+        {
+            let seenTime = document.createElement('p');
+            seenTime.innerHTML='Tin nhan khong gui duoc hoac server dang duoc bao tri';
+            modalBody.appendChild(seenTime);
+            modal.style.display = "block";
+        }
+        
     }
 
     // When the user clicks anywhere outside of the modal, close it
@@ -1020,11 +1260,11 @@ body {font-family: "Lato", sans-serif;}
             console.log(response_init[i]);
             if(response_init[i].docType=='private_message')
             {
-                tab_partner_el =  private_message_left_tab(response_init[i].docType, response_init[i].userID, response_init[i].username);
+                tab_partner_el =  private_message_left_user(response_init[i].docType, response_init[i].userID, response_init[i].username);
             }
             else if(response_init[i].docType=='group_message')
             {
-                tab_partner_el = private_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
+                tab_partner_el = group_message_left_tab(response_init[i].docType, response_init[i].groupID, response_init[i].groupName);
                 room_chat.push(response_init[i].groupID);
             }
             
@@ -1114,7 +1354,10 @@ body {font-family: "Lato", sans-serif;}
         // debugger;
         console.log(obj.getAttribute('id_sender'));
         console.log(obj, obj.nextSibling.nextSibling);
-        obj.querySelector('.dots-offline').innerHTML='';
+        if(obj.querySelector('.dots-offline').style.backgroundColor=='orange')
+        {
+            obj.querySelector('.dots-offline').style.backgroundColor='green';
+        }
         message_zone.innerHTML=``;
         var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');
@@ -1132,7 +1375,15 @@ body {font-family: "Lato", sans-serif;}
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, block[i].message, block[i].isImportant, block[i].docType);
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -1140,7 +1391,15 @@ body {font-family: "Lato", sans-serif;}
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    mess_block_t = myMessage(block[i].messID, my_name, block[i].message, block[i].isImportant, block[i].docType);
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
      
@@ -1164,11 +1423,27 @@ body {font-family: "Lato", sans-serif;}
                 var mess_block_G;
                 if(blockG[j].sender != myID)
                 {
-                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, blockG[j].message, blockG[j].isImportant, blockG[j].docType);
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, message, blockG[j].isImportant, blockG[j].docType);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    mess_block_G = myMessage(blockG[j].messID, my_name, blockG[j].message, blockG[j]. isImportant, blockG[j].docType);
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = myMessage(blockG[j].messID, my_name, message, blockG[j].isImportant, blockG[j].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
 
@@ -1205,24 +1480,115 @@ body {font-family: "Lato", sans-serif;}
         var res = await fetch('/seenUpdate', options);
     }
 
-    function sendFile()
+    async function downloadFile(fileID)
     {
-        console.log('sendFile');
+        
+        console.log(fileID)
+        const options ={
+            method: 'GET',
+            headers:{
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res= await fetch('/downloadFile?fileName='+fileID, options);
+        var res_blob = await res.blob();
+        console.log(res_blob)
+        var url = URL.createObjectURL(res_blob);
+        window.location.href=url
+        //window.location.href= '/downloadFile?fileName='+fileID;
     }
+
+    async function sendFile()
+    {
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            const uri = "/sendFile";
+            const xhr = new XMLHttpRequest();
+            const fd = new FormData();
+            var file = document.getElementById('myFile').files[0];
+            var current_partner = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+            var docType = partner_element.getAttribute('docType');
+ 
+            if(current_partner && file)
+            {
+                if(docType=='private_message')
+                {
+                    xhr.open("POST", uri, true);
+                    xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                    xhr.setRequestHeader('sender',myID);
+                    xhr.setRequestHeader('receiver', current_partner);
+                    xhr.setRequestHeader('docType', docType);
+                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
+                    //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(JSON.parse(xhr.responseText)); // handle response.
+                        }
+                    };
+                    
+                    console.log(file);
+                    fd.append('files', file);
+                    fd.append('data','test');
+                    // Initiate a multipart/form-data upload
+                    xhr.send(fd);
+                    document.getElementById("myFile").value = "";
+                }
+                else if(docType=='group_message')
+                {
+                    var groupName_parent = document.getElementById(tab_partner_prefix+ current_partner).querySelector('.acc-status').querySelector('.acc');
+ 
+                    var groupName = groupName_parent.innerHTML;
+                    xhr.open("POST", uri, true);
+                    xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                    xhr.setRequestHeader('sender',myID);
+                    xhr.setRequestHeader('groupID', current_partner);
+                    xhr.setRequestHeader('docType', docType);
+                    xhr.setRequestHeader('groupName', encodeURIComponent(groupName));
+                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
+                    //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(JSON.parse(xhr.responseText)); // handle response.
+                        }
+                    };
+                    
+                    console.log(file);
+                    fd.append('files', file);
+                    fd.append('data','test');
+                    // Initiate a multipart/form-data upload
+                    xhr.send(fd);
+                    document.getElementById("myFile").value = "";
+                }
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+
+    }
+    document.getElementById('myFile').addEventListener('change', sendFile);
 
     function sendMess()
     {
         var current_partner = sessionStorage.getItem('current_partner_id');
         var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
         var docType = partner_element.getAttribute('docType');
+        var isImportant = 'false';
         if(current_partner != null && messContent.value!= '')
         {
             if(docType=='private_message')
             {
                 var messID = 'MessPriv.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
                 console.log(messID);
-                mess_block_t = myMessage(messID, my_name, messContent.value , docType);
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                mess_block_t = myMessage(messID, my_name, messContent.value, isImportant, docType);
+                //message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
                 'receiver': current_partner, 'message': messContent.value});
@@ -1235,7 +1601,7 @@ body {font-family: "Lato", sans-serif;}
  
                 var groupName = groupName_parent.innerHTML;
                 var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
-                var mess_block_g = myMessage(messID, my_name, messContent.value, docType);
+                var mess_block_g = myMessage(messID, my_name, messContent.value, isImportant, docType);
                 message_zone.insertAdjacentHTML('beforeend', mess_block_g);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
@@ -1350,6 +1716,17 @@ body {font-family: "Lato", sans-serif;}
             }
         }
     })
+
+    $(document).on('click', '.tablinks', function () {
+        $('#hist_tab').find('.tablinks').removeClass('active-users')
+        $(this).each(function () {
+            if ($(this).hasClass('active-users')) {
+                $(this).removeClass('active-users');
+            } else {
+                $(this).addClass('active-users');
+            }
+        })
+    })
     /*
     function openUpDropdownGrbtn() {
         var item = document.getElementById("dropdown-item-grbtn"); console.log(item);
@@ -1359,5 +1736,6 @@ body {font-family: "Lato", sans-serif;}
     function newGroup(){
         window.open("/newGroup");
     }
+
 
 </script>
