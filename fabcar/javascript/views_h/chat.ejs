@@ -1611,12 +1611,10 @@
         }    
     }
     //--------------Send E2E Text Message-----------------
-    function openSecuredChat(obj){
+    async function openSecuredChat(obj){
         var id_partner = obj.closest('.tablinks').getAttribute('id_sender'); console.log('id_partner', id_partner);
         let oldModalHeaderText = modal.querySelector('.modal-header >h2').innerHTML;
-        modal.querySelector('.modal-header >h2').innerHTML='SECURED CHAT';
         var modalBody = document.getElementById('info-body');
-        modalBody.innerHTML='';
         let text_area_secured_chat= 
         `
                         
@@ -1637,10 +1635,65 @@
                                 cursor: pointer;">SECURED</button>
                         </div>
                       
-        `
+        `;
 
-        modalBody.innerHTML=text_area_secured_chat;
-        modal.style.display = "block";
+        const options = {
+            method: 'GET',
+            headers: {
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res = await fetch('/checkE2ERegisterAPI?senderID='+myID+'&receiverID='+id_partner, options);
+        var json_res = await res.json();console.log(json_res);
+
+        if(sessionStorage.getItem('privKeyRSA')){
+            if(json_res.data=='ok'){
+
+                sessionStorage.setItem('partner_publicKeyRSA', 
+                JSON.stringify(
+                    [
+                        {'partnerID':id_partner,
+                        'partner_publicKeyRSA':json_res.receiver_publicKeyRSA}
+                    ]
+                )
+            );
+                modal.querySelector('.modal-header >h2').innerHTML='SECURED CHAT';
+                modalBody.innerHTML='';
+                modalBody.innerHTML=text_area_secured_chat;
+                modal.style.display = "block";
+            }
+            else if(json_res.data=='ng')
+            {
+                alert('Yeu cau doi tac dang ky tin nhan ma hoa!');
+            }
+        }
+        else if(!sessionStorage.getItem('privKeyRSA')){
+            if(json_res.data == 'ng')
+            {   
+                if(json_res.unregList.length==1)
+                {
+                    if(json_res.unregList[0].userID==myID)
+                    {
+                        window.open('/registerE2EService');
+                    }
+                    else if(json_res.unregList[0].userID!=myID)
+                    {
+                        alert('Yeu cau doi tac dang ky tin nhan ma hoa!');
+                    }
+                }
+                else if(json_res.unregList.length==2)
+                {
+                    window.open('/registerE2EService');
+                }
+
+            }
+            else if( json_res.data =='ok')
+            {
+                modal.style.display="none";
+                var privKeyModal = document.getElementById("privKeyModal");
+                privKeyModal.style.display = "block";
+            }
+        }
         //modal.querySelector('.modal-header >h2').innerHTML=oldModalHeaderText;
         
     }
@@ -1648,6 +1701,29 @@
     function sendSecure(){
         let message=document.getElementById('secure_content').value;
         console.log(message);
+        if(message != '')
+        {
+            var current_partner = sessionStorage.getItem('current_partner_id'); 
+            var privKey = sessionStorage.getItem('privKeyRSA');
+            let privKeyRSA = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+            var my_publicKey = cryptico.publicKeyString(privKeyRSA); 
+            var partner_publicKey_list = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA')); 
+            let partner_publicKey;
+
+            partner_publicKey_list.forEach(x=>{
+                if(x.partnerID==current_partner){
+                    partner_publicKey=x.partner_publicKeyRSA;
+                }
+            })
+            console.log('prn_pub', partner_publicKey);
+            SecurePrivMessageTextObj(message, 'secure_private_message', myID, current_partner, my_name,
+                        my_publicKey, partner_publicKey, socket, 'secure_sendMess');
+            document.getElementById('secure_content').value = '';
+            alert('Secured Message sent');
+        }
+        else if(message==''){
+            alert('Vui long nhap noi dung tin nhan');
+        }
     }
 
     //-------------End Send E2E Message--------------------
