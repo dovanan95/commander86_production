@@ -1,3 +1,25 @@
+     //------------preprocessiong message----------------
+
+     function detectURL(message)
+     {
+         if(message){
+             var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+             //var urlRegex = /(https?:\/\/[^\s]+)/g;
+             //var urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+             return message.replace(urlRegex, function(url,b,c) {
+                 var url2 = (c == 'www.') ?  'http://' +url : url;
+                 return '<a href="' +url2+ '" style="color:orange;" target="_blank">' + url + '</a>';
+             }) 
+         }
+ 
+     }
+    
+     function smartMessage(message){
+         var mess_1= detectURL(decodeURIComponent(message))
+         return mess_1;
+     }
+     //------------end preprocessiong message-----------------
+
 function serializeRSAKey(key) {
     return JSON.stringify({
         coeff: key.coeff.toString(16),
@@ -65,7 +87,7 @@ function decryptMyMessage(message){
         var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
         console.log(decodedMessage);
         if(decodedMessage.signature=='verified'){
-            return decodeURIComponent(decodedMessage.plaintext);
+            return smartMessage(decodedMessage.plaintext);
         }
         else if(decodedMessage.signature=='unsigned'){
             return 'tin nhan khong an toan';
@@ -198,26 +220,4 @@ function decryptMyMessage(message){
 
     //---------------End Search User-------------------------------
 
-    //-----------detech url------------------------------
-    
-    function detectURL(message)
-    {
-        if(message){
-            var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-            //var urlRegex = /(https?:\/\/[^\s]+)/g;
-            //var urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
-            return message.replace(urlRegex, function(url,b,c) {
-                var url2 = (c == 'www.') ?  'http://' +url : url;
-                return '<a href="' +url2+ '" style="color:orange;" target="_blank">' + url + '</a>';
-            }) 
-        }
 
-    }
-    //------------end detech url-------------------------
-
-    //------------preprocessiong message----------------
-    function smartMessage(message){
-        var mess_1= detectURL(message)
-        return mess_1;
-    }
-    //------------end preprocessiong message-----------------
