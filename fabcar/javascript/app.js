@@ -1359,6 +1359,7 @@ app.post('/registerSecureChat', authenticateAccessToken, async function(req, res
         {
             //xoa tin nhan cu va tao key moi
             await dbo.collection('user').updateOne({'userID': userID},{$set:{'secureKey.publicKeyRSA': publicKeyRSA}});
+            socketIo.emit('secure_update_partner_publicKey',{'userID': userID, 'newPublicKey': newPublicKey});
         }
 
         res.send({'data': 'ok'});
