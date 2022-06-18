@@ -614,6 +614,25 @@
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
 
+    socket.on('secure_update_partner_publicKey', function(data){
+        console.log('new key', data);
+        if(data.userID==myID){
+            var privKeyModal = document.getElementById("privKeyModal");
+            privKeyModal.style.display = "block";
+        }
+        if(sessionStorage.getItem('partner_publicKeyRSA')){
+            var publicKey_list = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'));
+            publicKey_list.forEach(element => {
+                if(element.partnerID==data.userID){
+                    element.partner_publicKeyRSA=data.newPublicKey.publicKeyRSA;
+                }
+            });
+            sessionStorage.setItem('partner_publicKeyRSA', JSON.stringify(publicKey_list));
+        }
+        
+
+    })
+
     socket.on('secure_incoming_mess', function(data){
         console.log(data);
         //console.log(document.getElementsByClassName('tablinks').length);
