@@ -327,7 +327,7 @@ socketIo.use((socket, next)=>{
       //socketIo.to(room).emit('incoming_mess',{data})
       try
       {
-        socket.to(data.groupID).emit('incoming_mess', 
+        socketIo.in(data.groupID).emit('incoming_mess', 
         {
             'messID': data.messID,
             'sender': data.sender, 
@@ -1271,7 +1271,12 @@ app.get('/checkE2ERegisterAPI', authenticateAccessToken, async function(req, res
         var sender = parseInt(req.query.senderID);
         var receiver = parseInt(req.query.receiverID);
         var unregisterSecureList = await app_helper.checkE2ERegister(sender, receiver);
-        var message = 'vui long dang ky de lien lac bang tin nhan ma hoa';
+        var message = `<div>
+                            <p>vui long dang ky de lien lac bang tin nhan ma hoa</p> 
+                            <a style="color:orange;"  href="/registerE2EService">
+                                Dang ky tai day
+                            </a>
+                        </div>`;
         if(unregisterSecureList.length==0){
             if(receiver!=000)
             {

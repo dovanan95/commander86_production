@@ -727,9 +727,9 @@
     socket.on('incoming_mess', function(data){
         console.log(data);
         //console.log(document.getElementsByClassName('tablinks').length);
-
         var current_partner = sessionStorage.getItem('current_partner_id');
         var tablinks = document.getElementsByClassName('tablinks');
+      
         if(data.docType=='private_message')
         {
             if(data.sender == current_partner)
@@ -741,7 +741,7 @@
                 }
                 else
                 {
-                    var message = data.message;
+                    var message = smartMessage(data.message);
                 }
                 var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
@@ -773,7 +773,7 @@
                             var message = messageFile(data.message, data.originalFilename);
                         }
                         else{
-                            var message = data.message;
+                            var message = smartMessage(data.message);
                         }
                         var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
@@ -797,6 +797,7 @@
         }
         if(data.docType=='group_message')
         {
+            console.log('mess', data);
             if(data.groupID == current_partner)
             {
                 if(data.isFile && data.isFile=='true')
@@ -805,7 +806,7 @@
                 }
                 else
                 {
-                    var message = data.message
+                    var message = smartMessage(data.message);
                 }
                 if(data.sender==myID)
                 {
@@ -1372,6 +1373,7 @@
             for(let i=0;i<block.length;i++)
             {
                 var mess_block;
+                block[i].message=smartMessage(block[i].message);
                 if(block[i].sender==id_partner)
                 {
                     if(block[i].isFile && block[i].isFile=='true')
@@ -1420,6 +1422,7 @@
             var seen_Group = [];
             for(var j in blockG){
                 var mess_block_G;
+                blockG[j].message=smartMessage(blockG[j].message);
                 if(blockG[j].sender != myID)
                 {
                     if(blockG[j].isFile && blockG[j].isFile=='true')
@@ -1601,7 +1604,7 @@
                 var groupName = groupName_parent.innerHTML;
                 var messID = 'MessGroup.' + myID+ '.'+ current_partner + '.' + Date.now().toString();
                 var mess_block_g = myMessage(messID, my_name, messContent.value, isImportant, docType);
-                message_zone.insertAdjacentHTML('beforeend', mess_block_g);
+                //message_zone.insertAdjacentHTML('beforeend', mess_block_g);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
                 'groupID': current_partner, 'groupName': groupName, 'message': messContent.value});
