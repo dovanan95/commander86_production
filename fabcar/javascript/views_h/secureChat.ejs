@@ -33,6 +33,10 @@
 
     }
 
+    hr {
+        opacity: 0;
+    }
+
     #hist_tab {
         height: 100%;
         overflow-y: auto;
@@ -275,13 +279,6 @@
         align-items: center;
     }
 
-    .expand-func-icon_left:hover {
-        background-color: #C7C9CC;
-    }
-
-    .expand-func-icon_left .fa-list-check {
-        font-size: 15px;
-    }
 
     .incoming .block_func_btn .dropdown-button {
         min-width: 110px;
@@ -523,87 +520,100 @@
     }
 
     .loader {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid blue;
-    border-bottom: 16px solid blue;
-    width: 120px;
-    height: 120px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
-    display: none;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid blue;
+        border-bottom: 16px solid blue;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        display: none;
     }
 
     @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
     }
 
     @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
 <html>
-    <head>
-        <title>He Thong Tin Chi Dao Dieu Hanh</title>
-        <%- include('./header')%>
-    </head>
-    <body onload="checkLogin()">
-        <div class="chat-container">
-            <div class="tab">
-                <div id='hist_tab'>
-                    <!--button class="tablinks" >Chat History</button-->
-                </div>
-            </div>
 
-            <div class="chat-box">
-                <div class="top-bar">
-                    <div class="user-info">
-                        <div class="avatar">
-                            <p>H</p>
-                        </div>
-                        <div class="name-chat"></div>
-                    </div>
-                    <div class="loader"></div>
-                    <!--<button onclick="call()"><i class="fa-solid fa-phone bxs-phone-call"></i></button>-->
-                </div>
-                <div id="chat-content">
-                    <!-- contentchat -->
-                </div>
-                <div class="msger-inputarea">
-                    <input id='inputMess' class="msger-input" placeholder="Type a message..." />
-                    <div class="msger-send-btn">
-                        <label for="myFile">
-                            <i class="fa-solid fa-paperclip"></i>
-                        </label>
-                        <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
-                    </div>
+<head>
+    <title>He Thong Tin Chi Dao Dieu Hanh</title>
+    <%- include('./header')%>
+</head>
 
-                    <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
+<body onload="checkLogin()">
+    <div class="chat-container">
+        <div class="tab">
+            <div id='hist_tab'>
+                <!--button class="tablinks" >Chat History</button-->
             </div>
         </div>
-        
-        <div id="infoModal" class="modal">
 
-            <!-- Modal content -->
-            <div class="modal-content">
-              <div class="modal-header">
+        <div class="chat-box">
+            <div class="top-bar">
+                <div class="user-info">
+                    <div class="avatar">
+                        <p>H</p>
+                    </div>
+                    <div class="name-chat"></div>
+                </div>
+                <div class="loader"></div>
+                <!--<button onclick="call()"><i class="fa-solid fa-phone bxs-phone-call"></i></button>-->
+            </div>
+            <div id="chat-content">
+                <!-- contentchat -->
+            </div>
+            <div class="msger-inputarea">
+                <input id='inputMess' class="msger-input" placeholder="Type a message..." />
+                <div class="msger-send-btn">
+                    <label for="myFile">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </label>
+                    <input onchange="sendFile()" type="file" style="display: none;" id="myFile" name="filename">
+                </div>
+
+                <button onclick="sendMess()" id="button_send_mess" class="msger-send-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
                 <span class="close" id="closeInfoModal">&times;</span>
                 <h2> MESSAGE INFOMATION</h2>
-              </div>
-              <div class="modal-body" id="info-body">
-              </div>
-              <div class="modal-footer">
-                <h3>HTTCDDH 2022</h3>
-              </div>
             </div>
-          
-          </div>
-    </body>
+            <div class="modal-body" id="info-body">
+            </div>
+            <div class="modal-footer">
+                <h3>HTTCDDH 2022</h3>
+            </div>
+        </div>
+
+    </div>
+</body>
+
 </html>
 <script type="text/javascript" src="./jquery-3.6.0.js"></script>
 <script type="text/javascript" src="./socket.io.min.js"></script>
@@ -614,88 +624,77 @@
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
 
-    socket.on('secure_incoming_mess', function(data){
+    socket.on('secure_incoming_mess', function (data) {
         console.log(data);
         //console.log(document.getElementsByClassName('tablinks').length);
 
         var current_partner = sessionStorage.getItem('current_partner_id');
         var tablinks = document.getElementsByClassName('tablinks');
-        if(data.docType=='secure_private_message')
-        {
-            if(data.sender == current_partner)
-            {
-                if(data.isFile && data.isFile=='true')
-                {
+        if (data.docType == 'secure_private_message') {
+            if (data.sender == current_partner) {
+                if (data.isFile && data.isFile == 'true') {
                     let my_block_message = decryptMyMessage(data.message);
-                        let my_block_filename = decryptMyMessage(data.originalFilename);
-                        var message = messageFile(my_block_message, my_block_filename);
+                    let my_block_filename = decryptMyMessage(data.originalFilename);
+                    var message = messageFile(my_block_message, my_block_filename);
                 }
-                else
-                {
+                else {
                     let my_block_message = decryptMyMessage(data.message);
-                        var message = my_block_message;
+                    var message = my_block_message;
                 }
                 var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
-                reloadLeftTab(tab_partner_prefix+ data.sender);
+                reloadLeftTab(tab_partner_prefix + data.sender);
                 //socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
             }
-            else if(data.sender != current_partner)
-            {   
-                var flag =0;
-                for(var k=0;k<tablinks.length;k++)
-                {
+            else if (data.sender != current_partner) {
+                var flag = 0;
+                for (var k = 0; k < tablinks.length; k++) {
                     console.log(tablinks[k]);
                     var id = tablinks[k].getAttribute('id_sender');
                     console.log(id);
-                    if(data.sender==id)
-                    {
-                        flag=1;
+                    if (data.sender == id) {
+                        flag = 1;
                     }
                 }
-                if(flag==0)
-                {
-                    if(myID!=data.sender){
+                if (flag == 0) {
+                    if (myID != data.sender) {
                         var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
                         left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
-                    else if(myID==data.sender && current_partner==data.receiver){
-                        if(data.isFile && data.isFile=='true'){
+                    else if (myID == data.sender && current_partner == data.receiver) {
+                        if (data.isFile && data.isFile == 'true') {
                             let my_block_message = decryptMyMessage(data.message);
                             let my_block_filename = decryptMyMessage(data.originalFilename);
                             var message = messageFile(my_block_message, my_block_filename);
                         }
-                        else{
+                        else {
                             let my_block_message = decryptMyMessage(data.message);
                             var message = my_block_message;
                         }
                         var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
-                        reloadLeftTab(tab_partner_prefix+ data.receiver);
+                        reloadLeftTab(tab_partner_prefix + data.receiver);
                     }
                 }
-                else if(flag==1)
-                {
-                    if(myID!=data.sender)
-                    {
-                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                else if (flag == 1) {
+                    if (myID != data.sender) {
+                        var partner_tab = document.getElementById(tab_partner_prefix + data.sender);
                         console.log(partner_tab);
                         //partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
-                        reloadLeftTab(tab_partner_prefix+ data.sender);
+                        reloadLeftTab(tab_partner_prefix + data.sender);
                     }
                 }
-                
+
             }
-            
+
         }
     })
 
-    function private_message_left_user(docType, id, name)
-    {
+    function private_message_left_user(docType, id, name) {
         var left_private_block =
-        `
+            `
         <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
                     onclick=choosePartner_2(this) id_sender="${id}">
                 <div class="acc-avatar"></div>
@@ -705,7 +704,6 @@
                 <div class="block_func_btn"  onclick=leftTabOption(this)>
                     <div class="expand-func-icon_left">
                         <i class="fa-solid fa-lock"></i>
-                        <i class="fa-solid fa-list-check"></i>   
                     </div>
                     <div class="dropdown-button" style="display:none;">
                         <button onclick="console.log(this)" > SECURED CHAT</button>
@@ -718,8 +716,7 @@
         `
         return left_private_block
     }
-    function myMessage(id_block, my_name, content, isImportant, docType)
-    {
+    function myMessage(id_block, my_name, content, isImportant, docType) {
         var mess_block = `
                             <div class="outgoing messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
@@ -738,19 +735,17 @@
                                     </div>
                                 </div>
                             </div>`
-        if(isImportant=='true')
-        {
+        if (isImportant == 'true') {
             var text_before = `class="bubble"`;
-            var postitionAdd = mess_block.search(text_before)+ text_before.length;
-            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
-            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
-                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+            var postitionAdd = mess_block.search(text_before) + text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd)].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`,
+                `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
 
         }
         return mess_block;
     }
-    function prtnerMessage(id_block, sender_name, content, isImportant, docType)
-    {
+    function prtnerMessage(id_block, sender_name, content, isImportant, docType) {
         var mess_block = `
                             <div class="incoming messBlock" id=${id_block} docType=${docType}>
                                 <div class="bubble">
@@ -769,175 +764,160 @@
                                     </div>
                                 </div>
                             </div>`
-        if(isImportant=='true')
-        {
+        if (isImportant == 'true') {
             var text_before = `class="bubble"`;
-            var postitionAdd = mess_block.search(text_before)+ text_before.length;
-            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
-            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
-                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+            var postitionAdd = mess_block.search(text_before) + text_before.length;
+            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd)].join('');
+            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`,
+                `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
         }
         return mess_block
     }
-    function messageFile(fileID, fileName) { 
-        var message=
-        `
+    function messageFile(fileID, fileName) {
+        var message =
+            `
             <i class="fa-solid fa-file-lines"></i>
             <div class="fileName">${fileName}</div>
             <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
         `
         return message;
     };
-    function reloadLeftTab(id){
-        
+    function reloadLeftTab(id) {
+
         var childLeftButton = left_tab.children;
         var index; var tab;
-        for(let i=0; i<childLeftButton.length; i++)
-        {
+        for (let i = 0; i < childLeftButton.length; i++) {
             var childItem = childLeftButton[i];
-            if(childItem.id==id)
-            {
+            if (childItem.id == id) {
                 index = i;
-                tab=childItem.outerHTML+ `<hr class="solid">`;
+                tab = childItem.outerHTML + `<hr class="solid">`;
             }
         }
-        left_tab.removeChild(left_tab.children[index+1]);
+        left_tab.removeChild(left_tab.children[index + 1]);
         left_tab.removeChild(document.getElementById(id));
         left_tab.insertAdjacentHTML('afterbegin', tab);
     }
-    function checkLogin(){ 
-       var check = sessionStorage.getItem('login_data');
-       sessionStorage.removeItem('current_partner_id');
+    function checkLogin() {
+        var check = sessionStorage.getItem('login_data');
+        sessionStorage.removeItem('current_partner_id');
 
-       var check_json = JSON.parse(check);
-       if(check_json ==null || check_json.isLogin != true)
-       {
-           window.location.href='/';
-       }
-       else
-       {
+        var check_json = JSON.parse(check);
+        if (check_json == null || check_json.isLogin != true) {
+            window.location.href = '/';
+        }
+        else {
 
             fetchData();
-       }
+        }
     }
     var response_init;
-    async function fetchData(){
+    async function fetchData() {
         const options = {
             method: 'POST',
-            body: JSON.stringify({'id': parseInt(myID), 'limit':30}),
+            body: JSON.stringify({ 'id': parseInt(myID), 'limit': 30 }),
             headers: {
-                'authorization': 'token '+ accessToken,
+                'authorization': 'token ' + accessToken,
                 'Content-Type': 'application/json'
             }
         }
         var response_init_load = await fetch("/secureChat/secure_load_chat_history", options);
-        response_init = await response_init_load.json(); 
-        response_init = response_init.sort((a,b)=>b.timestamp-a.timestamp);
+        response_init = await response_init_load.json();
+        response_init = response_init.sort((a, b) => b.timestamp - a.timestamp);
         var tab_partner_el;
-        var room_chat=[];
-        for(var i in response_init)
-        {
+        var room_chat = [];
+        for (var i in response_init) {
             console.log(response_init[i]);
-            if(response_init[i].docType=='secure_private_message')
-            {
-                tab_partner_el =  private_message_left_user(response_init[i].docType, response_init[i].userID, response_init[i].username);
+            if (response_init[i].docType == 'secure_private_message') {
+                tab_partner_el = private_message_left_user(response_init[i].docType, response_init[i].userID, response_init[i].username);
             }
-            
+
             left_tab.insertAdjacentHTML("beforeend", tab_partner_el);
         }
         //socket.emit('joinRoom',{'roomID':room_chat});
         //console.log(document.getElementsByClassName('tablinks').length);
     }
-    async function getBlockByID(partner_id, docType){
+    async function getBlockByID(partner_id, docType) {
         //code call API get to /chat_peer
         var block;
-        if(docType=='secure_private_message')
-        {
+        if (docType == 'secure_private_message') {
             //code
-            var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
+            var data = { 'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0 };
             const options = {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'token '+ accessToken,
+                    'authorization': 'token ' + accessToken,
                 }
             }
             var getPrivMessBlock = await fetch('/secureChat/secure_chat_peer', options);
             block = await getPrivMessBlock.json(); console.log(block.partner_publicKeyRSA)
-            sessionStorage.setItem('partner_publicKeyRSA', 
+            sessionStorage.setItem('partner_publicKeyRSA',
                 JSON.stringify(
                     [
-                        {'partnerID':sessionStorage.getItem('current_partner_id'),
-                        'partner_publicKeyRSA':block.partner_publicKeyRSA}
+                        {
+                            'partnerID': sessionStorage.getItem('current_partner_id'),
+                            'partner_publicKeyRSA': block.partner_publicKeyRSA
+                        }
                     ]
                 )
             );
         }
-        return(block.chatBlocks);
+        return (block.chatBlocks);
     }
-    async function choosePartner_2(obj){
+    async function choosePartner_2(obj) {
         // debugger;
 
-        message_zone.innerHTML=``;
+        message_zone.innerHTML = ``;
         var id_partner = obj.getAttribute('id_sender');
         var docType = obj.getAttribute('docType');
         sessionStorage.setItem('current_partner_id', id_partner);
         var options;
         //callAPI(id)
-        if(docType=='secure_private_message')
-        {   
-            id_partner=parseInt(id_partner);
+        if (docType == 'secure_private_message') {
+            id_partner = parseInt(id_partner);
             var block_ = await getBlockByID(id_partner, docType); //API call result
-            var block =block_.reverse(); 
+            var block = block_.reverse();
             var seen = [];
-            for(let i=0;i<block.length;i++)
-            {
+            for (let i = 0; i < block.length; i++) {
                 var mess_block;
-                if(block[i].sender==id_partner)
-                {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
+                if (block[i].sender == id_partner) {
+                    if (block[i].isFile && block[i].isFile == 'true') {
                         let my_block_message = decryptMyMessage(block[i].message);
                         let my_block_filename = decryptMyMessage(block[i].originalFilename);
                         var message = messageFile(my_block_message, my_block_filename);
                     }
-                    else
-                    {
+                    else {
                         let my_block_message = decryptMyMessage(block[i].message);
                         var message = my_block_message;
                     }
                     mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
-                    if(block[i].seen && block[i].seen.length==0)
-                    {
+                    if (block[i].seen && block[i].seen.length == 0) {
                         seen.push(block[i].messID);
                     }
                 }
-                else if(block[i].sender != id_partner)
-                {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
+                else if (block[i].sender != id_partner) {
+                    if (block[i].isFile && block[i].isFile == 'true') {
                         let my_block_message = decryptMyMessage(block[i].message);
                         let my_block_filename = decryptMyMessage(block[i].originalFilename);
                         var message = messageFile(my_block_message, my_block_filename);
                     }
-                    else
-                    {
+                    else {
                         let my_block_message = decryptMyMessage(block[i].message);
                         var message = my_block_message;
                     }
                     mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-     
+
             }
 
-            options ={
+            options = {
                 method: 'POST',
-                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
-                headers:{
+                body: JSON.stringify({ 'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message' }),
+                headers: {
                     'Content-Type': 'application/json',
-                    'authorization': 'token '+ accessToken,
+                    'authorization': 'token ' + accessToken,
                 }
             }
         }
@@ -946,39 +926,35 @@
         //var res = await fetch('/seenUpdate', options);
     }
 
-    messContent.addEventListener('keyup', function(event){
-        if(event.keyCode===13)
-        {
+    messContent.addEventListener('keyup', function (event) {
+        if (event.keyCode === 13) {
             document.getElementById('button_send_mess').click();
-        } 
+        }
     })
 
-    function sendMess()
-    {
+    function sendMess() {
         var current_partner = sessionStorage.getItem('current_partner_id');
-        var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+        var partner_element = document.getElementById(tab_partner_prefix + current_partner);
         var docType = partner_element.getAttribute('docType');
         var isImportant = 'false';
-        if(current_partner != null && messContent.value!= '')
-        {
-            if(docType=='secure_private_message')
-            {
+        if (current_partner != null && messContent.value != '') {
+            if (docType == 'secure_private_message') {
                 //message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
                 let my_publicKey = cryptico.publicKeyString(RSAkey)
                 var partner_publicKey = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'))[0]['partner_publicKeyRSA'];
                 SecurePrivMessageTextObj(messContent.value, 'secure_private_message', myID, current_partner, my_name,
-                        my_publicKey, partner_publicKey, socket, 'secure_sendMess');
-                messContent.value='';
-                reloadLeftTab(tab_partner_prefix+ current_partner);
+                    my_publicKey, partner_publicKey, socket, 'secure_sendMess');
+                messContent.value = '';
+                reloadLeftTab(tab_partner_prefix + current_partner);
             }
-        }    
+        }
     }
 
-    $(document).on('click', '#menu-btn', function(){
+    $(document).on('click', '#menu-btn', function () {
         //debugger;
-        if ($('.sidebar').hasClass('active')){
+        if ($('.sidebar').hasClass('active')) {
             $('.sidebar').removeClass('active');
             $('.chat-container').removeClass('scaledown');
         } else {
@@ -987,17 +963,17 @@
         }
     })
 
-    $(document).on('click', '.bx-search-alt-2' , function(){
-        if (!$('.sidebar').hasClass('active')){
+    $(document).on('click', '.bx-search-alt-2', function () {
+        if (!$('.sidebar').hasClass('active')) {
             $('.sidebar').addClass('active');
             $('.chat-container').addClass('scaledown');
         }
     })
-    
-    $(document).on('click', '.expand-func-icon', function(){
+
+    $(document).on('click', '.expand-func-icon', function () {
         console.log(this);
         // debugger;
-        if ($(this).closest('.incoming, .outgoing').hasClass('active-dropdown')){
+        if ($(this).closest('.incoming, .outgoing').hasClass('active-dropdown')) {
             $(this).closest('.incoming, .outgoing').removeClass('active-dropdown');
         } else {
             $('.incoming, .outgoing').removeClass('active-dropdown');
@@ -1005,12 +981,10 @@
         }
     })
 
-    document.addEventListener('click', function(e){
-        if(!e.target.matches('.expand-func-icon'))
-        {
+    document.addEventListener('click', function (e) {
+        if (!e.target.matches('.expand-func-icon')) {
             var dropdowns = document.getElementsByClassName("active-dropdown");
-            if(dropdowns.length>0)
-            {
+            if (dropdowns.length > 0) {
                 dropdowns[0].classList.remove("active-dropdown");
             }
         }

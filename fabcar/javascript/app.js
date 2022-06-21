@@ -29,7 +29,7 @@ var db_mongo_name = 'httcddh_2022';
 
 var sql_config = {
     user: 'SA',
-    password: 'H@yvuilennao1',
+    password: 'Hieu@123',
     server: '127.0.0.1', 
     database: 'httcddh2018_86_130',
     trustServerCertificate: true 
