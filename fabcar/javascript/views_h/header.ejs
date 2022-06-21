@@ -420,6 +420,7 @@
         var my_name = JSON.parse(myID_json)['my_username'];
         var accessToken = JSON.parse(myID_json).accessToken;
         var refreshToken = JSON.parse(myID_json).refreshToken;
+      var privKeyModal = document.getElementById("privKeyModal");
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
     var privKeyModal = document.getElementById("privKeyModal");
@@ -483,7 +484,8 @@
         }
         else if( json_res.data =='ok')
         {
-          var privKeyModal = document.getElementById("privKeyModal");
+          //var privKeyModal = document.getElementById("privKeyModal");
+          console.log(privKeyModal);
           privKeyModal.style.display = "block";
         }
       }
