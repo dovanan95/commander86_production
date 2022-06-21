@@ -1,0 +1,100 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#group-container {
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+#group-container.scaledown {
+    margin-left: 380px;
+}
+
+.group-form {
+    width: 100% !important;
+    /* height: 50%; */
+    flex: 1;
+    overflow-y: auto;
+}
+
+.input-form {
+    display: flex;
+    height: 45px;
+    margin-bottom: 8px;
+    outline: none;
+}
+
+.input-form:focus {
+    outline: none;
+}
+
+.input-box {
+    width: 96%;
+    border-radius: 5px 0 0 5px !important;
+}
+
+.input-box:focus {
+    outline: none;
+}
+
+.input-btn {
+    width: 5%;
+    font-size: 17px;
+}
+
+.input-btn:focus {
+    outline: none;
+}
+
+.btn-primary {
+    border-radius: 0 5px 5px 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#groupName {
+    outline: none;
+}
+
+tr {
+    font-size: 17px;
+    text-align: center;
+}
+
+.name-tb {
+    width: 25%;
+}
+
+.unit-tb {
+    width: 40%;
+}
+
+.phone-tb {
+    width: 20%;
+}
+
+.options-tb {
+    width: 15%;
+}
+
+.divider {
+    width: 100%;
+    border-top: 2px solid grey;
+    /* height: 1px; */
+    /* background-color: black; */
+}
+
+.btn-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}

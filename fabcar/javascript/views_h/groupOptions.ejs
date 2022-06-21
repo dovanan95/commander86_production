@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Group Settings</title>
   <meta charset="utf-8">
@@ -8,107 +9,112 @@
   <script src="./bootstrap-5.1.3-dist/js/jquery.slim.min.js"></script>
   <script src="./bootstrap-5.1.3-dist/js/popper.min.js"></script>
   <script src="./bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="./css/groupOptions.css">
+  <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
 </head>
+
 <body>
-    <p class="h1">SETTING</p>
-    <div class="modal-body row">
-        <div >
-          <!-- Your first column here -->
-          <label>ADD MEMBER</label>
-          <div class="input-group">
-            <input type="search" id="searchBox" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-            <button type="button" onclick="searchUsers()" id="btnSearchUser" class="btn btn-outline-primary">search</button>
-          </div>
-          <table class="table" id="queryTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Mobile</th>
-                <th>Admin</th>
-                <th>Select</th>
-              </tr>
-            </thead>
-            <tbody>
-              
-            </tbody>
-          </table>
-        </div>
-        <div >
-          <!-- Your second column here -->
-          <label for="groupName">GROUP NAME</label>
-          <div class="input-group">
-            <input type="text" class="form-control" id="groupName" placeholder="Group Name">
-            <button type="submit" class="btn btn-primary" id="btnChangeName">Change Name</button>
-          </div>
-          <table class="table" id="memberListTable">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Mobile</th>
-                <th>Admin</th>
-                <th>Option</th>
-              </tr>
-            </thead>
-            <tbody>
-             
-            </tbody>
-          </table>
-          <button type="submit" onclick="applySettings()" class="btn btn-primary" id="btnApply">APPLY</button>
-          <button type="submit" class="btn btn-danger" id="btnDelGrp">DELETE GROUP</button>
-          <button type="submit" class="btn btn-secondary" id="btnLeave">Leave Group</button>  
-        </div>
+  <div class="modal-body row" id="group-container">
+    <div class="group-form">
+      <!-- Your first column here -->
+      <label>ADD MEMBER</label>
+      <div class="input-form">
+        <input type="search" id="searchBox" class="form-control rounded input-box" placeholder="Search"
+          aria-label="Search" aria-describedby="search-addon" />
+        <button type="button" onclick="searchUsers()" id="btnSearchUser" class="btn btn-outline-primary input-btn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
       </div>
-      
+      <table class="table" id="queryTable">
+        <thead>
+          <tr>
+            <th class="name-tb">Ho ten</th>
+            <th class="unit-tb">Don vi</th>
+            <th class="phone-tb">So dien thoai</th>
+            <th class="role-tb">Quyen</th>
+            <th class="options-tb">Chuc nang</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+    <div class="divider"></div>
+    <div class="group-form">
+      <!-- Your second column here -->
+      <label for="groupName">GROUP NAME</label>
+      <div class="input-form">
+        <input type="text" class="form-control input-box" id="groupName" placeholder="Group Name">
+        <button type="submit" class="btn btn-primary input-btn" id="btnChangeName">Doi ten</button>
+      </div>
+      <table class="table" id="memberListTable">
+        <thead>
+          <tr>
+            <th class="name-tb">Ho ten</th>
+            <th class="unit-tb">Don vi</th>
+            <th class="phone-tb">So dien thoai</th>
+            <th class="role-tb">Quyen</th>
+            <th class="options-tb">Chuc nang</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+      <div class="btn-container">
+        <button type="submit" onclick="applySettings()" class="btn btn-primary" id="btnApply">APPLY</button>
+        <button type="submit" class="btn btn-danger" id="btnDelGrp">DELETE GROUP</button>
+        <button type="submit" class="btn btn-secondary" id="btnLeave">Leave Group</button>
+      </div>
+    </div>
+  </div>
+
 </body>
+
 </html>
 <script>
-    var id_group = '<%=id_group%>';
-    var myID_json = sessionStorage.getItem('login_data');
-    if(myID_json==null){
-        if(window.confirm('ban khong co quyen truy cap!!!')){
-            window.location.href='/';
-        }
-        else
-        {
-            window.location.href='/';
-        }
+  var id_group = '<%=id_group%>';
+  var myID_json = sessionStorage.getItem('login_data');
+  if (myID_json == null) {
+    if (window.confirm('ban khong co quyen truy cap!!!')) {
+      window.location.href = '/';
     }
-    else
-    {
-        var myID = JSON.parse(myID_json)['id'];
-        var accessToken = JSON.parse(myID_json).accessToken;
-        var refreshToken = JSON.parse(myID_json).refreshToken;
+    else {
+      window.location.href = '/';
     }
-    
-    window.onload = async function(){
-        const options = {
-            method: 'GET',
-            headers: {
-                'authorization': 'token '+ accessToken
-            }
-        };
-        var res= await fetch('/authenOnLoad', options);
-        var res_json = await res.json();
-        if(!res || res.status!=200)
-        {
-            if(window.confirm('ban khong co quyen truy cap!!!')){
-                window.location.href='/';
-            }
-            else
-            {
-                window.location.href='/';
-            }
-        }
-        else{
-            await fetchData();
-        }
+  }
+  else {
+    var myID = JSON.parse(myID_json)['id'];
+    var accessToken = JSON.parse(myID_json).accessToken;
+    var refreshToken = JSON.parse(myID_json).refreshToken;
+  }
+
+  window.onload = async function () {
+    const options = {
+      method: 'GET',
+      headers: {
+        'authorization': 'token ' + accessToken
+      }
+    };
+    var res = await fetch('/authenOnLoad', options);
+    var res_json = await res.json();
+    if (!res || res.status != 200) {
+      if (window.confirm('ban khong co quyen truy cap!!!')) {
+        window.location.href = '/';
+      }
+      else {
+        window.location.href = '/';
+      }
     }
-    var isAdmin;
-    var admin;
-    //var optionBTN_enable = '<td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>';
-    var optionBTN_enable =
+    else {
+      await fetchData();
+    }
+  }
+  var isAdmin;
+  var admin;
+  //var optionBTN_enable = '<td><button type="button" class="btn btn-outline-danger delete">Delete</button></td>';
+  var optionBTN_enable =
     `<td>
         <div class="btn-group">
           <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -121,70 +127,62 @@
         </div>
       </td>
     `;
-    var optionBTN_disable = 
+  var optionBTN_disable =
     `<td>
       <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
         Action
       </button>
     </td>`;
-    async function fetchData()
-    {
-        const options = {
-            method: 'POST',
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
-            },
-            body:JSON.stringify({'id_group': id_group, 'userID': myID, 'docType': 'group_message'})
-        };
-        var res= await fetch('/loadOptions', options);
-        var res_json = await res.json();
-        console.log(res_json);
-        document.getElementById('groupName').value=res_json.groupName;
-        admin= res_json.admin;
-        if(res_json.isAdmin=='false')
-        {
-            isAdmin='false';
-            document.getElementById('btnSearchUser').setAttribute('disabled','');
-            document.getElementById('btnChangeName').setAttribute('disabled','');
-            //document.getElementById('btnApply').disabled=false;
-            document.getElementById('btnApply').disabled=true;
-            document.getElementById('btnDelGrp').disabled=true;
-        }
-        else if(res_json.isAdmin=='true')
-        {
-            isAdmin='true';
-            
-        }
+  async function fetchData() {
+    const options = {
+      method: 'POST',
+      headers: {
+        'authorization': 'token ' + accessToken,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'id_group': id_group, 'userID': myID, 'docType': 'group_message' })
+    };
+    var res = await fetch('/loadOptions', options);
+    var res_json = await res.json();
+    console.log(res_json);
+    document.getElementById('groupName').value = res_json.groupName;
+    admin = res_json.admin;
+    if (res_json.isAdmin == 'false') {
+      isAdmin = 'false';
+      document.getElementById('btnSearchUser').setAttribute('disabled', '');
+      document.getElementById('btnChangeName').setAttribute('disabled', '');
+      //document.getElementById('btnApply').disabled=false;
+      document.getElementById('btnApply').disabled = true;
+      document.getElementById('btnDelGrp').disabled = true;
+    }
+    else if (res_json.isAdmin == 'true') {
+      isAdmin = 'true';
 
-        for(let i=0;i<res_json.data.length;i++)
-        {
-          var newRow = document.createElement('tr');
-              var id = res_json.data[i]['id'];
-              var name = res_json.data[i]['TenDayDu'];
-              var dept = res_json.data[i]['TenDonVi'];
-              var mobile = res_json.data[i]['Mobile'];
-              if(isAdmin=='true')
-              {
-                var selectBtn =optionBTN_enable;
-              }
-              else if(isAdmin=='false')
-              {
-                var selectBtn = optionBTN_disable;
-              }
+    }
 
-              if(id==admin)
-              {
-                var admin_element=`<td>Admin</td>`
-                selectBtn = optionBTN_disable;
-              }
-              else
-              {
-                var admin_element=`<td>Member</td>`
-              }
-              
-              newRow.innerHTML= 
-              `
+    for (let i = 0; i < res_json.data.length; i++) {
+      var newRow = document.createElement('tr');
+      var id = res_json.data[i]['id'];
+      var name = res_json.data[i]['TenDayDu'];
+      var dept = res_json.data[i]['TenDonVi'];
+      var mobile = res_json.data[i]['Mobile'];
+      if (isAdmin == 'true') {
+        var selectBtn = optionBTN_enable;
+      }
+      else if (isAdmin == 'false') {
+        var selectBtn = optionBTN_disable;
+      }
+
+      if (id == admin) {
+        var admin_element = `<td>Admin</td>`
+        selectBtn = optionBTN_disable;
+      }
+      else {
+        var admin_element = `<td>Member</td>`
+      }
+
+      newRow.innerHTML =
+        `
                   <td style="display:none;">${id}</td>
                   <td>${name}</td>
                   <td>${dept}</td>
@@ -192,67 +190,62 @@
                   ${admin_element}
                   ${selectBtn}
               `;
-              memListTable.append(newRow);
-        }
+      memListTable.append(newRow);
     }
-    $(document).on('click', '.delete', function(){
-        $(this).parents("tr").remove();
+  }
+  $(document).on('click', '.delete', function () {
+    $(this).parents("tr").remove();
+  })
+  var selectBtn = document.getElementsByClassName('select');
+  var queryTable = document.getElementById('queryTable').getElementsByTagName('tbody')[0];
+  var memListTable = document.getElementById("memberListTable").getElementsByTagName('tbody')[0];
+  for (var i = 0; i < selectBtn.length; i++) {
+    selectBtn[i].addEventListener('click', function (event) {
+      var thisTarget = event.currentTarget;
+      var row = thisTarget.parentNode.parentNode;
+      var lastBTN = row.cells[row.cells.length - 1];
+      lastBTN.innerHTML = optionBTN_enable;
+      memListTable.appendChild(row)
     })
-    var selectBtn = document.getElementsByClassName('select');
-    var queryTable = document.getElementById('queryTable').getElementsByTagName('tbody')[0];
-    var memListTable = document.getElementById("memberListTable").getElementsByTagName('tbody')[0];
-    for(var i=0; i<selectBtn.length;i++)
-    {
-        selectBtn[i].addEventListener('click', function(event){
-            var thisTarget = event.currentTarget;
-            var row = thisTarget.parentNode.parentNode;
-            var lastBTN = row.cells[row.cells.length-1]; 
-            lastBTN.innerHTML = optionBTN_enable;
-            memListTable.appendChild(row)
-        })
+  }
+
+  function addNewMember(event) {
+    //var thisTarget = event.currentTarget;
+    var row = event.parentNode.parentNode;
+    var lastBTN = row.cells[row.cells.length - 1];
+    if (isAdmin == 'false') {
+      lastBTN.innerHTML = optionBTN_disable;
+    }
+    else if (isAdmin == 'true') {
+      lastBTN.innerHTML = optionBTN_enable;
     }
 
-    function addNewMember(event){
-        //var thisTarget = event.currentTarget;
-        var row = event.parentNode.parentNode;
-        var lastBTN = row.cells[row.cells.length-1]; 
-        if(isAdmin=='false')
-        {
-            lastBTN.innerHTML = optionBTN_disable;
-        }
-        else if(isAdmin == 'true')
-        {
-            lastBTN.innerHTML = optionBTN_enable;
-        }
-        
-        memListTable.appendChild(row)
-    }
+    memListTable.appendChild(row)
+  }
 
-    async function searchUsers(){
-        try
-        {
-            var searchBox = document.getElementById('searchBox');
-            var userID = searchBox.value;
-            const options = {
-                    method: 'GET',
-                    headers: {
-                        'authorization': 'token '+ accessToken,
-                    }
-                }
-            var res = await fetch('/searchUserByID?id='+userID, options);
-            var res_json = await res.json();
-            console.log(res_json);
-            for(let i=0; i<res_json.data.length; i++)
-            {
-              var newRow = document.createElement('tr');
-              var id = res_json.data[i]['id'];
-              var name = res_json.data[i]['TenDayDu'];
-              var dept = res_json.data[i]['TenDonVi'];
-              var mobile = res_json.data[i]['Mobile'];
-              var selectBtn =`<td><button type="button" onclick="addNewMember(this)" 
+  async function searchUsers() {
+    try {
+      var searchBox = document.getElementById('searchBox');
+      var userID = searchBox.value;
+      const options = {
+        method: 'GET',
+        headers: {
+          'authorization': 'token ' + accessToken,
+        }
+      }
+      var res = await fetch('/searchUserByID?id=' + userID, options);
+      var res_json = await res.json();
+      console.log(res_json);
+      for (let i = 0; i < res_json.data.length; i++) {
+        var newRow = document.createElement('tr');
+        var id = res_json.data[i]['id'];
+        var name = res_json.data[i]['TenDayDu'];
+        var dept = res_json.data[i]['TenDonVi'];
+        var mobile = res_json.data[i]['Mobile'];
+        var selectBtn = `<td><button type="button" onclick="addNewMember(this)" 
                   class="btn btn-outline-primary select">Select</button></td> `;
-              newRow.innerHTML= 
-              `
+        newRow.innerHTML =
+          `
                   <td style="display:none;">${id}</td>
                   <td>${name}</td>
                   <td>${dept}</td>
@@ -260,141 +253,134 @@
                   <td>Member</td>
                   ${selectBtn}
               `;
-              console.log(queryTable.rows.length);
-              var flag_q=0;
-              var flag_m =0
-              if(queryTable.rows.length>0){
-                  for(let j=0;j<queryTable.rows.length;j++){
-                  if(id==queryTable.rows[j].cells[0].innerHTML){
-                      flag_q=1;
-                    }
-                  }
-              }
-
-              if(memListTable.rows.length>0){
-                  for(let k=0; k<memListTable.rows.length;k++){
-                  if(id== memListTable.rows[k].cells[0].innerHTML){
-                      flag_m=1
-                    }
-                  }
-              }
-                  
-              if(flag_m==0 && flag_q==0 && id!=myID){
-                  queryTable.appendChild(newRow);
-              }
-              
-              if(queryTable.rows.length==0 && memListTable.rows.length==0 && id!=myID)
-              {
-                  queryTable.appendChild(newRow);
-              }
-
+        console.log(queryTable.rows.length);
+        var flag_q = 0;
+        var flag_m = 0
+        if (queryTable.rows.length > 0) {
+          for (let j = 0; j < queryTable.rows.length; j++) {
+            if (id == queryTable.rows[j].cells[0].innerHTML) {
+              flag_q = 1;
             }
+          }
         }
-        catch(error)
-        {
-            console.log(error);
-        }
-    }
 
-    async function applySettings(){
-      var groupName= document.getElementById('groupName');
-      if(memListTable.rows.length>0 && groupName.value != ''){
-        var listUser = [];
-        for(let i=0;i<memListTable.rows.length;i++){
-          let id = memListTable.rows[i].cells[0].innerHTML;
-          listUser.push(parseInt(id));
+        if (memListTable.rows.length > 0) {
+          for (let k = 0; k < memListTable.rows.length; k++) {
+            if (id == memListTable.rows[k].cells[0].innerHTML) {
+              flag_m = 1
+            }
+          }
         }
-        console.log(groupName.value, listUser);
-        const options={
-          method:'POST',
-          headers: {
-              'authorization': 'token '+ accessToken,
-              'Content-Type': 'application/json'
-            },
-          body: JSON.stringify({
-            'groupName': groupName.value,
-            'userListID': listUser,
-            'groupID': id_group
-          })
+
+        if (flag_m == 0 && flag_q == 0 && id != myID) {
+          queryTable.appendChild(newRow);
         }
-        var res = await fetch('/updateGroup', options);
-        var json_res = await res.json();
-        if(json_res.data=='ok'){
-          alert('cap nhat thanh cong!!!');
+
+        if (queryTable.rows.length == 0 && memListTable.rows.length == 0 && id != myID) {
+          queryTable.appendChild(newRow);
         }
-      }
-      else if(memListTable.rows.length==0 || groupName.value == '')
-      {
-        alert('vui long nhap ten nhom va chon thanh vien!!!')
+
       }
     }
+    catch (error) {
+      console.log(error);
+    }
+  }
 
-
-    document.getElementById('btnChangeName').addEventListener('click', async function(){
-      var groupName = document.getElementById('groupName').value;
-      console.log(groupName);
+  async function applySettings() {
+    var groupName = document.getElementById('groupName');
+    if (memListTable.rows.length > 0 && groupName.value != '') {
+      var listUser = [];
+      for (let i = 0; i < memListTable.rows.length; i++) {
+        let id = memListTable.rows[i].cells[0].innerHTML;
+        listUser.push(parseInt(id));
+      }
+      console.log(groupName.value, listUser);
       const options = {
-                method: 'POST',
-                headers: {
-                    'authorization': 'token '+ accessToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({'groupName': groupName, 'groupID': id_group})
-            }
-      var res = await fetch('/changeGroupName', options);
+        method: 'POST',
+        headers: {
+          'authorization': 'token ' + accessToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          'groupName': groupName.value,
+          'userListID': listUser,
+          'groupID': id_group
+        })
+      }
+      var res = await fetch('/updateGroup', options);
       var json_res = await res.json();
+      if (json_res.data == 'ok') {
+        alert('cap nhat thanh cong!!!');
+      }
+    }
+    else if (memListTable.rows.length == 0 || groupName.value == '') {
+      alert('vui long nhap ten nhom va chon thanh vien!!!')
+    }
+  }
+
+
+  document.getElementById('btnChangeName').addEventListener('click', async function () {
+    var groupName = document.getElementById('groupName').value;
+    var groupID = sessionStorage.getItem('current_partner_id');
+    console.log(groupName);
+    const options = {
+      method: 'POST',
+      headers: {
+        'authorization': 'token ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'groupName': groupName, 'groupID': groupID })
+    }
+    var res = await fetch('/changeGroupName', options);
+    var json_res = await res.json();
+    console.log(json_res);
+    if (json_res.data == 'ok') {
+      alert('doi ten nhom thanh cong!');
+    }
+  })
+
+  document.getElementById('btnLeave').addEventListener('click', async function () {
+    //console.log('leave');
+    const options = {
+      method: 'POST',
+      headers: {
+        'authorization': 'token ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'groupID': id_group })
+    }
+    var res = await fetch('/leaveGroup', options);
+    var json_res = await res.json();
+    if (json_res.data == 'ok') {
+      //window.close();
+      alert('ok')
+      window.close()
+    }
+    else {
       console.log(json_res);
-      if(json_res.data == 'ok')
-      {
-        alert('doi ten nhom thanh cong!');
-      }
-    })
+    }
+  });
 
-    document.getElementById('btnLeave').addEventListener('click', async function(){
-      //console.log('leave');
-      const options = {
-                method: 'POST',
-                headers: {
-                    'authorization': 'token '+ accessToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({'groupID': id_group})
-            }
-      var res = await fetch('/leaveGroup', options);
-      var json_res = await res.json();
-      if(json_res.data=='ok')
-      {
-        //window.close();
-        alert('ok')
-        window.close()
-      }
-      else
-      {
-        console.log(json_res);
-      } 
-    });
-
-    document.getElementById('btnDelGrp').addEventListener('click', async function(){
-      const options = {
-                method: 'POST',
-                headers: {
-                    'authorization': 'token '+ accessToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({'groupID': id_group})
-            }
-      var res = await fetch('/deleteGroup', options);
-      var json_res = await res.json();
-      if(json_res.data=='ok')
-      {
-        //window.close();
-        alert('ok')
-        window.close()
-      }
-      else
-      {
-        console.log(json_res);
-      } 
-    })
+  document.getElementById('btnDelGrp').addEventListener('click', async function () {
+    const options = {
+      method: 'POST',
+      headers: {
+        'authorization': 'token ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'groupID': id_group })
+    }
+    var res = await fetch('/deleteGroup', options);
+    var json_res = await res.json();
+    if (json_res.data == 'ok') {
+      //window.close();
+      alert('ok')
+      window.close()
+    }
+    else {
+      console.log(json_res);
+    }
+  })
 
 </script>

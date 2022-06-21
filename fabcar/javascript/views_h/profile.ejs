@@ -153,11 +153,40 @@
         cursor: pointer;
     }
 
-    #content {
-        width: 100%;
+    .mess-text {
         height: 100%;
-        box-sizing: border-box;
+        width: 100%;
+        margin-bottom: 15px;
     }
+
+    textarea {
+        resize: none;
+        height: 100%;
+        width: 100%;
+    }
+
+    .group-btn {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .group-btn button {
+        width: 160px;
+        border-radius: 12%;
+        padding: 12px 10px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+    }
+    
+    .group-btn button#button_send_mess_profile {
+        background-color: cadetblue;
+    }
+
+    .group-btn button#button_send_secure_mess_profile {
+        background-color: cadetblue;
+    }    
 </style>
 <%- include('./header')%>
 
@@ -191,23 +220,13 @@
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <div id="to_user"></div>
-                        <div>
+                        <div class="mess-text">
                             <textarea id="content" name="content" placeholder="Write Message.."></textarea>
                         </div>
                         <br />
-                        <div>
-                            <button onclick="sendMess()" id="button_send_mess_profile" style="  background-color: #04AA6D;
-                                color: white;
-                                padding: 12px 20px;
-                                border: none;
-                                border-radius: 4px;
-                                cursor: pointer;">SEND</button>
-                            <button onclick="sendSecure()" id="button_send_secure_mess_profile" style="  background-color: #5c1a5c;
-                                color: white;
-                                padding: 12px 20px;
-                                border: none;
-                                border-radius: 4px;
-                                cursor: pointer;">SECURED</button>
+                        <div class="group-btn">
+                            <button onclick="sendMess()" id="button_send_mess_profile">SEND</button>
+                            <button onclick="sendSecure()" id="button_send_secure_mess_profile">SECURED</button>
                         </div>
                     </div>
                 </div>
