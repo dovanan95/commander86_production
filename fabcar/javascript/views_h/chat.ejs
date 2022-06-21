@@ -31,7 +31,7 @@
         border-right: none;
         height: 100%;
         position: relative;
-        z-index: 1;
+        z-index: 50;
     }
 
     #hist_tab {
@@ -54,6 +54,25 @@
         position: relative;
         z-index: 20;
         margin-bottom: 10px;
+    }
+    
+    .tablinks .dropdown-button {
+        position: absolute;
+        top: 30;
+        right: 0;
+        width: fit-content;
+        z-index: 999;
+        background-color: #C7C9CC;
+        padding: 10px;
+        border-radius: 5% 0 5% 5%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .tablinks .dropdown-button button {
+        margin-bottom: 5px;
     }
 
     .tablinks:hover {
@@ -118,6 +137,8 @@
 
     /* Style the tab content */
     .chat-box {
+        position: relative;
+        z-index: 1;
         display: flex;
         width: 75%;
         flex-direction: column;
@@ -1023,7 +1044,7 @@
     }
 
     document.addEventListener('click', function(e){
-        if(!e.target.matches('.expand-func-icon_left'))
+        if(!e.target.matches('.expand-func-icon_left, .fa-solid'))
         {
             var dropdowns = document.getElementsByClassName("dropdown-button");
             for(let i =0;i<dropdowns.length;i++)
