@@ -1132,11 +1132,19 @@
             {
                 var id_block = res_block_verify_json.messID;
                 var mess_block = document.getElementById(id_block);
+                var message;
+                if(mess_block.querySelector('.fileName'))
+                {
+                    console.log('true');
+                    var fileName = mess_block.querySelector('.fileName').innerHTML;
+                    var fileID = res_block_verify_json.content;
+                    message = messageFile(fileID, fileName);
+                }
+                else{
+                    message = smartMessage(res_block_verify_json.content);
+                }
                 mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
-                mess_block.querySelector('.mess-content').innerHTML=res_block_verify_json.content;
-                //console.log(mess_block);
-                //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
-                //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
+                mess_block.querySelector('.mess-content').innerHTML=message;
             }
         
         }
