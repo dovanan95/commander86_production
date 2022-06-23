@@ -7,6 +7,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const {shim} = require('fabric-shim');
 
 class FabCar extends Contract {
 
@@ -551,6 +552,19 @@ class FabCar extends Contract {
         }
         await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
         console.log('saved group message');
+    }
+
+    async saveSecurePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp){
+        var message = {
+            messID,
+            docType: 'secure_private_message',
+            sender,
+            receiver,
+            content,
+            sender_name,
+            timestamp
+        }
+        await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
     }
 
     async queryMessage(ctx,sender, receiver, docType, limit, skip)
