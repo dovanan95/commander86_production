@@ -1039,7 +1039,7 @@
                     'Content-Type': 'application/json'
                 }
             };
-            var res_block_verify = await fetch('/verifyMessBlockchain', options); //api link
+            var res_block_verify = await fetch('/secureChat/secure_verifyMessBlockchain', options); //api link
             var res_block_verify_json = await res_block_verify.json();
             console.log(res_block_verify_json);
             if(res_block_verify_json.data=="error")
@@ -1050,16 +1050,16 @@
             {
                 var id_block = res_block_verify_json.messID;
                 var mess_block = document.getElementById(id_block);
-                var message;
+                var message ;
                 if(mess_block.querySelector('.fileName'))
                 {
                     console.log('true');
                     var fileName = mess_block.querySelector('.fileName').innerHTML;
-                    var fileID = res_block_verify_json.content;
+                    var fileID = decryptMyMessage(JSON.parse(res_block_verify_json.content));
                     message = messageFile(fileID, fileName);
                 }
                 else{
-                    message = smartMessage(res_block_verify_json.content);
+                    message = smartMessage(decryptMyMessage(JSON.parse(res_block_verify_json.content)));
                 }
                 mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
                 mess_block.querySelector('.mess-content').innerHTML=message;
@@ -1095,7 +1095,7 @@
                 let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
                 let my_publicKey = cryptico.publicKeyString(RSAkey)
                 var partner_publicKey = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'))[0]['partner_publicKeyRSA'];
-                SecurePrivMessageTextObj(messContent.value, 'secure_private_message', myID, current_partner, my_name,
+                SecurePrivMessageTextObj(messContent.value, 'secure_private_message', myID, parseInt(current_partner), my_name,
                         my_publicKey, partner_publicKey, socket, 'secure_sendMess');
                 messContent.value='';
                 reloadLeftTab(tab_partner_prefix+ current_partner);

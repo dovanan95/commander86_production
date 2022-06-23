@@ -230,7 +230,7 @@ router.post('/secure_markImportant', authenticateAccessToken, async function(req
         {
             chatBlock = await dbo.collection('secure_privateMessage').findOne({'messID': req.body.messID});
             await contract_.submitTransaction('saveSecurePrivateMessage', req.body.messID,
-                                chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
+                        chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, JSON.stringify(chatBlock.message), chatBlock.timestamp);
             var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
             if(JSON.parse(resporn.toString()).messID)
             {
@@ -241,6 +241,34 @@ router.post('/secure_markImportant', authenticateAccessToken, async function(req
             {
                 res.send({'data':'error'});
             }
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
+router.post('/secure_verifyMessBlockchain', authenticateAccessToken, async function(req, res){
+    try
+    {
+        const contract_ = await contract();
+        var dbo = mongoUtil.getDb();
+        const updated_Mess = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, req.body.dateTime);
+        var update_Mess_json = await JSON.parse(updated_Mess.toString()); console.log(update_Mess_json);
+        console.log(JSON.parse(update_Mess_json.content))
+        if(update_Mess_json.docType=='secure_private_message')
+        {
+            await dbo.collection('secure_privateMessage').updateOne({'messID': req.body.messID},{$set:{
+                'message': JSON.parse(update_Mess_json.content),
+                'sender_name':update_Mess_json.sender_name,
+                'sender': parseInt(update_Mess_json.sender),
+                'receiver': parseInt(update_Mess_json.receiver),
+                'timestamp': parseInt(update_Mess_json.timestamp),
+                'isImportant': "true",
+                'docType': update_Mess_json.docType
+            }})
+            console.log(updated_Mess.toString());
+            res.send(updated_Mess.toString());
         }
     }
     catch(error)
