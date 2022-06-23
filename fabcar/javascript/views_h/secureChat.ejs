@@ -956,7 +956,7 @@
 
             options ={
                 method: 'POST',
-                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'secure_private_message'}),
                 headers:{
                     'Content-Type': 'application/json',
                     'authorization': 'token '+ accessToken,

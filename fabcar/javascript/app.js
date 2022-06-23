@@ -41,38 +41,13 @@ const { dirname } = require('path');
 var mongoUtil = require( './server/db' );
 const pwdEncryption =(password)=>app_helper.pwdEncryption(password);
 const secureChat = require('./server/E2EPackage/secureChat');
+const blockChain = require('./server/blockchain');
 
-
-async function contract()
-{
-    const ccpPath = path.resolve(__dirname, '..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org2.example.com', 'connection-org2.json');
-    let ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
-
-            // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), 'wallet');
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
-
-            // Check to see if we've already enrolled the user.
-    const identity = await wallet.get('appUser');
-    if (!identity) {
-        console.log('An identity for the user "appUser" does not exist in the wallet');
-        console.log('Run the registerUser.js application before retrying');
-        return;
-    }
-
-            // Create a new gateway for connecting to our peer node.
-    const gateway = new Gateway();
-    await gateway.connect(ccp, { wallet, identity: 'appUser', discovery: { enabled: true, asLocalhost: true } });
-
-            // Get the network (channel) our contract is deployed to.
-    const network = await gateway.getNetwork('mychannel');
-
-            // Get the contract from the network.
-    const contract = network.getContract('fabcar');
-
+async function contract(){
+    const contract = await blockChain.contract();
     return contract;
 }
+
 //------------Security Zone ------------------------//
 
 const ACCESS_TOKEN_SECRET = app_helper.ACCESS_TOKEN_SECRET;
@@ -119,25 +94,6 @@ app.post("/refreshtoken",(req,res)=>{
     })
 });
 
-/*function pwdEncryption(password)
-{
-    var secret_key = 'MAKV2SPBNI99254';
-    var salt = Buffer.from([0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76]) 
-    const iteration = 1000;
-    const length = 32+16;
-    const digest = 'sha1';
-    const keyIV = crypto.pbkdf2Sync(secret_key, salt, iteration, length, digest);
-    const key = keyIV.slice(0, 32);
-    const iv = keyIV.slice(32, 32 + 16);
-    const inputEncoding = 'utf16le';
-    const outputEncoding = 'base64';
-    const algorithm = 'aes-256-cbc';
-    let cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encrypted = cipher.update(password, inputEncoding, outputEncoding);
-    encrypted += cipher.final(outputEncoding);
-    console.log(encrypted);
-    return encrypted;
-}*/
 
 //------------ End Security Zone ------------------------//
 
