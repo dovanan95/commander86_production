@@ -975,6 +975,111 @@
         } 
     })
 
+    async function markImportantMess(obj)
+    {
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            //console.log(obj.parentNode.parentNode.parentNode);
+            var parentObj = obj.closest('.messBlock');
+            var parentObj_id = parentObj.getAttribute('id'); 
+            var docType = parentObj.getAttribute('docType')
+            var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
+                            <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+            console.log(parentObj);
+            var messItem = document.getElementById(parentObj_id);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': parentObj_id, 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_markBlockchain = await fetch('/secureChat/secure_markImportant', options); //api link
+            var res_json = await res_markBlockchain.json();
+            console.log(res_json);
+            if(res_json.data=='ok')
+            {
+                parentObj.querySelector('.dropdown-button').innerHTML= newItem;
+                parentObj.querySelector('.bubble').style.backgroundColor='red';
+                console.log(res_json.data)
+                messItem = parentObj;
+            }
+            //messItem = parentObj;
+        
+        }
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+        
+    }
+
+    async function verifyMessBlock(obj)
+    {
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            var parentObj = obj.closest('.messBlock');
+            //var parentObj = obj.parentElement.parentNode.parentNode;
+            console.log(parentObj);
+            var id_block = parentObj.getAttribute('id');
+            var docType = parentObj.getAttribute('docType');
+            console.log(id_block);
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'messID': id_block, 'dateTime': Date.now().toString(), 'docType': docType}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                }
+            };
+            var res_block_verify = await fetch('/verifyMessBlockchain', options); //api link
+            var res_block_verify_json = await res_block_verify.json();
+            console.log(res_block_verify_json);
+            if(res_block_verify_json.data=="error")
+            {
+                alert("du lieu da bi thay doi");
+            }
+            else
+            {
+                var id_block = res_block_verify_json.messID;
+                var mess_block = document.getElementById(id_block);
+                var message;
+                if(mess_block.querySelector('.fileName'))
+                {
+                    console.log('true');
+                    var fileName = mess_block.querySelector('.fileName').innerHTML;
+                    var fileID = res_block_verify_json.content;
+                    message = messageFile(fileID, fileName);
+                }
+                else{
+                    message = smartMessage(res_block_verify_json.content);
+                }
+                mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
+                mess_block.querySelector('.mess-content').innerHTML=message;
+                //console.log(mess_block);
+                //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
+                //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
+            }
+        
+        }
+        catch(error)
+        {
+            alert(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+
+    }
+
     function sendMess()
     {
         var current_partner = sessionStorage.getItem('current_partner_id');

@@ -1,11 +1,17 @@
 var mongoUtil = require( '../db' );
 var multer = require('multer');
 var app_helper = require('../app_helper');
+var blockChain = require('../blockchain');
 const express = require('express');
 const router = express.Router();
 var sql = require('mssql');
 var sql_config = app_helper.sql_config;
 var jwt = require('jsonwebtoken');
+
+async function contract(){
+    const contract = await blockChain.contract();
+    return contract;
+}
 
 async function saveSecurePrivateMessage(data)
 {
@@ -213,5 +219,34 @@ router.post('/secure_chat_peer', authenticateAccessToken, async function(req, re
     }
 })
 
+
+router.post('/secure_markImportant', authenticateAccessToken, async function(req, res){
+    try
+    {
+        const contract_ = await contract();
+        var dbo = mongoUtil.getDb();
+        var chatBlock;
+        if(req.body.docType=='secure_private_message')
+        {
+            chatBlock = await dbo.collection('secure_privateMessage').findOne({'messID': req.body.messID});
+            await contract_.submitTransaction('saveSecurePrivateMessage', req.body.messID,
+                                chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
+            var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
+            if(JSON.parse(resporn.toString()).messID)
+            {
+                await dbo.collection('secure_privateMessage').updateOne({'messID': req.body.messID},{$set:{'isImportant': 'true'}})
+                res.send({'data':'ok'});
+            }
+            else if(!JSON.parse(resporn.toString()).messID)
+            {
+                res.send({'data':'error'});
+            }
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
 module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, router}
 //module.exports=router;
