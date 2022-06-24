@@ -661,7 +661,7 @@
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
-                //socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'private_message', 'userID': myID, 'timestamp': Date.now()})
+                socket.emit('secure_seenUpdate', {'messID': data.messID, 'docType': 'secure_private_message', 'userID': myID, 'timestamp': Date.now()})
             }
             else if(data.sender != current_partner)
             {   
