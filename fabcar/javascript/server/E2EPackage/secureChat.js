@@ -334,6 +334,7 @@ router.post('/secure_seenUpdate', authenticateAccessToken,async function(req, re
                 await dbo.collection('secure_privateMessage').updateMany({'messID':{$in: messList}},
                 {$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
             }
+            res.send({'data': 'ok'});
         }
     }
     catch(error)
