@@ -1080,6 +1080,68 @@
 
     }
 
+    //----------Modal---------------------
+    var modal = document.getElementById("infoModal");
+    async function viewDetailBlock(obj)
+    {
+        try{
+            var messObjID = obj.closest('.messBlock').getAttribute('id'); 
+            var messDocType = obj.closest('.messBlock').getAttribute('docType');console.log(messObjID, messDocType);
+            var modalBody = document.getElementById('info-body');
+            modalBody.innerHTML='';
+            const options = {
+                    method: 'GET',
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                    }
+                }
+            var res = await fetch('/secureChat/secure_getMessInfo?messID='+messObjID+'&docType='+messDocType, options);
+            var json_res = await res.json();
+            console.log(json_res); console.log(messObjID);
+            var sendTime = document.createElement('p');
+            sendTime.innerHTML ='Thoi gian gui: '+ json_res.sendTime;
+            if(json_res.docType=='secure_private_message')
+            {   
+                let seenTime = document.createElement('p');
+                modalBody.appendChild(sendTime);
+                if(json_res.seenTime!=0)
+                {
+                    seenTime.innerHTML='Da xem: '+ json_res.seenTime;
+                    modalBody.appendChild(seenTime);
+                }
+                else if(json_res.seenTime==0)
+                {
+                    seenTime.innerHTML='Chua ai xem';
+                    modalBody.appendChild(seenTime);
+                }
+            }
+            // When the user clicks the button, open the modal
+            modal.querySelector('.modal-header >h2').innerHTML='MESSAGE INFORMATION'; 
+            modal.style.display = "block";
+        }
+        catch(error)
+        {
+            let seenTime = document.createElement('p');
+            seenTime.innerHTML='Tin nhan khong gui duoc hoac server dang duoc bao tri';
+            modalBody.appendChild(seenTime);
+            modal.style.display = "block";
+        }
+        
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    var modal = document.getElementById("infoModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    document.getElementById('closeInfoModal').addEventListener('click', function(e){
+        modal.style.display = "none";
+    })
+
+    //----------End--------
+
     function sendMess()
     {
         var current_partner = sessionStorage.getItem('current_partner_id');
