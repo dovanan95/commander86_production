@@ -965,7 +965,7 @@
         }
 
         message_zone.scrollTop = message_zone.scrollHeight;
-        //var res = await fetch('/seenUpdate', options);
+        var res = await fetch('/secureChat/secure_seenUpdate', options);
     }
 
     messContent.addEventListener('keyup', function(event){
