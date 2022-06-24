@@ -27,15 +27,8 @@ const { Socket } = require('socket.io');
 var url_mongo = "mongodb://localhost:27017/";
 var db_mongo_name = 'httcddh_2022';
 
-var sql_config = {
-    user: 'SA',
-    password: 'H@yvuilennao1',
-    server: '127.0.0.1', 
-    database: 'httcddh2018_86_130',
-    trustServerCertificate: true 
-};
-
 var app_helper = require('./server/app_helper');
+var sql_config = app_helper.sql_config;
 
 const { dirname } = require('path');
 var mongoUtil = require( './server/db' );
