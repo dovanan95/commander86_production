@@ -129,6 +129,9 @@ function socketCommunication(socketIo){
 
         socket.on('secure_sendMess', async function(data){
             await secureChat.sendSecurePrivMessIO(data, socketIo, online_account);
+        });
+        socket.on('secure_seenUpdate', async function(data){
+            await secureChat.secure_seenUpdateIO(data);
         })
 
         socket.on('seenUpdate', async function(data){

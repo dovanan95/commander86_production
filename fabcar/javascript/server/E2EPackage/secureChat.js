@@ -116,6 +116,22 @@ async function sendSecurePrivMessIO(data, socketIo, online_account){
         console.log(error);
     }
 }
+async function secure_seenUpdateIO(data){
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        if(data.docType=='secure_private_message')
+        {
+            await dbo.collection('secure_privateMessage').updateOne({'messID':data.messID},
+            {$push:{'seen':{'userID': data.userID,'timestamp': data.timestamp}}});
+
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
 
 function authenticateAccessToken(req, res, next)
 {
@@ -276,5 +292,54 @@ router.post('/secure_verifyMessBlockchain', authenticateAccessToken, async funct
         console.log(error);
     }
 })
-module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, router}
+
+router.get('/secure_getMessInfo', authenticateAccessToken, async function(req, res){
+    try{
+        var userID = req.user.id;
+        var dbo = mongoUtil.getDb();
+        if(req.query.docType=='secure_private_message')
+        {
+            let seenTime;
+            var message = await dbo.collection('secure_privateMessage').findOne({'messID':req.query.messID}); 
+            
+            if(message.seen && message.seen.length>0)
+            {
+                seenTime = app_helper.timestamptoDateConverter(message.seen[0].timestamp);
+            }
+            else if(!message.seen || message.seen.length==0)
+            {
+                seenTime = 0;
+            }
+            let sendTime = app_helper.timestamptoDateConverter(message.timestamp);
+            res.send({'docType':req.query.docType, 'sendTime': sendTime, 'seenTime': seenTime});
+        }
+
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+
+router.post('/secure_seenUpdate', authenticateAccessToken,async function(req, res){
+    try{
+        var userID = req.user.id;
+        var dbo = mongoUtil.getDb();
+        if(req.body.docType=='secure_private_message')
+        {
+            var messList = req.body.seenMessID;
+            let timestamp = req.body.timestamp;
+            if(req.body.seenMessID.length>0)
+            {
+                console.log(req.body);
+                await dbo.collection('secure_privateMessage').updateMany({'messID':{$in: messList}},
+                {$push:{'seen':{'userID': userID,'timestamp': timestamp}}});
+            }
+        }
+    }
+    catch(error)
+    {
+        res.send({'data': error});
+    }
+})
+module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, secure_seenUpdateIO, router}
 //module.exports=router;
