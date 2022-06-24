@@ -25,6 +25,118 @@ const ACCESS_TOKEN_SECRET = 'btl86_qdndvn';
 const REFRESH_TOKEN_SECRET = 'httcddh_blockchain_2022';
 
 
+async function saveGroupMessage(data)
+{
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        dbo.collection('groupMessage').insertOne(data, function(err, res){
+            if(err){
+                console.log(err);
+            }
+        });
+        var groupChat = await dbo.collection('groupCollection').findOne({'groupID':data.groupID});
+        console.log(groupChat['member'])
+        dbo.collection('user').updateMany({'userID':{$in:groupChat['member']},'chat_history.groupID': data.groupID},
+        {$set:{'chat_history.$.timestamp':data.timestamp}});
+        dbo.collection('user').updateMany({'userID': {$in:groupChat['member']}}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+}
+
+async function savePrivateMessage(data)
+{
+    try
+    {
+        //var db = await mongo.connect(url_mongo);
+        //var dbo = await db.db(db_mongo_name);
+        var dbo = mongoUtil.getDb();
+        dbo.collection('privateMessage').insertOne(data, function(err, res){
+            if(err){
+                console.log(err);
+            }
+            console.log("1 document inserted");
+        })
+        var myObj = await dbo.collection('user').find({'userID': {'$in':[data.sender, data.receiver]}}).toArray();
+        for(let i=0; i<myObj.length;i++)
+        {
+            console.log(myObj[i].chat_history.length);
+            if(myObj[i].chat_history.length==0) //kiem tra lich su tin nhan neu chua co gi thi them moi
+            {
+                if(myObj[i].userID==data.sender)
+                {
+                    let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
+                    await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                }
+                else if(myObj[i].userID==data.receiver)
+                {
+                    let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
+                    await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                }
+                
+            }
+            else if(myObj[i].chat_history.length>0)
+            {
+                //trong lich su tin nhan neu da co san thong tin thi kiem tra doi phuong dang chat da co trong danh sach chua.
+                //neu co roi thi cap nhat thoi gian. neu chua co thi them moi
+                if(myObj[i].userID==data.sender)
+                {
+                    let flag=0;
+                    for(let j=0; j<myObj[i].chat_history.length;j++)
+                    {
+                        if(myObj[i].chat_history[j].userID==data.receiver)
+                        {
+                            flag=1;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        let prtnObj = {'userID':data.receiver, 'docType':data.docType, 'timestamp':data.timestamp};
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                    }
+                    else if(flag==1)
+                    {
+                        await dbo.collection('user').updateOne({'userID':data.sender, 'chat_history.userID':data.receiver},
+                            {$set:{'chat_history.$.timestamp':data.timestamp}});
+                    }
+                }
+                else if(myObj[i].userID==data.receiver)
+                {
+                    let flag=0;
+                    for(let j=0; j<myObj[i].chat_history.length;j++)
+                    {
+                        if(myObj[i].chat_history[j].userID==data.sender)
+                        {
+                            flag=1;
+                        }
+                    }
+                    if(flag==0)
+                    {
+                        let prtnObj = {'userID':data.sender, 'docType':data.docType, 'timestamp':data.timestamp};
+                        await dbo.collection('user').updateOne({'userID':myObj[i].userID},{$push:{'chat_history':prtnObj}});
+                    }
+                    else if(flag==1)
+                    {
+                        await dbo.collection('user').updateOne({'userID':data.receiver, 'chat_history.userID':data.sender},
+                            {$set:{'chat_history.$.timestamp':data.timestamp}});
+                    }
+                }
+            }
+        }
+        await dbo.collection('user').updateMany({'userID': {$in:[data.sender, data.receiver]}}, 
+        {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
+}
+
 async function loadUserInformation(listUserID)
 {
     try
@@ -261,5 +373,7 @@ function authenticateAccessToken(req, res, next)
     })
 }
 
-module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
-    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, generateAccessToken, generateRefreshToken, authenticateAccessToken}
+module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, 
+    ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
+    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, 
+    generateAccessToken, generateRefreshToken, authenticateAccessToken, savePrivateMessage, saveGroupMessage}
