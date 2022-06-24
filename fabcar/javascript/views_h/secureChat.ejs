@@ -1059,7 +1059,7 @@
                     message = messageFile(fileID, fileName);
                 }
                 else{
-                    message = smartMessage(decryptMyMessage(JSON.parse(res_block_verify_json.content)));
+                    message = decryptMyMessage(JSON.parse(res_block_verify_json.content));
                 }
                 mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
                 mess_block.querySelector('.mess-content').innerHTML=message;
