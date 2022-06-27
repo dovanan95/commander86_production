@@ -214,6 +214,7 @@ async function savePrivateMessage(data)
 }
 socketIOFuntion.socketCommunication(socketIo);
 var users = socketIOFuntion.users;
+var online_account = socketIOFuntion.online_account;
 
 //------------ End Communication Zone -----------------------//
 
@@ -221,7 +222,7 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname);
  
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.use(bodyParser.json());
+app.use(bodyParser.json()); 
 app.use(cors());
 
 app.use(express.static(__dirname + '/views_h'));
@@ -916,7 +917,7 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
 app.post('/sendFile', authenticateAccessToken, async function(req, res){
     try
     {
-        let docType = req.headers.doctype; 
+        let docType = req.headers.doctype; console.log(req.body);
         if(docType=='private_message')
         {
             let sender_name = req.headers.sender_name;
