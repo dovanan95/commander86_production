@@ -917,7 +917,7 @@ app.get('/getMessInfo', authenticateAccessToken, async function(req, res){
 app.post('/sendFile', authenticateAccessToken, async function(req, res){
     try
     {
-        let docType = req.headers.doctype; console.log(req.body);
+        let docType = req.headers.doctype; 
         if(docType=='private_message')
         {
             let sender_name = req.headers.sender_name;

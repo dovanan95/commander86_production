@@ -617,102 +617,7 @@
     // const messContainer = document.getElementById('mess_container');
     var tab_partner_prefix = 'partner_list.';
 
-    socket.on('secure_update_partner_publicKey', function(data){
-        console.log('new key', data);
-        if(data.userID==myID){
-            var privKeyModal = document.getElementById("privKeyModal");
-            privKeyModal.style.display = "block";
-        }
-        if(sessionStorage.getItem('partner_publicKeyRSA')){
-            var publicKey_list = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'));
-            publicKey_list.forEach(element => {
-                if(element.partnerID==data.userID){
-                    element.partner_publicKeyRSA=data.newPublicKey.publicKeyRSA;
-                }
-            });
-            sessionStorage.setItem('partner_publicKeyRSA', JSON.stringify(publicKey_list));
-        }
-        
 
-    })
-
-    socket.on('secure_incoming_mess', function(data){
-        console.log(data);
-        //console.log(document.getElementsByClassName('tablinks').length);
-
-        var current_partner = sessionStorage.getItem('current_partner_id');
-        var tablinks = document.getElementsByClassName('tablinks');
-        if(data.docType=='secure_private_message')
-        {
-            if(data.sender == current_partner)
-            {
-                if(data.isFile && data.isFile=='true')
-                {
-                    let my_block_message = decryptMyMessage(data.message);
-                        let my_block_filename = decryptMyMessage(data.originalFilename);
-                        var message = messageFile(my_block_message, my_block_filename);
-                }
-                else
-                {
-                    let my_block_message = decryptMyMessage(data.message);
-                        var message = my_block_message;
-                }
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                message_zone.scrollTop = message_zone.scrollHeight;
-                reloadLeftTab(tab_partner_prefix+ data.sender);
-                socket.emit('secure_seenUpdate', {'messID': data.messID, 'docType': 'secure_private_message', 'userID': myID, 'timestamp': Date.now()})
-            }
-            else if(data.sender != current_partner)
-            {   
-                var flag =0;
-                for(var k=0;k<tablinks.length;k++)
-                {
-                    console.log(tablinks[k]);
-                    var id = tablinks[k].getAttribute('id_sender');
-                    console.log(id);
-                    if(data.sender==id)
-                    {
-                        flag=1;
-                    }
-                }
-                if(flag==0)
-                {
-                    if(myID!=data.sender){
-                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
-                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
-                    }
-                    else if(myID==data.sender && current_partner==data.receiver){
-                        if(data.isFile && data.isFile=='true'){
-                            let my_block_message = decryptMyMessage(data.message);
-                            let my_block_filename = decryptMyMessage(data.originalFilename);
-                            var message = messageFile(my_block_message, my_block_filename);
-                        }
-                        else{
-                            let my_block_message = decryptMyMessage(data.message);
-                            var message = my_block_message;
-                        }
-                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
-                        message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-                        message_zone.scrollTop = message_zone.scrollHeight;
-                        reloadLeftTab(tab_partner_prefix+ data.receiver);
-                    }
-                }
-                else if(flag==1)
-                {
-                    if(myID!=data.sender)
-                    {
-                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
-                        console.log(partner_tab);
-                        //partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
-                        reloadLeftTab(tab_partner_prefix+ data.sender);
-                    }
-                }
-                
-            }
-            
-        }
-    })
 
     function private_message_left_user(docType, id, name)
     {
@@ -804,12 +709,109 @@
     function messageFile(fileID, fileName) { 
         var message=
         `
-            <i class="fa-solid fa-file-lines"></i>
             <div class="fileName">${fileName}</div>
-            <button onclick="downloadFile('${fileID}')" fileID="${fileID}">DOWNLOAD</button>
+            <i class="fa-solid fa-download" style="cursor: pointer" onclick="downloadFile('${fileID}')" fileID="${fileID}"></i>
         `
         return message;
     };
+
+    socket.on('secure_update_partner_publicKey', function(data){
+        console.log('new key', data);
+        if(data.userID==myID){
+            var privKeyModal = document.getElementById("privKeyModal");
+            privKeyModal.style.display = "block";
+        }
+        if(sessionStorage.getItem('partner_publicKeyRSA')){
+            var publicKey_list = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'));
+            publicKey_list.forEach(element => {
+                if(element.partnerID==data.userID){
+                    element.partner_publicKeyRSA=data.newPublicKey.publicKeyRSA;
+                }
+            });
+            sessionStorage.setItem('partner_publicKeyRSA', JSON.stringify(publicKey_list));
+        }
+        
+
+    })
+
+    socket.on('secure_incoming_mess', function(data){
+        console.log(data);
+        //console.log(document.getElementsByClassName('tablinks').length);
+
+        var current_partner = sessionStorage.getItem('current_partner_id');
+        var tablinks = document.getElementsByClassName('tablinks');
+        if(data.docType=='secure_private_message')
+        {
+            if(data.sender == current_partner)
+            {
+                if(data.isFile && data.isFile=='true')
+                {
+                    let my_block_message = decryptMyMessageFile(data.message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(data.message)['decodedFileName'];
+                        var message = messageFile(my_block_message, my_block_filename);
+                }
+                else
+                {
+                    let my_block_message = decryptMyMessage(data.message);
+                        var message = my_block_message;
+                }
+                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.scrollTop = message_zone.scrollHeight;
+                reloadLeftTab(tab_partner_prefix+ data.sender);
+                socket.emit('secure_seenUpdate', {'messID': data.messID, 'docType': 'secure_private_message', 'userID': myID, 'timestamp': Date.now()})
+            }
+            else if(data.sender != current_partner)
+            {   
+                var flag =0;
+                for(var k=0;k<tablinks.length;k++)
+                {
+                    console.log(tablinks[k]);
+                    var id = tablinks[k].getAttribute('id_sender');
+                    console.log(id);
+                    if(data.sender==id)
+                    {
+                        flag=1;
+                    }
+                }
+                if(flag==0)
+                {
+                    if(myID!=data.sender){
+                        var tab_partner_el = private_message_left_user(data.docType, data.sender, data.sender_name)
+                        left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
+                    }
+                    else if(myID==data.sender && current_partner==data.receiver){
+                        if(data.isFile && data.isFile=='true'){
+                            let my_block_message = decryptMyMessageFile(data.message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(data.message)['decodedFileName'];
+                            var message = messageFile(my_block_message, my_block_filename);
+                        }
+                        else{
+                            let my_block_message = decryptMyMessage(data.message);
+                            var message = my_block_message;
+                        }
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                        message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                        message_zone.scrollTop = message_zone.scrollHeight;
+                        reloadLeftTab(tab_partner_prefix+ data.receiver);
+                    }
+                }
+                else if(flag==1)
+                {
+                    if(myID!=data.sender)
+                    {
+                        var partner_tab = document.getElementById(tab_partner_prefix+data.sender);
+                        console.log(partner_tab);
+                        //partner_tab.querySelector('.dots-offline').style.backgroundColor='orange';
+                        reloadLeftTab(tab_partner_prefix+ data.sender);
+                    }
+                }
+                
+            }
+            
+        }
+    })
+
     function reloadLeftTab(id){
         
         var childLeftButton = left_tab.children;
@@ -920,8 +922,8 @@
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        let my_block_filename = decryptMyMessage(block[i].originalFilename);
+                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
                         var message = messageFile(my_block_message, my_block_filename);
                     }
                     else
@@ -939,8 +941,8 @@
                 {
                     if(block[i].isFile && block[i].isFile=='true')
                     {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        let my_block_filename = decryptMyMessage(block[i].originalFilename);
+                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
                         var message = messageFile(my_block_message, my_block_filename);
                     }
                     else
@@ -1163,6 +1165,86 @@
                 reloadLeftTab(tab_partner_prefix+ current_partner);
             }
         }    
+    }
+    async function sendFile(){
+        try
+        {
+            document.getElementsByClassName('loader')[0].style.display='block';
+            const uri = "/secureChat/secure_sendFile";
+            const xhr = new XMLHttpRequest();
+            const fd = new FormData();
+            var file = document.getElementById('myFile').files[0];
+            var current_partner = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+            var docType = partner_element.getAttribute('docType');
+ 
+            if(current_partner && file)
+            {
+                let RSAkey = deserializeRSAKey(sessionStorage.getItem('privKeyRSA'));
+                let my_publicKey = cryptico.publicKeyString(RSAkey)
+                var partner_publicKey = JSON.parse(sessionStorage.getItem('partner_publicKeyRSA'))[0]['partner_publicKeyRSA'];
+                if(docType=='secure_private_message')
+                {
+                    xhr.open("POST", uri, true);
+                    xhr.setRequestHeader('authorization', 'token '+ accessToken);
+                    xhr.setRequestHeader('docType', docType);
+
+                    /*xhr.setRequestHeader('sender',myID);
+                    xhr.setRequestHeader('receiver', current_partner);
+                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
+                    xhr.setRequestHeader('Content-Type', 'multipart/form-data')*/
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log('res_file:', JSON.parse(xhr.responseText)); // handle response.
+                            let resObj = JSON.parse(xhr.responseText);
+                            if(resObj.data=='ok'){
+                                let fileID = resObj.fileID;
+                                let fileName = file.name;
+                                sendSecureFileMessage(fileID, fileName, docType, myID, current_partner, my_name, my_publicKey,
+                                    partner_publicKey, socket, 'secure_sendMess')
+                            }
+                            else if(resObj.data=='error')
+                            {
+                                alert('khong the gui file');
+                            }
+                        }
+                    };
+                    
+                    console.log(file);
+                    fd.append('files', file);
+                    fd.append('data','test');
+                    // Initiate a multipart/form-data upload
+                    xhr.send(fd);
+                    document.getElementById("myFile").value = "";
+                }
+            }
+        }
+        catch
+        {
+            console.log(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+    }
+
+    async function downloadFile(fileID)
+    {
+        
+        console.log(fileID)
+        const options ={
+            method: 'GET',
+            headers:{
+                'authorization': 'token '+ accessToken,
+            }
+        }
+        var res= await fetch('/downloadFile?fileName='+fileID, options);
+        var res_blob = await res.blob();
+        console.log(res_blob)
+        var url = URL.createObjectURL(res_blob);
+        window.location.href=url
+        //window.location.href= '/downloadFile?fileName='+fileID;
     }
 
     $(document).on('click', '#menu-btn', function(){

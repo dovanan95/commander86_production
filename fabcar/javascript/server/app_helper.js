@@ -319,6 +319,17 @@ async function systemMessage(message, receiver)
 
 }
 
+function generateString(length) {
+    const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+
 function sendMessMultiSocket(socketIo, online_account, receiverID, socket_event, socket_object){
     for(let i=0;i<online_account.length;i++){
         if(online_account[i].userID==receiverID){
@@ -375,5 +386,5 @@ function authenticateAccessToken(req, res, next)
 
 module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, 
     ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
-    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, 
+    storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, generateString,
     generateAccessToken, generateRefreshToken, authenticateAccessToken, savePrivateMessage, saveGroupMessage}

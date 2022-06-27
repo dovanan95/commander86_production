@@ -72,6 +72,42 @@ function SecurePrivMessageTextObj(message, docType, senderID, receiverID, sender
     }
 }
 
+function sendSecureFileMessage(fileID, fileName, docType, senderID, receiverID, sender_name, sender_pubKey, receiver_pubKey, socket, socket_event)
+{
+    try
+    {
+        if(docType=='secure_private_message'){
+            let privateKeyString = sessionStorage.getItem('privKeyRSA');
+            let privKeyRSA = deserializeRSAKey(privateKeyString);
+            let encrypted_sender_fileID =cryptico.encrypt(fileID, sender_pubKey, privKeyRSA);
+            let encrypted_receiver_fileID =cryptico.encrypt(fileID, receiver_pubKey, privKeyRSA);
+            let encrypted_sender_fileName = cryptico.encrypt(fileName, sender_pubKey, privKeyRSA);
+            let encrypted_receiver_fileName = cryptico.encrypt(fileName, receiver_pubKey, privKeyRSA);
+            var encrypted_message = [
+                {'userID': senderID, 'encrypted_message': encrypted_sender_fileID,'encrypted_fileName': encrypted_sender_fileName},
+                {'userID': receiverID, 'encrypted_message':encrypted_receiver_fileID, 'encrypted_fileName': encrypted_receiver_fileName}
+            ];
+            var secure_data={
+                'messID': 'securePrivMess.' + senderID+ '.'+ receiverID + '.' + Date.now().toString(),
+                'docType': 'secure_private_message',
+                'sender': parseInt(senderID),
+                'receiver': parseInt(receiverID),
+                'message': encrypted_message, //ex:[{'userID': 123, encrypted_message: 'e393nd3823d', encrypted_fileName: 'fijfwjowfjw'}] 
+                'sender_name': sender_name,
+                'timestamp':parseInt(Date.now()),
+                'isImportant': 'false',
+                'seen':[],
+                'isFile': 'true',
+            }
+            socket.emit(socket_event, secure_data);
+        }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
+
 function decryptMyMessage(message){
     try{
         var myID_json = sessionStorage.getItem('login_data');
@@ -99,6 +135,39 @@ function decryptMyMessage(message){
 
     }catch(error){
         console.log(error);
+    }
+}
+
+function decryptMyMessageFile(message){
+    try{
+        var myID_json = sessionStorage.getItem('login_data');
+        var myID = parseInt(JSON.parse(myID_json)['id']);
+        let privateKeyString = sessionStorage.getItem('privKeyRSA');
+        let privKeyRSA = deserializeRSAKey(privateKeyString);
+        var myMessage;
+        var myFileName
+        for(let i=0;i<message.length;i++){
+            if(myID==message[i].userID){
+                myMessage=message[i].encrypted_message.cipher;
+                myFileName=message[i].encrypted_fileName.cipher;
+            }
+        }
+        var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
+        var decodedFileName = cryptico.decrypt(myFileName, privKeyRSA);
+        console.log(decodedMessage);
+        if(decodedMessage.signature=='verified'){
+            return {'decodedMessage':decodedMessage.plaintext, 'decodedFileName': decodedFileName.plaintext};
+        }
+        else if(decodedMessage.signature=='unsigned'){
+            return 'tin nhan khong an toan';
+        }
+        else if(decodedMessage.status == 'failure')
+        {
+            return '***********************';
+        }
+    }   
+    catch(error){
+        console.log(error)
     }
 }
 

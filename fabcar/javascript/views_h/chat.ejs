@@ -1558,7 +1558,7 @@
                     //xhr.setRequestHeader('Content-Type', 'multipart/form-data')
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {
-                            console.log(JSON.parse(xhr.responseText)); // handle response.
+                            console.log('res_file:', JSON.parse(xhr.responseText)); // handle response.
                         }
                     };
                     
