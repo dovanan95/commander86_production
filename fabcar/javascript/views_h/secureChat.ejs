@@ -790,7 +790,7 @@
                             let my_block_message = decryptMyMessage(data.message);
                             var message = my_block_message;
                         }
-                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
                         reloadLeftTab(tab_partner_prefix+ data.receiver);

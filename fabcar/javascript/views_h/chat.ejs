@@ -1625,7 +1625,7 @@
                 //message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit("sendMess", {'messID':messID, 'sender': myID, 'sender_name': my_name,
-                'receiver': current_partner, 'message': messContent.value});
+                'receiver': current_partner, 'message': encodeURIComponent(messContent.value)});
                 messContent.value='';
                 reloadLeftTab(tab_partner_prefix+ current_partner);
             }
@@ -1639,7 +1639,7 @@
                 //message_zone.insertAdjacentHTML('beforeend', mess_block_g);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 socket.emit('sendRoom', {'messID':messID, 'sender': myID, 'sender_name': my_name,
-                'groupID': current_partner, 'groupName': groupName, 'message': messContent.value});
+                'groupID': current_partner, 'groupName': groupName, 'message': encodeURIComponent(messContent.value)});
                 messContent.value='';
                 reloadLeftTab(tab_partner_prefix+current_partner);
             }

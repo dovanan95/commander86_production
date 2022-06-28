@@ -89,10 +89,15 @@
                 <!-- to show local and remote video -->
                 <div id="videos">
                     <div style="position:absolute; top:0; right:0; padding-right: 20px; padding-top: 20px">
-                        <video width="100px" id="localVideo" autoplay muted playsinline></video>
+                        <video width="300px" id="localVideo" autoplay muted playsinline></video>
                     </div>
                     <div id="remoteVideoDiv">
                         <video style="width: 500px;" id="remoteVideo" autoplay playsinline></video>
+                    </div>
+                    <div id="btnControl" style="position:absolute; padding-top: 20px">
+                        <button onclick="microControl()">MICRO</button>
+                        <button onclick="stop()">END CALL</button>
+                        <button onclick="videoControl()">CAMERA</button>
                     </div>
                 </div>
                 <div style="flex-grow: 1;">
@@ -428,6 +433,28 @@
         document.getElementById("calling").style.display = "none";
         document.getElementById("endVideoButton").style.display = "none"*/
         otherUser = null;
+    }
+
+    function microControl(){
+        var audio = localStream.getAudioTracks()[0];
+        if(audio.enabled==false){
+            console.log(audio.muted);
+            localStream.getAudioTracks()[0].enabled=true;
+        }
+        else if(audio.enabled==true){
+            localStream.getAudioTracks()[0].enabled=false;
+        }
+        console.log('audio then: ', audio);
+    }
+    function videoControl(){
+        var video = localStream.getVideoTracks()[0];
+        console.log(video)
+        if(video.enabled==true){
+            video.enabled=false;
+        }
+        else if(video.enabled==false){
+            video.enabled=true;
+        }
     }
     //--------------End Call-------------//
 </script>
