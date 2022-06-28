@@ -882,7 +882,7 @@
         } 
     })
 
-    function myMessage(id_block, my_name, content, isImportant, docType)
+    function myMessage(id_block, my_name, content, isImportant, docType, optionsObject)
     {
         var mess_block = `
                             <div class="outgoing messBlock" id=${id_block} docType=${docType}>
@@ -913,7 +913,7 @@
         }
         return mess_block;
     }
-    function prtnerMessage(id_block, sender_name, content, isImportant, docType)
+    function prtnerMessage(id_block, sender_name, content, isImportant, docType, optionsObject)
     {
         var mess_block = `
                             <div class="incoming messBlock" id=${id_block} docType=${docType}>
