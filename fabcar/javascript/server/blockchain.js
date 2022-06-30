@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 var multer = require('multer');
 var upload = multer();
 const fs = require('fs');
+var networkName = 'mangblockchainquansu';
+var smartContractName = 'chatblockchain';
 
 async function contract()
 {
@@ -29,10 +31,10 @@ async function contract()
     await gateway.connect(ccp, { wallet, identity: 'appUser', discovery: { enabled: true, asLocalhost: true } });
 
             // Get the network (channel) our contract is deployed to.
-    const network = await gateway.getNetwork('mychannel');
+    const network = await gateway.getNetwork(networkName);
 
             // Get the contract from the network.
-    const contract = network.getContract('fabcar');
+    const contract = network.getContract(smartContractName);
 
     return contract;
 }

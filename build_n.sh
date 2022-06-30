@@ -4,11 +4,11 @@ cd ../fabcar
 ./networkDown.sh
 cd ../test-network
 ./network.sh down
-./network.sh up createChannel -ca -s couchdb
+./network.sh up createChannel -c mangblockchainquansu -ca -s couchdb
 cd addOrg3/
-./addOrg3.sh up -c mychannel -ca -s couchdb
+./addOrg3.sh up -c mangblockchainquansu -ca -s couchdb
 cd ..
-./network.sh deployCC -ccn fabcar -ccv 1 -cci initLedger -ccl javascript  -ccp ../chaincode/fabcar/javascript/ -ccep "AND('Org1MSP.peer','Org2MSP.peer','Org3MSP.peer')"
+./network.sh deployCC -c mangblockchainquansu -ccn chatblockchain -ccv 1 -cci initLedger -ccl javascript  -ccp ../chaincode/fabcar/javascript/ -ccep "AND('Org1MSP.peer','Org2MSP.peer','Org3MSP.peer')"
 cd ../fabcar/javascript/
 node enrollAdmin.js
 node registerUser.js
@@ -62,3 +62,10 @@ DOCKER_SOCK="${DOCKER_SOCK}"  docker-compose -f docker/docker-compose-test-net.y
 #sql server ubuntu
 sqlcmd -S localhost -U SA -P '<YourPassword>'
 sqlcmd -S localhost -U SA -P '<YourPassword>' -i sqlfilename.sql
+
+#delete important messsage mongoDB
+mongo
+use httcddh_2022
+db.privateMessage.updateMany({'isImportant':'true'},{$set:{'isImportant':'false'}})
+db.groupMessage.updateMany({'isImportant':'true'},{$set:{'isImportant':'false'}})
+db.secure_privateMessage.updateMany({'isImportant':'true'},{$set:{'isImportant':'false'}})
