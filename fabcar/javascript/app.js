@@ -36,6 +36,7 @@ const pwdEncryption =(password)=>app_helper.pwdEncryption(password);
 const secureChat = require('./server/E2EPackage/secureChat');
 const blockChain = require('./server/blockchain');
 const socketIOFuntion = require('./server/socketIO');
+const commModule = require('./server/COMMPackage/comm');
 
 async function contract(){
     const contract = await blockChain.contract();
@@ -228,6 +229,7 @@ app.use(cors());
 app.use(express.static(__dirname + '/views_h'));
 
 app.use('/secureChat', secureChat.router);
+app.use('/commModule', commModule.router);
 
 //code
 

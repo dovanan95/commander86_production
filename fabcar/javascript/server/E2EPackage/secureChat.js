@@ -338,9 +338,6 @@ router.post('/secure_sendFile', authenticateAccessToken, async function(req, res
     {   
         let docType = req.headers.doctype; 
         if(docType=='secure_private_message'){
-            /*let sender_name = req.headers.sender_name;
-                let sender = req.headers.sender;
-                let receiver = req.headers.receiver;*/
                 let fileID = 'file'+app_helper.generateString(10)+ Date.now().toString()
                 var upload = multer({ storage : app_helper.storage(fileID)}).single('files');
                 upload(req,res, async function(err) {
@@ -349,23 +346,6 @@ router.post('/secure_sendFile', authenticateAccessToken, async function(req, res
                     }
                     console.log(req.file.originalname);
                     res.send({'data':'ok', 'fileID': fileID});
-                    /*let messID = 'MessPriv.'+sender+'.'+receiver+'.'+Date.now().toString()
-                    var privMessObj = {
-                        'messID': messID,
-                        'docType': 'private_message',
-                        'sender': parseInt(sender),
-                        'receiver': parseInt(receiver),
-                        'message': fileName,
-                        'sender_name': sender_name,
-                        'timestamp':parseInt(Date.now()),
-                        'isImportant': 'false',
-                        'seen':[],
-                        'isFile': 'true',
-                        'originalFilename': req.file.originalname
-                    }
-                    await saveSecurePrivateMessage(privMessObj);
-                    app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(sender),'incoming_mess', privMessObj);
-                    app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(receiver),'incoming_mess', privMessObj);*/
                 });
         }
     }

@@ -1256,6 +1256,8 @@
         left_tab.insertAdjacentHTML('afterbegin', tab);
     }
 
+
+
     function checkLogin(){ 
        var check = sessionStorage.getItem('login_data');
        sessionStorage.removeItem('current_partner_id');
@@ -1354,6 +1356,7 @@
         if(docType=='private_message')
         {
             //code
+            partner_id=parseInt(partner_id);
             var data = {'my_ID': myID, 'partner_ID': partner_id, 'limit': 100, 'skip': 0};
             const options = {
                 method: 'POST',
@@ -1382,25 +1385,15 @@
         }
         return(block);
     }
-    async function choosePartner_2(obj){
-        // debugger;
-        console.log(obj.getAttribute('id_sender'));
-        console.log(obj, obj.nextSibling.nextSibling);
-        if(obj.querySelector('.dots-offline').style.backgroundColor=='orange')
-        {
-            obj.querySelector('.dots-offline').style.backgroundColor='green';
-        }
-        message_zone.innerHTML=``;
-        var id_partner = obj.getAttribute('id_sender');
-        var docType = obj.getAttribute('docType');
-        sessionStorage.setItem('current_partner_id', id_partner);
+
+    async function handleLoadedMessage(block, partner_id, docType){
         var options;
         //callAPI(id)
         if(docType=='private_message')
         {   
-            id_partner=parseInt(id_partner);
-            var block_ = await getBlockByID(id_partner, docType); //API call result
-            var block =block_.reverse(); 
+            var id_partner=parseInt(partner_id);
+            //var block_ = await getBlockByID(id_partner, docType); //API call result
+            var block =block.reverse(); 
             var seen = [];
             for(let i=0;i<block.length;i++)
             {
@@ -1435,7 +1428,6 @@
                     mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
-     
             }
 
             options ={
@@ -1449,8 +1441,8 @@
         }
         if(docType=='group_message')
         {
-            var blockG = await getBlockByID(id_partner, docType);
-            block = blockG.reverse();
+            //var blockG = await getBlockByID(id_partner, docType);
+            var blockG = block.reverse();
             var seen_Group = [];
             for(var j in blockG){
                 var mess_block_G;
@@ -1513,6 +1505,192 @@
         message_zone.scrollTop = message_zone.scrollHeight;
         var res = await fetch('/seenUpdate', options);
     }
+    async function handleLoadedMoreMessage(block, partner_id, docType){
+        var options;
+        //callAPI(id)
+        if(docType=='private_message')
+        {   
+            var id_partner=parseInt(partner_id);
+            //var block_ = await getBlockByID(id_partner, docType); //API call result
+            //var block =block.reverse(); 
+            var seen = [];
+            for(let i=0;i<block.length;i++)
+            {
+                var mess_block;
+                block[i].message=smartMessage(block[i].message);
+                if(block[i].sender==id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    if(block[i].seen && block[i].seen.length==0)
+                    {
+                        seen.push(block[i].messID);
+                    }
+                }
+                else if(block[i].sender != id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        var message = messageFile(block[i].message, block[i].originalFilename);
+                    }
+                    else
+                    {
+                        var message = block[i].message;
+                    }
+                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                }
+                message_zone.insertAdjacentHTML("afterbegin", mess_block_t);
+     
+            }
+
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'private_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+        if(docType=='group_message')
+        {
+            //var blockG = await getBlockByID(id_partner, docType);
+            var blockG = block;
+            var seen_Group = [];
+            for(var j in blockG){
+                var mess_block_G;
+                blockG[j].message=smartMessage(blockG[j].message);
+                if(blockG[j].sender != myID)
+                {
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, message, blockG[j].isImportant, blockG[j].docType);
+                }
+                else if(blockG[j].sender == myID)
+                {
+                    if(blockG[j].isFile && blockG[j].isFile=='true')
+                    {
+                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
+                    }
+                    else
+                    {
+                        var message = blockG[j].message;
+                    }
+                    mess_block_G = myMessage(blockG[j].messID, my_name, message, blockG[j].isImportant, blockG[j].docType);
+                }
+                message_zone.insertAdjacentHTML("afterbegin", mess_block_G);
+
+                if(blockG[j].seen.length==0)
+                {
+                    seen_Group.push(blockG[j].messID);
+                }
+                else if(blockG[j].seen.length>0)
+                {
+                    let flag=0;
+                    blockG[j].seen.forEach(seenItem =>{
+                        if(seenItem.userID==myID)
+                        {
+                            flag=1;                            
+                        }
+                    })
+                    if(flag==0)
+                    {
+                        seen_Group.push(blockG[j].messID);
+                    }
+                }
+            }
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen_Group, 'docType': 'group_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+
+        var res = await fetch('/seenUpdate', options);
+    }
+
+    async function choosePartner_2(obj){
+        // debugger;
+        console.log(obj.getAttribute('id_sender'));
+        console.log(obj, obj.nextSibling.nextSibling);
+        if(obj.querySelector('.dots-offline').style.backgroundColor=='orange')
+        {
+            obj.querySelector('.dots-offline').style.backgroundColor='green';
+        }
+        message_zone.innerHTML=``;
+        var id_partner = obj.getAttribute('id_sender');
+        var docType = obj.getAttribute('docType');
+        sessionStorage.setItem('current_partner_id', id_partner);
+        var options;
+        var block_ = await getBlockByID(id_partner, docType); 
+        await handleLoadedMessage(block_,id_partner,docType); 
+    }
+
+    //-----------scroll load more-----//
+    message_zone.onscroll=async function(){
+        if(message_zone.scrollTop==0)
+        {
+            var messBlockList = message_zone.querySelectorAll('.messBlock');
+            var messCount = messBlockList.length;
+            var current_partner = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+            var docType = partner_element.getAttribute('docType');
+            if(docType=='private_message')
+            {
+                var data = {'my_ID': myID, 'partner_ID': parseInt(current_partner), 'limit': 100, 'skip': messCount}; 
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': 'token '+ accessToken,
+                    }
+                }
+                var getPrivMessBlock = await fetch('/commModule/loadMorePrivateMess', options);
+                var block = await getPrivMessBlock.json();
+                await handleLoadedMoreMessage(block, current_partner, docType);
+            }
+            if(docType=='group_message')
+            {
+                var dataG = {'groupID': current_partner, 'limit':100, 'skip':messCount};
+                const optionsG ={
+                    method: 'POST',
+                    body: JSON.stringify(dataG),
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'authorization': 'token '+ accessToken,
+                    }
+                }
+                var getrGroupMessBlock = await fetch('/commModule/loadMoreGroupMess', optionsG);
+                block = await getrGroupMessBlock.json();
+                await handleLoadedMoreMessage(block, current_partner, docType);
+            }
+        }
+    }
+
+    left_tab.onscroll=function(){
+        if(left_tab.scrollHeight - left_tab.scrollTop === left_tab.clientHeight)
+        {
+            console.log('bot');
+        }
+    }
+    //-----------end scroll load more-----//
 
     async function downloadFile(fileID)
     {
