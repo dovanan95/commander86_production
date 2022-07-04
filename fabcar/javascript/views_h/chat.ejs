@@ -957,8 +957,14 @@
                         <div class="status-online">${network_status}</div>
                     </div>
                 </div>
-                <div class="expand-func-icon_left" onclick=leftTabOption(this)>
-                    <i class="fa-solid fa-list-check"></i>   
+                <div class="block_func_btn"  onclick=leftTabOption(this)>
+                    <div class="expand-func-icon_left">
+                        <i class="fa-solid fa-list-check"></i>   
+                    </div>
+                    <div class="dropdown-button" style="display:none;">
+                        <button onclick="window.open('/groupOptions?id=${id}');" >GROUP SETTINGS</button>
+                        <button onclick="console.log(this)" >BLOCKCHAIN SYNCDOWN</button>
+                    </div>
                 </div>
             </div>
             <hr class="solid">
@@ -1023,12 +1029,6 @@
         var leftTab = obj.closest('.tablinks');
         var docType = leftTab.getAttribute('docType');
         var id = leftTab.getAttribute('id_sender');
-        if(docType=='group_message')
-        {
-            window.open('/groupOptions?id='+id);
-        }
-        else if(docType=='private_message')
-        {
             var optionButtons = leftTab.querySelector('.dropdown-button'); console.log('optBtn', optionButtons)
             if(optionButtons.style.display=='none')
             {
@@ -1038,8 +1038,6 @@
             {
                 optionButtons.style.display=='none';
             }
-            
-        }
         
     }
 
