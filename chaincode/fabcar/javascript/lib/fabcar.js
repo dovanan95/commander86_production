@@ -524,7 +524,7 @@ class FabCar extends Contract {
         await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
         console.info('============= END : Create Car ===========');
     }
-    async savePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp)
+    async savePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp, rawObj)
     {
         var message = {
             messID,
@@ -533,13 +533,14 @@ class FabCar extends Contract {
             receiver,
             content,
             sender_name,
-            timestamp
+            timestamp,
+            rawObj
         }
         await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
         //await this.updateCommandHistory(ctx, sender, receiver, 'private_message');
     }
 
-    async saveGroupMessage(ctx, messID, room_id, sender, sender_name, content, timestamp)
+    async saveGroupMessage(ctx, messID, room_id, sender, sender_name, content, timestamp, rawObj)
     {
         var message = {
             messID,
@@ -549,12 +550,13 @@ class FabCar extends Contract {
             sender_name,
             content,
             timestamp,
+            rawObj
         }
         await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
         console.log('saved group message');
     }
 
-    async saveSecurePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp){
+    async saveSecurePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp, rawObj){
         var message = {
             messID,
             docType: 'secure_private_message',
@@ -562,7 +564,8 @@ class FabCar extends Contract {
             receiver,
             content,
             sender_name,
-            timestamp
+            timestamp,
+            rawObj
         }
         await ctx.stub.putState(messID, Buffer.from(JSON.stringify(message)));
     }

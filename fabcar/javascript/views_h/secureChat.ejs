@@ -1055,9 +1055,8 @@
                 var message ;
                 if(mess_block.querySelector('.fileName'))
                 {
-                    console.log('true');
-                    var fileName = mess_block.querySelector('.fileName').innerHTML;
-                    var fileID = decryptMyMessage(JSON.parse(res_block_verify_json.content));
+                    var fileName = decryptMyMessageFile(JSON.parse(res_block_verify_json.content))['decodedFileName'];
+                    var fileID = decryptMyMessageFile(JSON.parse(res_block_verify_json.content))['decodedMessage'];
                     message = messageFile(fileID, fileName);
                 }
                 else{
@@ -1065,9 +1064,6 @@
                 }
                 mess_block.querySelector('.userName').innerHTML=res_block_verify_json.sender_name;
                 mess_block.querySelector('.mess-content').innerHTML=message;
-                //console.log(mess_block);
-                //var nameUserItem = mess_block.querySelector('.userName').outerHTML;
-                //mess_block.querySelector('.bubble').innerHTML=nameUserItem + res_block_verify_json.content;
             }
         
         }

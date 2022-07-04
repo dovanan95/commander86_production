@@ -52,12 +52,12 @@ peer chaincode query -C mangblockchainquansu -n chatblockchain -c '{"Args":["que
 export PATH=${PWD}/../bin:$PATH
 export FABRIC_CFG_PATH=$PWD/../config/
 export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-export PACKAGE_NAME=chatblockchain_4.tar.gz
-export CHAINCODE_LABEL=chatblockchain_4.0
+export PACKAGE_NAME=chatblockchain_6.tar.gz
+export CHAINCODE_LABEL=chatblockchain_6.0
 export CHAINCODE_NAME=chatblockchain
 export CHANNEL_ID=mangblockchainquansu
-export version=4.0
-export sequence=4
+export version=6.0
+export sequence=6
 
 peer lifecycle chaincode package $PACKAGE_NAME --path ../chaincode/fabcar/javascript/ --lang node --label $CHAINCODE_LABEL
 

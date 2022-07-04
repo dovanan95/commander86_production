@@ -486,7 +486,8 @@ app.post('/markImportant', authenticateAccessToken, async function(req, res){
         {
             chatBlock = await dbo.collection('privateMessage').findOne({'messID': req.body.messID});
             await contract_.submitTransaction('savePrivateMessage', req.body.messID,
-                                chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp);
+                                chatBlock.sender, chatBlock.sender_name, chatBlock.receiver, chatBlock.message, chatBlock.timestamp,
+                                JSON.stringify(chatBlock));
             var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
             if(JSON.parse(resporn.toString()).messID)
             {
@@ -502,7 +503,8 @@ app.post('/markImportant', authenticateAccessToken, async function(req, res){
         {
             chatBlock = await dbo.collection('groupMessage').findOne({'messID': req.body.messID});
             await contract_.submitTransaction('saveGroupMessage', req.body.messID,chatBlock.groupID,
-                                chatBlock.sender, chatBlock.sender_name,  chatBlock.message, chatBlock.timestamp);
+                                chatBlock.sender, chatBlock.sender_name,  chatBlock.message, chatBlock.timestamp,
+                                JSON.stringify(chatBlock));
             var resporn = await contract_.submitTransaction('verifyMessBlockchain', req.body.messID, Date.now().toString());
             if(JSON.parse(resporn.toString()).messID)
             {
