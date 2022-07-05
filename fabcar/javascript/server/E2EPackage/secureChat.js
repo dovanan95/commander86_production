@@ -357,5 +357,14 @@ router.post('/secure_sendFile', authenticateAccessToken, async function(req, res
     }
     
 })
+
+router.post('/loadMoreSecurePrivateMess', authenticateAccessToken, async function(req, res){
+
+});
+
+router.post('/loadMoreSecureChatHist', authenticateAccessToken, async function(req,res){
+
+});
+
 module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, secure_seenUpdateIO, router}
 //module.exports=router;

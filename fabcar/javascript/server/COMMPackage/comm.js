@@ -56,15 +56,13 @@ router.post('/loadMoreGroupMess', authenticateAccessToken, async function(req, r
     }
 });
 
-router.post('/loadMoreSecurePrivateMess', authenticateAccessToken, async function(req, res){
-
-})
 
 router.post('/loadMoreChatHist', authenticateAccessToken, async function(req, res){
 
 })
 
-router.post('/loadMoreSecureChatHist', authenticateAccessToken, async function(req,res){
+
+router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async function(req, res){
 
 })
 
