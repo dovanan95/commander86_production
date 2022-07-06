@@ -384,6 +384,10 @@ function authenticateAccessToken(req, res, next)
     })
 }
 
+async function blockchainSyncDown(){
+    
+}
+
 module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, 
     ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
     storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, generateString,

@@ -63,7 +63,55 @@ router.post('/loadMoreChatHist', authenticateAccessToken, async function(req, re
 
 
 router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async function(req, res){
-
+    try
+    {
+        const contract_ = await contract();
+        var dbo = mongoUtil.getDb();
+        var userID = req.user.id;
+        var docType = req.body.docType;
+        if(docType=='private_message'){
+            var queryString = {
+                "selector":{
+                    "$or":[
+                        {"sender": userID, "receiver": req.body.receiverID},
+                        {"sender": req.body.receiverID, "receiver": userID}
+                    ],
+                    "docType": docType,
+                    "timestamp": {"$gt": null}
+                },
+                "sort":[{"timestamp":"desc"}],
+                "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
+            }
+            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
+})
+router.post('/blockchainSyncGroupMess', authenticateAccessToken, async function(req, res){
+    try
+    {
+        if(docType=='group_message'){
+            var queryString = {
+                "selector":{
+                    "room_id": req.body.receiverID,
+                    "docType": docType,
+                    "timestamp": {"$gt": null}
+                },
+                "sort":[{"timestamp":"desc"}],
+                "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
+            }
+            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+    
 })
 
 module.exports={router}

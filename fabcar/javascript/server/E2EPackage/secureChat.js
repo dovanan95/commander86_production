@@ -359,12 +359,54 @@ router.post('/secure_sendFile', authenticateAccessToken, async function(req, res
 })
 
 router.post('/loadMoreSecurePrivateMess', authenticateAccessToken, async function(req, res){
-
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        var chatBlocks = await dbo.collection('secure_privateMessage').find({$or:[{'sender':req.body.my_ID,'receiver':req.body.partner_ID},
+        {'sender':req.body.partner_ID,'receiver':req.body.my_ID}]}).sort({'timestamp':-1}).limit(req.body.limit).skip(req.body.skip).toArray();
+        var userObj = await dbo.collection('user').findOne({'userID': req.body.partner_ID});
+        var partner_publicKeyRSA = userObj.secureKey.publicKeyRSA;
+        res.send(JSON.stringify({'chatBlocks':chatBlocks, 'partner_publicKeyRSA': partner_publicKeyRSA}));
+        
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
 });
 
 router.post('/loadMoreSecureChatHist', authenticateAccessToken, async function(req,res){
 
 });
+
+router.post('/blockchainSyncSecurePrivateMess', authenticateAccessToken, async function(req, res){
+    try
+    {
+        const contract_ = await contract();
+        var dbo = mongoUtil.getDb();
+        var userID = req.user.id;
+        var docType = req.body.docType;
+        if(docType=='secure_private_message'){
+            var queryString = {
+                "selector":{
+                    "$or":[
+                        {"sender": userID, "receiver": req.body.receiverID},
+                        {"sender": req.body.receiverID, "receiver": userID}
+                    ],
+                    "docType": docType,
+                    "timestamp": {"$gt": null}
+                },
+                "sort":[{"timestamp":"desc"}],
+                "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
+            }
+            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+        }
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+})
 
 module.exports={saveSecurePrivateMessage, sendSecurePrivMessIO, secure_seenUpdateIO, router}
 //module.exports=router;

@@ -970,6 +970,94 @@
         var res = await fetch('/secureChat/secure_seenUpdate', options);
     }
 
+    async function handleLoadedMoreMessage(block, partner_id, docType){
+        var options;
+        //callAPI(id)
+        if(docType=='secure_private_message')
+        {   
+            id_partner=parseInt(partner_id);
+            var seen = [];
+            for(let i=0;i<block.length;i++)
+            {
+                var mess_block;
+                if(block[i].sender==id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
+                        var message = messageFile(my_block_message, my_block_filename);
+                    }
+                    else
+                    {
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        var message = my_block_message;
+                    }
+                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    if(block[i].seen && block[i].seen.length==0)
+                    {
+                        seen.push(block[i].messID);
+                    }
+                }
+                else if(block[i].sender != id_partner)
+                {
+                    if(block[i].isFile && block[i].isFile=='true')
+                    {
+                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
+                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
+                        var message = messageFile(my_block_message, my_block_filename);
+                    }
+                    else
+                    {
+                        let my_block_message = decryptMyMessage(block[i].message);
+                        var message = my_block_message;
+                    }
+                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                }
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+     
+            }
+
+            options ={
+                method: 'POST',
+                body: JSON.stringify({'timestamp': Date.now(), 'seenMessID': seen, 'docType': 'secure_private_message'}),
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': 'token '+ accessToken,
+                }
+            }
+        }
+
+        //message_zone.scrollTop = message_zone.scrollHeight;
+        var res = await fetch('/secureChat/secure_seenUpdate', options);
+    }
+    //-----scroll load more-------------//
+    message_zone.onscroll= async function(){
+        if(message_zone.scrollTop==0){
+            var messBlockList = message_zone.querySelectorAll('.messBlock');
+            var messCount = messBlockList.length;
+            var current_partner = sessionStorage.getItem('current_partner_id');
+            var partner_element = document.getElementById(tab_partner_prefix+ current_partner);
+            var docType = partner_element.getAttribute('docType');
+            if(docType=='secure_private_message')
+            {
+                var data = {'my_ID': myID, 'partner_ID': parseInt(current_partner), 'limit': 100, 'skip': messCount}; 
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'authorization': 'token '+ accessToken,
+                    }
+                }
+                var getPrivMessBlock = await fetch('/secureChat/loadMoreSecurePrivateMess', options);
+                var block = await getPrivMessBlock.json();
+                await handleLoadedMoreMessage(block, current_partner, docType);
+            }
+        }
+    }
+    //-----end scroll load more-------------//
+
     messContent.addEventListener('keyup', function(event){
         if(event.keyCode===13)
         {
@@ -1242,6 +1330,7 @@
         window.location.href=url
         //window.location.href= '/downloadFile?fileName='+fileID;
     }
+
 
     $(document).on('click', '#menu-btn', function(){
         //debugger;

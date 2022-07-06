@@ -1,4 +1,12 @@
      //------------preprocessiong message----------------
+     function messageFile(fileID, fileName) { 
+        var message=
+        `
+            <div class="fileName">${fileName}</div>
+            <i class="fa-solid fa-download" style="cursor: pointer" onclick="downloadFile('${fileID}')" fileID="${fileID}"></i>
+        `
+        return message;
+    };
 
      function detectURL(message)
      {
@@ -18,6 +26,10 @@
          var mess_1= detectURL(decodeURIComponent(message))
          return mess_1;
      }
+     /*function smartMessage(data){
+         var mess_1 = detectURL(decodeURIComponent(data.message));
+     }*/
+     
      //------------end preprocessiong message-----------------
 
 function serializeRSAKey(key) {
