@@ -382,6 +382,7 @@ router.post('/loadMoreSecureChatHist', authenticateAccessToken, async function(r
 router.post('/blockchainSyncSecurePrivateMess', authenticateAccessToken, async function(req, res){
     try
     {
+        console.log('htlok');
         const contract_ = await contract();
         var dbo = mongoUtil.getDb();
         var userID = req.user.id;
@@ -390,8 +391,8 @@ router.post('/blockchainSyncSecurePrivateMess', authenticateAccessToken, async f
             var queryString = {
                 "selector":{
                     "$or":[
-                        {"sender": userID, "receiver": req.body.receiverID},
-                        {"sender": req.body.receiverID, "receiver": userID}
+                        {"sender": userID.toString(), "receiver": String(req.body.receiverID)},
+                        {"sender": String(req.body.receiverID), "receiver": userID.toString()}
                     ],
                     "docType": docType,
                     "timestamp": {"$gt": null}
@@ -399,7 +400,9 @@ router.post('/blockchainSyncSecurePrivateMess', authenticateAccessToken, async f
                 "sort":[{"timestamp":"desc"}],
                 "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
             }
-            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+            var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString)); 
+            console.log(JSON.parse(blocks_result.toString()));
+            res.send({'data': 'ok'});
         }
     }
     catch(error)

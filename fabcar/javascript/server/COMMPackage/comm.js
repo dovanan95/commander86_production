@@ -73,8 +73,8 @@ router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async functio
             var queryString = {
                 "selector":{
                     "$or":[
-                        {"sender": userID, "receiver": req.body.receiverID},
-                        {"sender": req.body.receiverID, "receiver": userID}
+                        {"sender": userID.toString(), "receiver": String(req.body.receiverID)},
+                        {"sender": String(req.body.receiverID), "receiver": userID.toString()}
                     ],
                     "docType": docType,
                     "timestamp": {"$gt": null}
@@ -82,7 +82,9 @@ router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async functio
                 "sort":[{"timestamp":"desc"}],
                 "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
             }
-            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+            var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+            console.log(JSON.parse(blocks_result.toString()));
+            res.send({'data': 'ok'});
         }
     }
     catch(error)
@@ -94,17 +96,24 @@ router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async functio
 router.post('/blockchainSyncGroupMess', authenticateAccessToken, async function(req, res){
     try
     {
+        const contract_ = await contract();
+        var dbo = mongoUtil.getDb();
+        var userID = req.user.id;
+        var docType = req.body.docType;
         if(docType=='group_message'){
             var queryString = {
                 "selector":{
                     "room_id": req.body.receiverID,
-                    "docType": docType,
+                    "docType": req.body.docType,
                     "timestamp": {"$gt": null}
                 },
                 "sort":[{"timestamp":"desc"}],
                 "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
             }
-            var blocks_result = contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+            var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+            console.log(JSON.parse(blocks_result.toString()));
+            console.log(JSON.parse(JSON.parse(blocks_result.toString())[0]['Record']['rawObj']))
+            res.send({'data': 'ok'});
         }
     }
     catch(error)

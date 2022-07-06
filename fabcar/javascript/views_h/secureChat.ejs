@@ -5,22 +5,18 @@
         box-sizing: border-box;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
         font-family: "Lato", sans-serif;
     }
-
     .chat-container {
         display: flex;
         margin-left: 80px;
         transition: all 0.4s ease;
         height: 100vh;
     }
-
     .chat-container.scaledown {
         margin-left: 380px;
     }
-
     /* Style the tab */
     .tab {
         display: flex;
@@ -30,19 +26,16 @@
         background-color: #f8f8f8;
         border-right: none;
         height: 100%;
-
     }
     hr {
         opacity: 0;
     }
-
     #hist_tab {
         height: 100%;
         overflow-y: auto;
         background-color: #f8f8f8;
         padding-left: 20px;
     }
-
     .tablinks {
         display: flex;
         /* justify-content: space-between; */
@@ -57,28 +50,43 @@
         z-index: 999;
         margin-bottom: 10px;
     }
-
+    .tablinks .dropdown-button {
+        position: absolute;
+        top: 30;
+        right: 0;
+        width: fit-content;
+        z-index: 999;
+        background-color: #C7C9CC;
+        padding: 10px;
+        border-radius: 5% 0 5% 5%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .tablinks .dropdown-button button {
+        margin-bottom: 5px;
+    }
     .tablinks:hover {
         cursor: pointer;
         background-color: #ffffff;
         border-right: 4px solid #635f84;
         box-shadow: -4px 10px 15px 0px #eee;
     }
-
     .tablinks.active-users {
         background-color: #ffffff;
         border-right: 4px solid #635f84;
         box-shadow: -4px 10px 15px 0px #eee;
+        position: relative;
+        z-index: 21;
     }
-
     .tablinks .acc-avatar {
         width: 20%;
     }
-
     .tablinks .acc-status {
         width: 90%;
     }
-
     .tablinks .acc {
         /* text-transform: uppercase; */
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -86,20 +94,16 @@
         letter-spacing: 0.5px;
         margin-bottom: 5px;
     }
-
     .tablinks .status-offline {
         color: red;
     }
-
     .tablinks .status-info {
         display: flex;
         align-items: center;
     }
-
     .tablinks .status-online {
         color: red;
     }
-
     .dots-offline {
         width: 10px;
         height: 10px;
@@ -107,7 +111,6 @@
         background-color: red;
         margin-right: 15px;
     }
-
     .dots-online {
         width: 10px;
         height: 10px;
@@ -115,7 +118,6 @@
         background-color: green;
         margin-right: 15px;
     }
-
     /* Style the tab content */
     .chat-box {
         display: flex;
@@ -125,7 +127,6 @@
         height: 100%;
         background-color: #f1f3f4;
     }
-
     .chat-box .top-bar {
         width: auto;
         height: 8%;
@@ -140,13 +141,11 @@
         border-radius: 8px;
         box-shadow: -4px 10px 15px 0px #eee;
     }
-
     .chat-box .top-bar .user-info {
         display: flex;
         align-items: center;
         gap: 15px;
     }
-
     .chat-box .top-bar .user-info .avatar {
         width: 40px;
         height: 40px;
@@ -154,7 +153,6 @@
         background: #5364ee;
         position: relative;
     }
-
     .chat-box .top-bar .user-info .avatar p {
         width: 40px;
         height: 40px;
@@ -165,26 +163,21 @@
         color: white;
         font-weight: 400;
     }
-
     .chat-box .top-bar .user-info .name-chat {
         letter-spacing: 1px;
         font-weight: 500;
         font-size: 20px;
     }
-
-
     .chat-box .top-bar button {
         outline: none;
         border: none;
     }
-
     .chat-box .top-bar i.bxs-phone-call {
         color: #5364ee;
         font-size: 26px;
         background-color: #fff;
         cursor: pointer;
     }
-
     #chat-content {
         min-width: 100%;
         height: 85%;
@@ -194,14 +187,12 @@
         background-color: #f1f3f4;
         padding: 20px;
     }
-
     .incoming {
         display: flex;
         align-items: center;
         margin-bottom: 4px;
         width: 100%;
     }
-
     .incoming .bubble {
         padding: 15px 15px 15px 18px;
         background: #fdfdfd;
@@ -213,7 +204,6 @@
         max-width: 75%;
         margin-bottom: 10px;
     }
-
     .outgoing {
         display: flex;
         flex-direction: row-reverse;
@@ -221,7 +211,6 @@
         margin-bottom: 4px;
         width: 100%;
     }
-
     .outgoing .bubble {
         padding: 15px 15px 15px 18px;
         background: #3b3ea2;
@@ -233,18 +222,15 @@
         max-width: 75%;
         margin-bottom: 10px;
     }
-
     .userName {
         font-size: 16px;
         margin-bottom: 5px;
         font-weight: 600;
     }
-
     .block_func_btn {
         position: relative;
         display: inline-block;
     }
-
     .expand-func-icon {
         display: flex;
         flex-direction: column;
@@ -256,19 +242,15 @@
         justify-content: center;
         align-items: center;
     }
-
-
     .expand-func-icon:hover {
         background-color: #C7C9CC;
     }
-
     .expand-func-icon .dots {
         width: 3px;
         height: 3px;
         border-radius: 50%;
         background: #777777;
     }
-
     .expand-func-icon_left {
         display: flex;
         cursor: pointer;
@@ -277,15 +259,12 @@
         justify-content: center;
         align-items: center;
     }
-
     .expand-func-icon_left:hover {
         background-color: #C7C9CC;
     }
-
     .expand-func-icon_left .fa-list-check {
         font-size: 15px;
     }
-
     .incoming .block_func_btn .dropdown-button {
         min-width: 110px;
         min-height: 60px;
@@ -297,7 +276,6 @@
         border-radius: 0px 8px 10px 8px;
         display: none;
     }
-
     .incoming.active-dropdown .block_func_btn .dropdown-button {
         display: flex;
         flex-direction: column;
@@ -305,7 +283,6 @@
         gap: 5px;
         z-index: 99;
     }
-
     .block_func_btn .dropdown-button button {
         outline: none;
         border: none;
@@ -315,14 +292,12 @@
         width: 100%;
         font-weight: 400;
     }
-
     .block_func_btn .dropdown-button button:hover {
         cursor: pointer;
         background-color: #f2f2f2;
         padding: 5px 8px;
         border-radius: 4px;
     }
-
     .outgoing .block_func_btn .dropdown-button {
         min-width: 110px;
         min-height: 60px;
@@ -335,7 +310,6 @@
         border-radius: 10px 0px 10px 10px;
         display: none;
     }
-
     .outgoing.active-dropdown .block_func_btn .dropdown-button {
         display: flex;
         flex-direction: column;
@@ -343,15 +317,12 @@
         gap: 5px;
         z-index: 99;
     }
-
-
     /* .input_form{
     position: absolute;
     position: sticky;
     bottom: 50;
     top: 430px;
 } */
-
     /* .input_mess{
     float: right;
     width: 50%;
@@ -363,13 +334,10 @@
     float: right;
     height: 50px;
 } */
-
     .darker {
         border-color: #ccc;
         background-color: #ddd;
     }
-
-
     .msger-inputarea {
         margin: 15px 10px;
         display: flex;
@@ -377,7 +345,6 @@
         background: #fff;
         border-radius: 6px;
     }
-
     .msger-input {
         border: none;
         outline: none;
@@ -390,7 +357,6 @@
         font-family: 'Poppins', sans-serif;
         padding-left: 30px;
     }
-
     .msger-send-btn {
         border: none;
         outline: none;
@@ -400,17 +366,14 @@
         cursor: pointer;
         border-radius: 10%;
     }
-
     .msger-send-btn i {
         padding: 10px 12px;
         font-size: 28px;
         cursor: pointer;
     }
-
     .netstat {
         color: green;
     }
-
     .button_menu {
         background-color: #4CAF50;
         /* Green */
@@ -425,11 +388,9 @@
         transition-duration: 0.4s;
         cursor: pointer;
     }
-
     .show {
         display: block;
     }
-
     /* The Modal (background) */
     .modal {
         display: none;
@@ -453,7 +414,6 @@
         background-color: rgba(0, 0, 0, 0.4);
         /* Black w/ opacity */
     }
-
     /* Modal Content */
     .modal-content {
         position: relative;
@@ -468,32 +428,27 @@
         animation-name: animatetop;
         animation-duration: 0.4s
     }
-
     /* Add Animation */
     @-webkit-keyframes animatetop {
         from {
             top: -300px;
             opacity: 0
         }
-
         to {
             top: 0;
             opacity: 1
         }
     }
-
     @keyframes animatetop {
         from {
             top: -300px;
             opacity: 0
         }
-
         to {
             top: 0;
             opacity: 1
         }
     }
-
     /* The Close Button */
     .close {
         color: white;
@@ -501,30 +456,32 @@
         font-size: 28px;
         font-weight: bold;
     }
-
     .close:hover,
     .close:focus {
         color: #000;
         text-decoration: none;
         cursor: pointer;
     }
-
     .modal-header {
         padding: 2px 16px;
         background-color: #5cb85c;
         color: white;
     }
-
     .modal-body {
         padding: 2px 16px;
     }
-
     .modal-footer {
         padding: 2px 16px;
         background-color: #5cb85c;
         color: white;
     }
-
+    hr {
+        opacity: 0;
+    }
+    .fileName {
+        text-decoration: underline;
+        margin-right: 8px;
+    }
     .loader {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
@@ -536,12 +493,10 @@
     animation: spin 2s linear infinite;
     display: none;
     }
-
     @-webkit-keyframes spin {
     0% { -webkit-transform: rotate(0deg); }
     100% { -webkit-transform: rotate(360deg); }
     }
-
     @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -635,8 +590,7 @@
                         <i class="fa-solid fa-list-check"></i>   
                     </div>
                     <div class="dropdown-button" style="display:none;">
-                        <button onclick="console.log(this)" > SECURED CHAT</button>
-                        <button onclick="console.log(this)" > CHAT SETTINGS</button>
+                        <button onclick="blockchainSyncDown(this)" >BLOCKCHAIN SYNCDOWN</button>
                     </div>
                 </div>
                 
@@ -645,6 +599,7 @@
         `
         return left_private_block
     }
+
     function myMessage(id_block, my_name, content, isImportant, docType, optionsObject)
     {
         var mess_block = `
@@ -714,6 +669,70 @@
         `
         return message;
     };
+
+
+    function leftTabOption(obj){
+        var leftTab = obj.closest('.tablinks');
+        var docType = leftTab.getAttribute('docType');
+        var id = leftTab.getAttribute('id_sender');
+            var optionButtons = leftTab.querySelector('.dropdown-button'); console.log('optBtn', optionButtons)
+            if(optionButtons.style.display=='none')
+            {
+                optionButtons.style.display='block';
+            }
+            else if(optionButtons.style.display=='block')
+            {
+                optionButtons.style.display=='none';
+            }
+        
+    }
+
+    document.addEventListener('click', function(e){
+        if(!e.target.matches('.expand-func-icon_left, .fa-solid'))
+        {
+            var dropdowns = document.getElementsByClassName("dropdown-button");
+            for(let i =0;i<dropdowns.length;i++)
+            {
+                if(dropdowns[i].style.display=='block')
+                {
+                    dropdowns[i].style.display='none';
+                }
+            }
+        }
+    })
+    async function blockchainSyncDown(obj){
+        try
+        {
+            console.log('obj', obj);
+            document.getElementsByClassName('loader')[0].style.display='block';
+            var majorObj = obj.closest('.tablinks')
+            var id_partner = majorObj.getAttribute('id_sender');
+            var docType = majorObj.getAttribute('docType');
+            if(docType=='secure_private_message')
+            {
+                var api_url = '/secureChat/blockchainSyncSecurePrivateMess';
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify({'receiverID': id_partner, 'docType': docType}),
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                var res = await fetch(api_url, options);
+                var json_res = await res.json();
+                console.log(json_res);
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+    }
 
     socket.on('secure_update_partner_publicKey', function(data){
         console.log('new key', data);
@@ -888,7 +907,7 @@
                 }
             }
             var getPrivMessBlock = await fetch('/secureChat/secure_chat_peer', options);
-            block = await getPrivMessBlock.json(); console.log(block.partner_publicKeyRSA)
+            block = await getPrivMessBlock.json(); 
             sessionStorage.setItem('partner_publicKeyRSA', 
                 JSON.stringify(
                     [

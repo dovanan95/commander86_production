@@ -365,9 +365,9 @@
         z-index: 99;
     }
 
-    .mess-content {
+    /*.mess-content {
         display: flex;
-    }
+    }*/
 
     .darker {
         border-color: #ccc;
@@ -1056,25 +1056,48 @@
     })
 
     async function blockchainSyncDown(obj){
-        var api_url = '/commModule/blockchainSyncPrivateMess';
-        var id_partner = obj.getAttribute('id_sender');
-        var docType = obj.getAttribute('docType');
-        if(docType=='private_message')
+        try
         {
-            const options = {
-                method: 'POST',
-                body: JSON.stringify({'receiverID': id_partner, 'docType': docType}),
-                headers: {
-                    'authorization': 'token '+ accessToken,
-                    'Content-Type': 'application/json'
-                }
-            };
-            await fetch(api_url, options);
+            document.getElementsByClassName('loader')[0].style.display='block';
+            var majorObj = obj.closest('.tablinks')
+            var id_partner = majorObj.getAttribute('id_sender');
+            var docType = majorObj.getAttribute('docType'); 
+            if(docType=='private_message')
+            {
+                var api_url = '/commModule/blockchainSyncPrivateMess';
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify({'receiverID': id_partner, 'docType': docType}),
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                await fetch(api_url, options);
+            }
+            else if(docType=='group_message')
+            {
+                var api_url = '/commModule/blockchainSyncGroupMess';
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify({'receiverID': id_partner, 'docType': docType}),
+                    headers: {
+                        'authorization': 'token '+ accessToken,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                await fetch(api_url, options);
+            }
         }
-        else if(docType=='group_message')
+        catch(error)
         {
-
+            console.log(error);
         }
+        finally
+        {
+            document.getElementsByClassName('loader')[0].style.display='none';
+        }
+        
     }
 
     async function markImportantMess(obj)

@@ -133,7 +133,7 @@ function decryptMyMessage(message){
             }
         }
         var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
-        console.log(decodedMessage);
+        //console.log(decodedMessage);
         if(decodedMessage.signature=='verified'){
             return smartMessage(decodedMessage.plaintext);
         }
@@ -166,7 +166,7 @@ function decryptMyMessageFile(message){
         }
         var decodedMessage = cryptico.decrypt(myMessage, privKeyRSA);
         var decodedFileName = cryptico.decrypt(myFileName, privKeyRSA);
-        console.log(decodedMessage);
+        //console.log(decodedMessage);
         if(decodedMessage.signature=='verified'){
             return {'decodedMessage':decodedMessage.plaintext, 'decodedFileName': decodedFileName.plaintext};
         }
