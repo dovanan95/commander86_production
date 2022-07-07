@@ -1473,7 +1473,7 @@
                     }
                     mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
                 }
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t); 
             }
 
             options ={
@@ -1690,7 +1690,7 @@
 
     //-----------scroll load more-----//
     message_zone.onscroll=async function(){
-        if(message_zone.scrollTop==0)
+        if(message_zone.scrollTop==0 && message_zone.innerHTML!='')
         {
             var messBlockList = message_zone.querySelectorAll('.messBlock');
             var messCount = messBlockList.length;
