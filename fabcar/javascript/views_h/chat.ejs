@@ -1088,6 +1088,8 @@
                 };
                 await fetch(api_url, options);
             }
+            var block_ = await getBlockByID(id_partner, docType); 
+            await handleLoadedMessage(block_,id_partner,docType); 
         }
         catch(error)
         {
@@ -1430,6 +1432,7 @@
     }
 
     async function handleLoadedMessage(block, partner_id, docType){
+        message_zone.innerHTML='';
         var options;
         //callAPI(id)
         if(docType=='private_message')

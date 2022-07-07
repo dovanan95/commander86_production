@@ -384,11 +384,46 @@ function authenticateAccessToken(req, res, next)
     })
 }
 
-async function blockchainSyncDown(){
-    
+async function blockchainSyncDown(blockList, docType){
+    try
+    {
+        var dbo = mongoUtil.getDb();
+        var collection;
+        if(docType=='private_message'){
+            collection='privateMessage';
+        }
+        else if(docType=='group_message'){
+            collection='groupMessage';
+        }
+        else if(docType=='secure_private_message'){
+            collection='secure_privateMessage';
+        }
+        var blockData = JSON.parse(blockList.toString()); console.log(blockData);
+        for(let i=0; i<blockData.length;i++){
+            var messID = blockData[i].Key; 
+            var messInMongo = await dbo.collection(collection).findOne({'messID': messID}); 
+            if(messInMongo==null){
+                var syncObj = JSON.parse(blockData[i]['Record']['rawObj']);
+                syncObj.isImportant='true';
+                delete syncObj['_id'];
+                console.log('block', syncObj);
+                await dbo.collection(collection).insertOne(syncObj, function(err, res){
+                    if(err){
+                        console.log(err);
+                    }
+                })
+            }
+        }
+        return({'data':'ok'});
+    }
+    catch(error)
+    {
+        console.log(error);
+    }
+
 }
 
 module.exports = {loadUserInformation, timestamptoDateConverter, sendMessMultiSocket, pwdEncryption, 
-    ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config,
+    ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, sql_config, blockchainSyncDown,
     storage, checkE2ERegister, systemMessage, verifyPrivKeyRSA, generateString,
     generateAccessToken, generateRefreshToken, authenticateAccessToken, savePrivateMessage, saveGroupMessage}

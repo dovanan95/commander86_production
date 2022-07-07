@@ -84,6 +84,7 @@ router.post('/blockchainSyncPrivateMess', authenticateAccessToken, async functio
             }
             var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
             console.log(JSON.parse(blocks_result.toString()));
+            var result = await app_helper.blockchainSyncDown(blocks_result, docType)
             res.send({'data': 'ok'});
         }
     }
@@ -111,8 +112,9 @@ router.post('/blockchainSyncGroupMess', authenticateAccessToken, async function(
                 "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
             }
             var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-            console.log(JSON.parse(blocks_result.toString()));
-            console.log(JSON.parse(JSON.parse(blocks_result.toString())[0]['Record']['rawObj']))
+            //console.log(JSON.parse(blocks_result.toString()));
+            //console.log(JSON.parse(JSON.parse(blocks_result.toString())[0]['Record']['rawObj']))
+            var ressult = await app_helper.blockchainSyncDown(blocks_result, docType)
             res.send({'data': 'ok'});
         }
     }

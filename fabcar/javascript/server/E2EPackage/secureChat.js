@@ -402,6 +402,7 @@ router.post('/blockchainSyncSecurePrivateMess', authenticateAccessToken, async f
             }
             var blocks_result = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString)); 
             console.log(JSON.parse(blocks_result.toString()));
+            var result = await app_helper.blockchainSyncDown(blocks_result, docType)
             res.send({'data': 'ok'});
         }
     }
