@@ -37,11 +37,14 @@ const secureChat = require('./server/E2EPackage/secureChat');
 const blockChain = require('./server/blockchain');
 const socketIOFuntion = require('./server/socketIO');
 const commModule = require('./server/COMMPackage/comm');
+const jobs = require('./server/jobs');
 
 async function contract(){
     const contract = await blockChain.contract();
     return contract;
 }
+
+jobs.deleteOldItem.start(); 
 
 //------------Security Zone ------------------------//
 
