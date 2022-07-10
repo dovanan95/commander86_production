@@ -4,7 +4,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Video Call</title>
         <link rel="stylesheet" href="./css/call.css">
-    
+        <!-- ### here -->
+        <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
+        <link rel="stylesheet" href="./bootstrap-5.1.3-dist/css/bootstrap.min.css">
+        <!-- ### end here -->
         <script src='socket.io.min.js'></script>
         <style>
             body {
@@ -17,10 +20,11 @@
             }
         </style>
     </head>
-    <body>
-        <div>
-            <div>
-    
+    <!-- here -->
+    <body style="background-color: rgba(0, 0, 0, 0.349);">
+        <div class="container-fluid">
+    <!-- bo di 1 the div -->
+    <!-- end here -->
                 <!-- to make a call with name -->
                 <div id="call">
                     <div class="dialWrapper">
@@ -57,23 +61,31 @@
                         </div>
                     </div>
                 </div>
-    
-                <!-- to show outgoing call -->
+                 <!-- ### here -->
+                <!-- to show outgoing call --> 
                 <div id="calling">
-                    <div class="incomingWrapper">
-                        <div class="itemWrapper">
-                            <h2>Calling</h2>
-                        </div>
-                        <div class="itemWrapper">
-                            <img id="profileImageCA" style="padding: 30px; width: 140px; height: 140px;"
-                                src="./img/profile.png" alt="">
-                        </div>
-                        <div class="itemWrapper">
-                            <h3 style="line-height: 0px;"><span id="otherUserNameCA"></span></h3>
+                    <div class="modal" id="calling-modal" style="display: block;">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="profile-widget">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="#" class="avatar"><img src="./img/profile.png" alt=""></a>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="#" id="otherUserNameCA" style="text-decoration:none">Partnet Name</a></h4>
+                                        </div>                    
+                                        <div class="d-flex justify-content-center small text-muted mb-2">calling <span id="ellipsis"> ...  </span></div>
+                                        <div class="d-flex justify-content-center">
+                                            <!-- <a href="#" class="btn btn-danger me-4" id="decline-btn" onclick="stop()">Decline</a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-    
+            <!-- ### end here -->
                 <!-- to show call in progress call -->
                 <div id="inCall">
                     <div class="incomingWrapper">
@@ -85,21 +97,25 @@
                 </div>
     
                 <br>
-    
-                <!-- to show local and remote video -->
-                <div id="videos">
-                    <div style="position:absolute; top:0; right:0; padding-right: 20px; padding-top: 20px">
+                <!-- ### here: thay doi lai cho <div id=videos > -->
+                <div id="videos" class="container">
+                    <div id="localVideoDiv" class="border border-1" style="position:absolute; top:0; left: 80%;z-index: 10;">
                         <video width="300px" id="localVideo" autoplay muted playsinline></video>
                     </div>
-                    <div id="remoteVideoDiv">
-                        <video style="width: 500px;" id="remoteVideo" autoplay playsinline></video>
+                    <div id="remoteVideoDiv" class="d-flex justify-content-center container">
+                        <video style="position:absolute;top:0;left: 0;z-index: 1;width: 100vw!important ;height: 100vh!important;object-fit:fill;" id="remoteVideo" autoplay playsinline></video>
                     </div>
-                    <div id="btnControl" style="position:absolute; padding-top: 20px">
-                        <button onclick="microControl()">MICRO</button>
-                        <button onclick="stop()">END CALL</button>
-                        <button onclick="videoControl()">CAMERA</button>
+                    <div id="btns" style="position:absolute; bottom: 5%;left: 5%; width: 90%; padding-top: 10px;z-index: 11;" class="d-flex">
+                        <button id="btnMicro"class="btn btn-primary p-2" onclick="microControl()" style="width: 40px;">
+                            <i id="iconMicro" class="fa fa-microphone"></i>
+                        </button>
+                        <button id="btnCam" class="btn btn-primary p-2" onclick="videoControl()" style="width: 40px;">
+                            <i id="iconCam" class="fa fa-video-camera"></i>
+                        </button>
+                        <button class="btn btn-danger ms-auto p-2" onclick="stop()">END CALL</button>
                     </div>
                 </div>
+            <!-- ### end here -->
                 <div style="flex-grow: 1;">
                 </div>
             </div>
@@ -433,6 +449,8 @@
         document.getElementById("calling").style.display = "none";
         document.getElementById("endVideoButton").style.display = "none"*/
         otherUser = null;
+        window.close(); // ### here
+
     }
 
     function microControl(){
@@ -440,9 +458,21 @@
         if(audio.enabled==false){
             console.log(audio.muted);
             localStream.getAudioTracks()[0].enabled=true;
+            // ### here: Thay doi hinh anh cua nut bam tat bat am thanh
+            document.getElementById("btnMicro").classList.add("btn-primary");
+            document.getElementById("btnMicro").classList.remove("btn-secondary");
+            document.getElementById("iconMicro").classList.add("fa-microphone");
+            document.getElementById("iconMicro").classList.remove("fa-microphone-slash");      
+            // ### end here  
         }
         else if(audio.enabled==true){
             localStream.getAudioTracks()[0].enabled=false;
+            // ### here: Thay doi hinh anh cua nut bam tat bat am thanh
+            document.getElementById("btnMicro").classList.remove("btn-primary");
+            document.getElementById("btnMicro").classList.add("btn-secondary");
+            document.getElementById("iconMicro").classList.remove("fa-microphone");
+            document.getElementById("iconMicro").classList.add("fa-microphone-slash");
+            // ### end here
         }
         console.log('audio then: ', audio);
     }
@@ -451,10 +481,72 @@
         console.log(video)
         if(video.enabled==true){
             video.enabled=false;
+            // ### here: Thay doi hinh anh cua nut bam tat bat camera
+            document.getElementById("btnCam").classList.remove("btn-primary");
+            document.getElementById("btnCam").classList.add("btn-secondary");
+            document.getElementById("iconCam").classList.remove("fa-video-camera");
+            document.getElementById("iconCam").classList.add("fa-video-slash");
+            // ### end here
         }
         else if(video.enabled==false){
             video.enabled=true;
+            // ### here: Thay doi hinh anh cua nut bam tat bat camera
+            document.getElementById("btnCam").classList.add("btn-primary");
+            document.getElementById("btnCam").classList.remove("btn-secondary");
+            document.getElementById("iconCam").classList.add("fa-video-camera");
+            document.getElementById("iconCam").classList.remove("fa-video-slash");   
+            // ### end here
         }
     }
     //--------------End Call-------------//
 </script>
+
+<!-- ### here: de keo tha, di chuyen man hinh nguoi goi (localVideoDiv) -->
+<script>
+    dragElement(document.getElementById("localVideoDiv"));
+        function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+            // if present, the header is where you move the DIV from:
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            var tempTop = elmnt.offsetTop - pos2;
+            var tempLeft = elmnt.offsetLeft - pos1;
+            var maxW = window.innerWidth-305;
+            let maxH = window.innerHeight-230;
+            // set the element's new position:
+            elmnt.style.top = (tempTop < 0 ? 0 : (tempTop > maxH ? maxH : tempTop)) + "px";
+            elmnt.style.left = (tempLeft < 0 ? 0 : (tempLeft > maxW ? maxW : tempLeft )) + "px";
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+</script>
+<!-- ### end here -->
