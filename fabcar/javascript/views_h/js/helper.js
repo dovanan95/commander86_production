@@ -103,11 +103,21 @@
         {
             var message = smartMessage(data.message);
         }
-        if(data.sender == partnerID){
-            messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+        if(data.docType=='private_message'){
+            if(data.sender == partnerID){
+                messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+            }
+            else if( data.sender != partnerID){    
+                messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+            }
         }
-        else if( data.sender != partnerID){    
-            messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+        else if(data.docType=='group_message'){
+            if(data.sender != partnerID){
+                messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+            }
+            else if( data.sender == partnerID){    
+                messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+            }
         }
         return(messBlock)
      }
@@ -124,12 +134,15 @@
             let my_block_message = decryptMyMessage(data.message);
             var message = my_block_message;
         }
-        if(data.sender != partnerID){
-            messBlock=myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
+        if(data.docType=='secure_private_message'){
+            if(data.sender != partnerID){
+                messBlock=myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
+            }
+            else if(data.sender == partnerID){
+                messBlock=prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+            }
         }
-        else if(data.sender == partnerID){
-            messBlock=prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
-        }
+
         return(messBlock);
      } 
      

@@ -565,19 +565,19 @@
         font-size:medium;
         padding-bottom:5px;
       }
-      .dropbtn {
-        float: right;
+      .dropbtnup {
+    
       }
 
       /* The container <div> - needed to position the dropup content */
-      .dropup {
-        position: absolute;
+      .dropupup {
+        position: relative;
         display: inline-block;
-        float: right;
+     
       }
  
       /* Dropup content (Hidden by Default) */
-      .dropup-content {
+      .dropup-contentup {
         display: none;
         position: fixed;
         bottom: 50px;
@@ -585,11 +585,11 @@
         min-width: 200px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         z-index: 1;
-        left: auto;
+
       }
 
       /* Links inside the dropup */
-      .dropup-content a {
+      .dropup-contentup a {
         color: black;
         padding: 12px 16px;
         text-decoration: none;
@@ -600,15 +600,15 @@
       }
 
       /* Change color of dropup links on hover */
-      .dropup-content a:hover {background-color: #ddd}
+      .dropup-contentup a:hover {background-color: #ddd}
 
       /* Show the dropup menu on hover */
-      .dropup:hover .dropup-content {
+      .dropupup:hover .dropup-contentup {
         display: block;
       }
 
       /* Change the background color of the dropup button when the dropup content is shown */
-      .dropup:hover .dropbtn {
+      .dropupup:hover .dropbtnup {
         background-color: #2980B9;
       } 
 
@@ -642,11 +642,11 @@
                 </div>
                 <div class="msger-inputarea">
                     <input id='inputMess' class="msger-input" placeholder="Type a message..." />
-                    <div class="dropup">
-                        <button  id="button_utils" class="msger-send-btn dropbtn">
+                    <div class="dropupup">
+                        <button  id="button_utils" class="msger-send-btn dropbtnup">
                             <i class="fa-solid fa-hammer"></i>
                         </button>
-                        <div class="dropup-content">
+                        <div class="dropup-contentup">
                             <a onclick="console.log('task')">Giao Viec</a>
                             <a onclick="console.log('task')">Tien Ich Khac</a>
                         </div>
@@ -867,7 +867,7 @@
             console.log('mess', data);
             if(data.groupID == current_partner)
             {
-                var mess_block_t = smartMessageII(data, current_partner);
+                var mess_block_t = smartMessageII(data, myID);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t)
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
@@ -1505,11 +1505,11 @@
                 var mess_block_G;
                 if(blockG[j].sender != myID)
                 {
-                    var mess_block_G = smartMessageII(blockG[j], id_partner);
+                    var mess_block_G = smartMessageII(blockG[j], myID);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    var mess_block_G = smartMessageII(blockG[j], id_partner);
+                    var mess_block_G = smartMessageII(blockG[j], myID);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
 
@@ -1590,11 +1590,11 @@
                 var mess_block_G;
                 if(blockG[j].sender != myID)
                 {
-                    var mess_block_G = smartMessageII(blockG[j], id_partner);
+                    var mess_block_G = smartMessageII(blockG[j], myID);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    var mess_block_G = smartMessageII(blockG[j], id_partner);
+                    var mess_block_G = smartMessageII(blockG[j], myID);
                 }
                 message_zone.insertAdjacentHTML("afterbegin", mess_block_G);
 
