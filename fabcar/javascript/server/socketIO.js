@@ -77,7 +77,9 @@ function socketCommunication(socketIo){
                 'groupName': data.groupName,
                 'message': data.message, 
                 'sender_name': data.sender_name,
-                'docType': 'group_message'
+                'docType': 'group_message',
+                'isImportant': 'false',
+                'seen':[]
             })
             var groupMessObj = {
                 'messID': data.messID,

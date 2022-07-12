@@ -764,18 +764,7 @@
         {
             if(data.sender == current_partner)
             {
-                if(data.isFile && data.isFile=='true')
-                {
-                    let my_block_message = decryptMyMessageFile(data.message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(data.message)['decodedFileName'];
-                        var message = messageFile(my_block_message, my_block_filename);
-                }
-                else
-                {
-                    let my_block_message = decryptMyMessage(data.message);
-                        var message = my_block_message;
-                }
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                var mess_block_t = secureSmartMessage(data, current_partner);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
@@ -801,16 +790,7 @@
                         left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
                     else if(myID==data.sender && current_partner==data.receiver){
-                        if(data.isFile && data.isFile=='true'){
-                            let my_block_message = decryptMyMessageFile(data.message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(data.message)['decodedFileName'];
-                            var message = messageFile(my_block_message, my_block_filename);
-                        }
-                        else{
-                            let my_block_message = decryptMyMessage(data.message);
-                            var message = my_block_message;
-                        }
-                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
+                        var mess_block_t = secureSmartMessage(data, current_partner);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
                         reloadLeftTab(tab_partner_prefix+ data.receiver);
@@ -940,18 +920,7 @@
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
-                        var message = messageFile(my_block_message, my_block_filename);
-                    }
-                    else
-                    {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        var message = my_block_message;
-                    }
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = secureSmartMessage(block[i], id_partner);
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -959,18 +928,7 @@
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
-                        var message = messageFile(my_block_message, my_block_filename);
-                    }
-                    else
-                    {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        var message = my_block_message;
-                    }
-                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = secureSmartMessage(block[i], id_partner);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
      
@@ -1002,18 +960,7 @@
                 var mess_block;
                 if(block[i].sender==id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
-                        var message = messageFile(my_block_message, my_block_filename);
-                    }
-                    else
-                    {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        var message = my_block_message;
-                    }
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = secureSmartMessage(block[i], id_partner);
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -1021,18 +968,7 @@
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        let my_block_message = decryptMyMessageFile(block[i].message)['decodedMessage'];
-                        let my_block_filename = decryptMyMessageFile(block[i].message)['decodedFileName'];
-                        var message = messageFile(my_block_message, my_block_filename);
-                    }
-                    else
-                    {
-                        let my_block_message = decryptMyMessage(block[i].message);
-                        var message = my_block_message;
-                    }
-                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = secureSmartMessage(block[i], id_partner);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
      
@@ -1292,11 +1228,6 @@
                     xhr.open("POST", uri, true);
                     xhr.setRequestHeader('authorization', 'token '+ accessToken);
                     xhr.setRequestHeader('docType', docType);
-
-                    /*xhr.setRequestHeader('sender',myID);
-                    xhr.setRequestHeader('receiver', current_partner);
-                    xhr.setRequestHeader('sender_name', encodeURIComponent(my_name));
-                    xhr.setRequestHeader('Content-Type', 'multipart/form-data')*/
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {
                             console.log('res_file:', JSON.parse(xhr.responseText)); // handle response.

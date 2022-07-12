@@ -1,4 +1,8 @@
-     //------------preprocessiong message----------------
+    //----------CONST-----------------------
+
+    var myID_json = sessionStorage.getItem('login_data');
+    var my_name = JSON.parse(myID_json)['my_username'];
+    //------------preprocessiong message----------------
      function messageFile(fileID, fileName) { 
         var message=
         `
@@ -26,9 +30,108 @@
          var mess_1= detectURL(decodeURIComponent(message))
          return mess_1;
      }
-     /*function smartMessage(data){
-         var mess_1 = detectURL(decodeURIComponent(data.message));
-     }*/
+
+     function myMessage(id_block, my_name, content, isImportant, docType, optionsObject)
+     {
+         var mess_block = `
+                             <div class="outgoing messBlock" id=${id_block} docType=${docType}>
+                                 <div class="bubble">
+                                     <div class="userName" style="font-size: 10px; font-style:italic; ">${my_name}</div>
+                                     <div class="mess-content">${content}</div>
+                                 </div>
+                                 <div class="block_func_btn">
+                                     <div class="expand-func-icon">
+                                         <div class="dots"></div>
+                                         <div class="dots"></div>
+                                         <div class="dots"></div>    
+                                     </div>
+                                     <div class="dropdown-button">
+                                         <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                         <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                     </div>
+                                 </div>
+                             </div>`
+         if(isImportant=='true')
+         {
+             var text_before = `class="bubble"`;
+             var postitionAdd = mess_block.search(text_before)+ text_before.length;
+             mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+             mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                         `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+ 
+         }
+         return mess_block;
+     }
+     function prtnerMessage(id_block, sender_name, content, isImportant, docType, optionsObject)
+     {
+         var mess_block = `
+                             <div class="incoming messBlock" id=${id_block} docType=${docType}>
+                                 <div class="bubble">
+                                     <div class="userName" style="font-size: 10px; font-style:italic; ">${sender_name}</div>
+                                     <div class="mess-content">${content}</div>
+                                 </div>
+                                 <div class="block_func_btn" style="float:right;">
+                                     <div class="expand-func-icon">
+                                         <div class="dots"></div>
+                                         <div class="dots"></div>
+                                         <div class="dots"></div>    
+                                     </div>
+                                     <div class="dropdown-button">
+                                         <button onclick="markImportantMess(this)" >IMPORTANT</button>
+                                         <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                     </div>
+                                 </div>
+                             </div>`
+         if(isImportant=='true')
+         {
+             var text_before = `class="bubble"`;
+             var postitionAdd = mess_block.search(text_before)+ text_before.length;
+             mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
+             mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
+                         `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
+         }
+         return mess_block
+     }
+
+     function smartMessageII(data,partnerID){
+         //data.message = detectURL(decodeURIComponent(data.message));
+        var messBlock;
+        if(data.isFile && data.isFile=='true'){
+            var message = messageFile(data.message, data.originalFilename);
+        }
+        else
+        {
+            var message = smartMessage(data.message);
+        }
+        if(data.sender == partnerID){
+            messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+        }
+        else if( data.sender != partnerID){    
+            messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+        }
+        return(messBlock)
+     }
+
+     function secureSmartMessage(data, partnerID){
+        var messBlock;
+        if(data.isFile && data.isFile=='true'){
+            let my_block_message = decryptMyMessageFile(data.message)['decodedMessage'];
+            let my_block_filename = decryptMyMessageFile(data.message)['decodedFileName'];
+            var message = messageFile(my_block_message, my_block_filename);
+        }
+        else
+        {
+            let my_block_message = decryptMyMessage(data.message);
+            var message = my_block_message;
+        }
+        if(data.sender != partnerID){
+            messBlock=myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
+        }
+        else if(data.sender == partnerID){
+            messBlock=prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
+        }
+        return(messBlock);
+     } 
      
      //------------end preprocessiong message-----------------
 

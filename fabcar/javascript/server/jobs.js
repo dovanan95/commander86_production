@@ -13,8 +13,8 @@ var deleteOldItem = cron.schedule('* * 1 * *', async ()=>{
     
 });
 
-var testFunc = cron.schedule('1,10,20,30,50 * * * * *', ()=>{
+/*var testFunc = cron.schedule('1,10,20,30,50 * * * * *', ()=>{
     console.log('job', Date.now() );
-})
+})*/
 
-module.exports={deleteOldItem, testFunc};
+module.exports={deleteOldItem};

@@ -747,7 +747,6 @@
 
     socket.on('incoming_mess', function(data){
         console.log(data);
-        //console.log(document.getElementsByClassName('tablinks').length);
         var current_partner = sessionStorage.getItem('current_partner_id');
         var tablinks = document.getElementsByClassName('tablinks');
       
@@ -755,16 +754,7 @@
         {
             if(data.sender == current_partner)
             {
-                if(data.isFile && data.isFile=='true')
-                {
-                    var message = messageFile(data.message, data.originalFilename)
-                    //var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
-                }
-                else
-                {
-                    var message = smartMessage(data.message);
-                }
-                var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
+                var mess_block_t = smartMessageII(data, current_partner);
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.sender);
@@ -790,13 +780,7 @@
                         left_tab.insertAdjacentHTML("afterbegin", tab_partner_el);
                     }
                     else if(myID==data.sender && current_partner==data.receiver){
-                        if(data.isFile && data.isFile=='true'){
-                            var message = messageFile(data.message, data.originalFilename);
-                        }
-                        else{
-                            var message = smartMessage(data.message);
-                        }
-                        var mess_block_t = myMessage(data.messID, my_name, message, data.isImportant, data.docType);
+                        var mess_block_t = smartMessageII(data, current_partner);
                         message_zone.insertAdjacentHTML("beforeend", mess_block_t);
                         message_zone.scrollTop = message_zone.scrollHeight;
                         reloadLeftTab(tab_partner_prefix+ data.receiver);
@@ -821,23 +805,8 @@
             console.log('mess', data);
             if(data.groupID == current_partner)
             {
-                if(data.isFile && data.isFile=='true')
-                {
-                    var message = messageFile(data.message, data.originalFilename)
-                }
-                else
-                {
-                    var message = smartMessage(data.message);
-                }
-                if(data.sender==myID)
-                {
-                    var mess_block_t = myMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                }
-                else if(data.sender!=myID)
-                {
-                    var mess_block_t = prtnerMessage(data.messID, data.sender_name, message, 'false', data.docType);
-                }
-                message_zone.insertAdjacentHTML("beforeend", mess_block_t);
+                var mess_block_t = smartMessageII(data, current_partner);
+                message_zone.insertAdjacentHTML("beforeend", mess_block_t)
                 message_zone.scrollTop = message_zone.scrollHeight;
                 reloadLeftTab(tab_partner_prefix+ data.groupID);
                 socket.emit('seenUpdate', {'messID': data.messID, 'docType': 'group_message', 'userID': myID, 'timestamp': Date.now()})
@@ -1107,7 +1076,6 @@
         try
         {
             document.getElementsByClassName('loader')[0].style.display='block';
-            //console.log(obj.parentNode.parentNode.parentNode);
             var parentObj = obj.closest('.messBlock');
             var parentObj_id = parentObj.getAttribute('id'); 
             var docType = parentObj.getAttribute('docType')
@@ -1438,24 +1406,14 @@
         if(docType=='private_message')
         {   
             var id_partner=parseInt(partner_id);
-            //var block_ = await getBlockByID(id_partner, docType); //API call result
             var block =block.reverse(); 
             var seen = [];
             for(let i=0;i<block.length;i++)
             {
                 var mess_block;
-                block[i].message=smartMessage(block[i].message);
                 if(block[i].sender==id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
-                    }
-                    else
-                    {
-                        var message = block[i].message;
-                    }
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = smartMessageII(block[i],id_partner)
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -1463,15 +1421,7 @@
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
-                    }
-                    else
-                    {
-                        var message = block[i].message;
-                    }
-                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = smartMessageII(block[i],id_partner)
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_t); 
             }
@@ -1487,35 +1437,17 @@
         }
         if(docType=='group_message')
         {
-            //var blockG = await getBlockByID(id_partner, docType);
             var blockG = block.reverse();
             var seen_Group = [];
             for(var j in blockG){
                 var mess_block_G;
-                blockG[j].message=smartMessage(blockG[j].message);
                 if(blockG[j].sender != myID)
                 {
-                    if(blockG[j].isFile && blockG[j].isFile=='true')
-                    {
-                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
-                    }
-                    else
-                    {
-                        var message = blockG[j].message;
-                    }
-                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, message, blockG[j].isImportant, blockG[j].docType);
+                    var mess_block_G = smartMessageII(blockG[j], id_partner);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    if(blockG[j].isFile && blockG[j].isFile=='true')
-                    {
-                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
-                    }
-                    else
-                    {
-                        var message = blockG[j].message;
-                    }
-                    mess_block_G = myMessage(blockG[j].messID, my_name, message, blockG[j].isImportant, blockG[j].docType);
+                    var mess_block_G = smartMessageII(blockG[j], id_partner);
                 }
                 message_zone.insertAdjacentHTML("beforeend", mess_block_G);
 
@@ -1563,18 +1495,9 @@
             for(let i=0;i<block.length;i++)
             {
                 var mess_block;
-                block[i].message=smartMessage(block[i].message);
                 if(block[i].sender==id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
-                    }
-                    else
-                    {
-                        var message = block[i].message;
-                    }
-                    mess_block_t = prtnerMessage(block[i].messID, block[i].sender_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = smartMessageII(block[i],id_partner)
                     if(block[i].seen && block[i].seen.length==0)
                     {
                         seen.push(block[i].messID);
@@ -1582,15 +1505,7 @@
                 }
                 else if(block[i].sender != id_partner)
                 {
-                    if(block[i].isFile && block[i].isFile=='true')
-                    {
-                        var message = messageFile(block[i].message, block[i].originalFilename);
-                    }
-                    else
-                    {
-                        var message = block[i].message;
-                    }
-                    mess_block_t = myMessage(block[i].messID, my_name, message, block[i].isImportant, block[i].docType);
+                    var mess_block_t = smartMessageII(block[i],id_partner)
                 }
                 message_zone.insertAdjacentHTML("afterbegin", mess_block_t);
      
@@ -1607,35 +1522,17 @@
         }
         if(docType=='group_message')
         {
-            //var blockG = await getBlockByID(id_partner, docType);
             var blockG = block;
             var seen_Group = [];
             for(var j in blockG){
                 var mess_block_G;
-                blockG[j].message=smartMessage(blockG[j].message);
                 if(blockG[j].sender != myID)
                 {
-                    if(blockG[j].isFile && blockG[j].isFile=='true')
-                    {
-                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
-                    }
-                    else
-                    {
-                        var message = blockG[j].message;
-                    }
-                    mess_block_G = prtnerMessage(blockG[j].messID, blockG[j].sender_name, message, blockG[j].isImportant, blockG[j].docType);
+                    var mess_block_G = smartMessageII(blockG[j], id_partner);
                 }
                 else if(blockG[j].sender == myID)
                 {
-                    if(blockG[j].isFile && blockG[j].isFile=='true')
-                    {
-                        var message = messageFile(blockG[j].message, blockG[j].originalFilename);
-                    }
-                    else
-                    {
-                        var message = blockG[j].message;
-                    }
-                    mess_block_G = myMessage(blockG[j].messID, my_name, message, blockG[j].isImportant, blockG[j].docType);
+                    var mess_block_G = smartMessageII(blockG[j], id_partner);
                 }
                 message_zone.insertAdjacentHTML("afterbegin", mess_block_G);
 
