@@ -414,12 +414,13 @@
         background-color: rgba(0, 0, 0, 0.4);
         /* Black w/ opacity */
     }
+
     /* Modal Content */
-    .modal-content {
-        position: relative;
+    .modal-content-2 {
+        position: fixed;
         background-color: #fefefe;
         margin: auto;
-        padding: 0;
+        margin-left: 10%;
         border: 1px solid #888;
         width: 80%;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -428,27 +429,32 @@
         animation-name: animatetop;
         animation-duration: 0.4s
     }
+
     /* Add Animation */
     @-webkit-keyframes animatetop {
         from {
             top: -300px;
             opacity: 0
         }
+
         to {
             top: 0;
             opacity: 1
         }
     }
+
     @keyframes animatetop {
         from {
             top: -300px;
             opacity: 0
         }
+
         to {
             top: 0;
             opacity: 1
         }
     }
+
     /* The Close Button */
     .close {
         color: white;
@@ -456,25 +462,30 @@
         font-size: 28px;
         font-weight: bold;
     }
+
     .close:hover,
     .close:focus {
         color: #000;
         text-decoration: none;
         cursor: pointer;
     }
-    .modal-header {
+
+    .modal-header-2 {
         padding: 2px 16px;
-        background-color: #5cb85c;
+        background-color: #1342a8;
         color: white;
     }
-    .modal-body {
+
+    .modal-body-2 {
         padding: 2px 16px;
     }
-    .modal-footer {
+
+    .modal-footer-2 {
         padding: 2px 16px;
-        background-color: #5cb85c;
+        background-color: #0f1c38;
         color: white;
     }
+
     hr {
         opacity: 0;
     }
@@ -548,14 +559,14 @@
         <div id="infoModal" class="modal">
 
             <!-- Modal content -->
-            <div class="modal-content">
-              <div class="modal-header">
+            <div class="modal-content-2">
+              <div class="modal-header-2">
                 <span class="close" id="closeInfoModal">&times;</span>
                 <h2> MESSAGE INFOMATION</h2>
               </div>
-              <div class="modal-body" id="info-body">
+              <div class="modal-body-2" id="info-body">
               </div>
-              <div class="modal-footer">
+              <div class="modal-footer-2">
                 <h3>HTTCDDH 2022</h3>
               </div>
             </div>
@@ -1158,7 +1169,7 @@
                 }
             }
             // When the user clicks the button, open the modal
-            modal.querySelector('.modal-header >h2').innerHTML='MESSAGE INFORMATION'; 
+            modal.querySelector('.modal-header-2 >h2').innerHTML='MESSAGE INFORMATION'; 
             modal.style.display = "block";
         }
         catch(error)
