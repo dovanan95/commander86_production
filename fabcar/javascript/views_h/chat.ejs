@@ -561,54 +561,6 @@
     100% { transform: rotate(360deg); }
     }
 
-    /*drop Up*/
-      .dropbtnup {
-        display: inline;
-      }
-
-      /* The container <div> - needed to position the dropup content */
-      .dropupup {
-        position: relative;
-        display: inline-block;
-     
-      }
- 
-      /* Dropup content (Hidden by Default) */
-      .dropup-contentup {
-        display: none;
-        position: fixed;
-        bottom: 50px;
-        background-color: #f1f1f1;
-        min-width: 200px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-
-      }
-
-      /* Links inside the dropup */
-      .dropup-contentup a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: medium;
-        display: block;
-        cursor: pointer;
-      }
-
-      /* Change color of dropup links on hover */
-      .dropup-contentup a:hover {background-color: #ddd}
-
-      /* Show the dropup menu on hover */
-      .dropupup:hover .dropup-contentup {
-        display: block;
-      }
-
-      /* Change the background color of the dropup button when the dropup content is shown */
-      .dropupup:hover .dropbtnup {
-        background-color: #2980B9;
-      } 
-
 </style>
 <html>
     <head>
@@ -639,13 +591,13 @@
                 </div>
                 <div class="msger-inputarea">
                     <input id='inputMess' class="msger-input" placeholder="Type a message..." />
-                    <div class="dropupup">
-                        <button  id="button_utils" class="msger-send-btn dropbtnup">
+                    <div class="btn-group">
+                        <button  id="button_utils" class="msger-send-btn dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa-solid fa-hammer"></i>
                         </button>
-                        <div class="dropup-contentup">
-                            <a onclick="console.log('task')">Giao Viec</a>
-                            <a onclick="console.log('task')">Tien Ich Khac</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="console.log('task')">Giao Viec</a>
+                            <a class="dropdown-item" onclick="console.log('task')">Tien Ich Khac</a>
                         </div>
                     </div>
                     <div class="msger-send-btn">
