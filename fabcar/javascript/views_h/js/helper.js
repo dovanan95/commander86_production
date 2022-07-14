@@ -48,6 +48,7 @@
                                      <div class="dropdown-button">
                                          <button onclick="markImportantMess(this)" >IMPORTANT</button>
                                          <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                         <button onclick="forwardMessage(this)" data-bs-toggle="modal" data-bs-target="#exampleModalScrollable" >FORWARD</button>
                                      </div>
                                  </div>
                              </div>`
@@ -79,6 +80,7 @@
                                      <div class="dropdown-button">
                                          <button onclick="markImportantMess(this)" >IMPORTANT</button>
                                          <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                                         <button onclick="forwardMessage(this)" data-bs-toggle="modal" data-bs-target="#exampleModalScrollable">FORWARD</button>
                                      </div>
                                  </div>
                              </div>`

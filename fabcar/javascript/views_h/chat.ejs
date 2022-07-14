@@ -450,7 +450,7 @@
         /* Full width */
         height: 100%;
         /* Full height */
-        overflow: auto;
+        overflow: scroll;
         /* Enable scroll if needed */
         background-color: rgb(0, 0, 0);
         /* Fallback color */
@@ -466,7 +466,7 @@
         margin-left: 10%;
         border: 1px solid #888;
         width: 80%;
-        height: auto;
+        min-height: fit-content;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         -webkit-animation-name: animatetop;
         -webkit-animation-duration: 0.4s;
@@ -630,8 +630,6 @@
             </div>
           
           </div>
-
-
 
     </body>
 </html>
@@ -862,67 +860,6 @@
         } 
     })
 
-    function myMessage(id_block, my_name, content, isImportant, docType, optionsObject)
-    {
-        var mess_block = `
-                            <div class="outgoing messBlock" id=${id_block} docType=${docType}>
-                                <div class="bubble">
-                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${my_name}</div>
-                                    <div class="mess-content">${content}</div>
-                                </div>
-                                <div class="block_func_btn">
-                                    <div class="expand-func-icon">
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>    
-                                    </div>
-                                    <div class="dropdown-button">
-                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
-                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
-                                    </div>
-                                </div>
-                            </div>`
-        if(isImportant=='true')
-        {
-            var text_before = `class="bubble"`;
-            var postitionAdd = mess_block.search(text_before)+ text_before.length;
-            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
-            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
-                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
-
-        }
-        return mess_block;
-    }
-    function prtnerMessage(id_block, sender_name, content, isImportant, docType, optionsObject)
-    {
-        var mess_block = `
-                            <div class="incoming messBlock" id=${id_block} docType=${docType}>
-                                <div class="bubble">
-                                    <div class="userName" style="font-size: 10px; font-style:italic; ">${sender_name}</div>
-                                    <div class="mess-content">${content}</div>
-                                </div>
-                                <div class="block_func_btn" style="float:right;">
-                                    <div class="expand-func-icon">
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>
-                                        <div class="dots"></div>    
-                                    </div>
-                                    <div class="dropdown-button">
-                                        <button onclick="markImportantMess(this)" >IMPORTANT</button>
-                                        <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
-                                    </div>
-                                </div>
-                            </div>`
-        if(isImportant=='true')
-        {
-            var text_before = `class="bubble"`;
-            var postitionAdd = mess_block.search(text_before)+ text_before.length;
-            mess_block = [mess_block.slice(0, postitionAdd), ` style="background-color:red"`, mess_block.slice(postitionAdd) ].join('');
-            mess_block = mess_block.replace(`<button onclick="markImportantMess(this)" >IMPORTANT</button>`, 
-                        `<button onclick="verifyMessBlock(this)" >VERIFY</button>`);
-        }
-        return mess_block
-    }
     function group_message_left_tab(docType, id, name)
     {
         var left_private_block =
@@ -996,14 +933,6 @@
         `
         return element_partner_selection_element;
     }
-    function messageFile(fileID, fileName) { 
-        var message=
-        `
-            <div class="fileName">${fileName}</div>
-            <i class="fa-solid fa-download" style="cursor: pointer" onclick="downloadFile('${fileID}')" fileID="${fileID}"></i>
-        `
-        return message;
-    };
 
     function leftTabOption(obj){
         var leftTab = obj.closest('.tablinks');
@@ -1957,6 +1886,70 @@
             }
         }
         
+    }
+
+    async function forwardMessage(obj){
+        try{
+            var messObjID = obj.closest('.messBlock').getAttribute('id'); 
+            var messDocType = obj.closest('.messBlock').getAttribute('docType');
+            var modal_modern = document.getElementById("exampleModalScrollable");
+            var modalBody = modal_modern.querySelector(".modal-body");
+            modalBody.innerHTML='';
+            const options = {
+            method: 'POST',
+            body: JSON.stringify({'id': myID, 'limit':100}),
+            headers: {
+                'authorization': 'token '+ accessToken,
+                'Content-Type': 'application/json'
+                }
+            }
+            var response_init_load = await fetch("/load_chat_history", options);
+            var json_res = await response_init_load.json();
+            json_res = json_res.sort((a,b)=>b.timestamp-a.timestamp);
+            function forwardElement(docType, id, name){
+                var left_private_block =
+                `
+                <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
+                            onclick=console.log(this) id_sender="${id}">
+                            <div class="acc">${name}</div>
+                        </div>
+                    </div>
+                    <hr class="solid">
+                `
+                return(left_private_block);
+            }
+            var footerFunction = 
+            `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Chia se an danh
+                    </label>
+                </div>
+                <button type="button" class="btn btn-primary">Chuyen tiep</button>
+            `;
+            modal_modern.querySelector('.modal-footer').innerHTML= footerFunction;
+
+            for(var i in json_res)
+            {
+                if(json_res[i].docType=='private_message')
+                {
+                   var tab_partner_el =  forwardElement(json_res[i].docType, json_res[i].userID, json_res[i].username);
+                }
+                else if(json_res[i].docType=='group_message')
+                {
+                   var tab_partner_el = forwardElement(json_res[i].docType, json_res[i].groupID, json_res[i].groupName);
+                }
+                
+                modalBody.insertAdjacentHTML("beforeend", tab_partner_el);
+            }
+            document.getElementById("exampleModalScrollableTitle").innerHTML='Chuyen tiep tin nhan';
+     
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
     }
 
 
