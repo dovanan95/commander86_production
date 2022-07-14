@@ -123,6 +123,18 @@ router.post('/blockchainSyncGroupMess', authenticateAccessToken, async function(
         console.log(error);
     }
     
+});
+
+router.post('/forwardMessage', authenticateAccessToken, async function(req, res){
+    try
+    {
+        console.log(req.body);
+        res.send({'data':'ok'});
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
 })
 
 module.exports={router}

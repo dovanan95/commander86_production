@@ -1896,12 +1896,12 @@
             var modalBody = modal_modern.querySelector(".modal-body");
             modalBody.innerHTML='';
             const options = {
-            method: 'POST',
-            body: JSON.stringify({'id': myID, 'limit':100}),
-            headers: {
-                'authorization': 'token '+ accessToken,
-                'Content-Type': 'application/json'
-                }
+                method: 'POST',
+                body: JSON.stringify({'id': myID, 'limit':100}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                    }
             }
             var response_init_load = await fetch("/load_chat_history", options);
             var json_res = await response_init_load.json();
@@ -1926,7 +1926,7 @@
                         Chia se an danh
                     </label>
                 </div>
-                <button type="button" class="btn btn-primary">Chuyen tiep</button>
+                <button type="button" onclick="forwardProcess('${messObjID}')" class="btn btn-primary">Chuyen tiep</button>
             `;
             modal_modern.querySelector('.modal-footer').innerHTML= footerFunction;
 
@@ -1950,6 +1950,79 @@
         {
             console.log(error);
         }
+    }
+
+    async function forwardProcess(messID){
+        try
+        {
+            var modalForward = document.getElementById('exampleModalScrollable');
+            var anonymousCheck = document.getElementById('flexCheckDefault');
+            var listForward = modalForward.querySelectorAll('.modal-body > .tablinks');
+
+            var messBlock = document.getElementById(messID);
+            var originalAcc = messBlock.querySelector('.userName').innerHTML;
+            var sender_name;
+                if(anonymousCheck.checked==true){
+                    sender_name = my_name;
+                }
+                else if(anonymousCheck.checked==false){
+                    sender_name=my_name+ ` (sent from ${originalAcc})`
+                }
+            if(messBlock.querySelector('.fileName')){
+                var originalFileName = messBlock.querySelector('.fileName').innerHTML;
+                var FileID = messBlock.querySelector('.fa-solid').getAttribute('fileid');
+                var messForward = {
+                    'sender': myID,
+                    'message': FileID,
+                    'sender_name': sender_name,
+                    'timestamp':parseInt(Date.now()),
+                    'isImportant': 'false',
+                    'seen':[],
+                    'isFile': 'true',
+                    'originalFilename': encodeURIComponent(originalFileName)
+                }
+            }
+            else{
+                var message = messBlock.querySelector('.mess-content').innerHTML;
+                var messForward = {
+                    'sender': myID,
+                    'message': encodeURIComponent(message),
+                    'sender_name': sender_name,
+                    'timestamp':parseInt(Date.now()),
+                    'isImportant': 'false',
+                    'seen':[],
+                }
+            }
+            var listFwSendToServer = [];
+            for(let i=0;i<listForward.length;i++){
+                if(listForward[i].classList.contains('active-users')){
+                    var targetReceiverForward = listForward[i].getAttribute('id_sender');
+                    var targetDocType = listForward[i].getAttribute('docType');
+                    listFwSendToServer.push({'receiver': targetReceiverForward, 'docType': targetDocType});
+                }
+            }
+
+            const options = {
+                method: 'POST',
+                body: JSON.stringify({'fwMess': messForward, 'recvList':listFwSendToServer}),
+                headers: {
+                    'authorization': 'token '+ accessToken,
+                    'Content-Type': 'application/json'
+                    }
+            }
+            var res = await fetch('/commModule/forwardMessage', options);
+            var json_res = await res.json();
+            if(json_res.data=='ok')
+            {
+                alert('finish');
+            }
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+        
+
     }
 
 
