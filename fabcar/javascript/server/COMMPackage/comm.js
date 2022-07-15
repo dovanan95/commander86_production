@@ -154,8 +154,8 @@ router.post('/forwardMessage', authenticateAccessToken, async function(req, res)
             }
         }
         for(let j=0;j<privList.length;j++){
-            console.log('sender name', privList[j]['sender_name']);
             await app_helper.savePrivateMessage(privList[j]);
+            //socket chi gui tin nhan den nguoi nhan tin nhan chuyen tiep, khong gui lai nguoi gui
             require('../socketIO').sendMessMultiSocket(privList[j]['receiver'],'incoming_mess', privList[j]);
         }
         for(let jj=0;jj<groupList.length;jj++){
