@@ -230,4 +230,9 @@ function sendMessMultiSocket(receiverID, socket_event, socket_object){
     }
 }
 
-module.exports={socketCommunication, sendMessMultiSocket, users, online_account, users_call, sockets}
+function sendMessInGroup(groupID, socket_event, socket_object){
+    socketio.in(groupID).emit(socket_event, socket_object);
+}
+
+module.exports={socketCommunication, sendMessMultiSocket, 
+    sendMessInGroup, users, online_account, users_call, sockets}

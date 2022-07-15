@@ -128,9 +128,42 @@ router.post('/blockchainSyncGroupMess', authenticateAccessToken, async function(
 router.post('/forwardMessage', authenticateAccessToken, async function(req, res){
     try
     {
-        console.log(req.body);
+        console.log('request', req.body);
+        var privList = [];
+        var groupList = [];
+        var messRequest = req.body.fwMess;
+        var fwlist = req.body.recvList;
+        var messID = 'fwMess.'+app_helper.generateString(20)+'.'+Date.now().toString();
+        for(let i=0;i<fwlist.length;i++){
+            var messObj ={};
+            if(fwlist[i].docType=='private_message'){
+                messObj = JSON.parse(JSON.stringify(messRequest));
+                messObj['messID']=messID+'.'+fwlist[i].receiver;
+                messObj['docType']=fwlist[i].docType;
+                messObj['receiver']=parseInt(fwlist[i].receiver);
+                messObj['timestamp']= Date.now();
+                privList.push(messObj);
+            }
+            else if(fwlist[i].docType=='group_message'){
+                messObj = JSON.parse(JSON.stringify(messRequest));
+                messObj['messID']=messID+'.'+fwlist[i].receiver;
+                messObj['docType']=fwlist[i].docType;
+                messObj['groupID']=fwlist[i].receiver;
+                messObj['timestamp']= Date.now();
+                groupList.push(messObj);
+            }
+        }
+        for(let j=0;j<privList.length;j++){
+            console.log('sender name', privList[j]['sender_name']);
+            await app_helper.savePrivateMessage(privList[j]);
+            require('../socketIO').sendMessMultiSocket(privList[j]['receiver'],'incoming_mess', privList[j]);
+        }
+        for(let jj=0;jj<groupList.length;jj++){
+            await app_helper.saveGroupMessage(groupList[jj]);
+            require('../socketIO').sendMessInGroup(groupList[jj]['groupID'],'incoming_mess', groupList[jj]);
+        }
+
         res.send({'data':'ok'});
-        //require('../socketIO').sendMessMultiSocket(777,'incoming_mess', {'data':'ok hehe'});
     }
     catch(error)
     {

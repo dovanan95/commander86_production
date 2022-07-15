@@ -1020,7 +1020,8 @@
             var parentObj_id = parentObj.getAttribute('id'); 
             var docType = parentObj.getAttribute('docType')
             var newItem = `<button onclick="verifyMessBlock(this)" >VERIFY</button>
-                            <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>`
+                            <button onclick="viewDetailBlock(this)" > VIEW DETAIL</button>
+                            <button onclick="forwardMessage(this)" data-bs-toggle="modal" data-bs-target="#exampleModalScrollable">FORWARD</button>`
             console.log(parentObj);
             var messItem = document.getElementById(parentObj_id);
             const options = {
@@ -1907,9 +1908,10 @@
             var json_res = await response_init_load.json();
             json_res = json_res.sort((a,b)=>b.timestamp-a.timestamp);
             function forwardElement(docType, id, name){
+                var prefix ='forwardPrefix'
                 var left_private_block =
                 `
-                <div class="tablinks" docType=${docType} id="${tab_partner_prefix + id}"
+                <div class="tablinks" docType=${docType} id="${prefix + id}"
                             onclick=console.log(this) id_sender="${id}">
                             <div class="acc">${name}</div>
                         </div>
@@ -1975,7 +1977,6 @@
                     'sender': myID,
                     'message': FileID,
                     'sender_name': sender_name,
-                    'timestamp':parseInt(Date.now()),
                     'isImportant': 'false',
                     'seen':[],
                     'isFile': 'true',
@@ -1988,7 +1989,6 @@
                     'sender': myID,
                     'message': encodeURIComponent(message),
                     'sender_name': sender_name,
-                    'timestamp':parseInt(Date.now()),
                     'isImportant': 'false',
                     'seen':[],
                 }

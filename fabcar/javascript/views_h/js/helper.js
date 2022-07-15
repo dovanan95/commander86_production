@@ -99,7 +99,7 @@
          //data.message = detectURL(decodeURIComponent(data.message));
         var messBlock;
         if(data.isFile && data.isFile=='true'){
-            var message = messageFile(data.message, data.originalFilename);
+            var message = messageFile(data.message, decodeURIComponent(data.originalFilename));
         }
         else
         {
@@ -110,7 +110,7 @@
                 messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
             }
             else if( data.sender != partnerID){    
-                messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+                messBlock = myMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
             }
         }
         else if(data.docType=='group_message'){
@@ -118,7 +118,7 @@
                 messBlock = prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
             }
             else if( data.sender == partnerID){    
-                messBlock = myMessage(data.messID, my_name, message, data.isImportant, data.docType)
+                messBlock = myMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
             }
         }
         return(messBlock)
@@ -138,7 +138,7 @@
         }
         if(data.docType=='secure_private_message'){
             if(data.sender != partnerID){
-                messBlock=myMessage(data.messID, my_name, message, data.isImportant, data.docType, {'option':'option'});
+                messBlock=myMessage(data.messID, data.sender_name, message, data.isImportant, data.docType, {'option':'option'});
             }
             else if(data.sender == partnerID){
                 messBlock=prtnerMessage(data.messID, data.sender_name, message, data.isImportant, data.docType)
