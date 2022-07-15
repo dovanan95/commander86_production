@@ -24,7 +24,6 @@ var sql_config = {
 const ACCESS_TOKEN_SECRET = 'btl86_qdndvn';
 const REFRESH_TOKEN_SECRET = 'httcddh_blockchain_2022';
 
-
 async function saveGroupMessage(data)
 {
     try
@@ -310,6 +309,9 @@ async function systemMessage(message, receiver)
         }
         await dbo.collection('user').updateOne({'userID': parseInt(receiver)}, 
         {$push:{'chat_history':{$each:[], $sort:{'timestamp': -1}}}})
+
+        require('./socketIO').sendMessMultiSocket(receiver,'incoming_mess', messObj);
+
     }
     catch(error)
     {

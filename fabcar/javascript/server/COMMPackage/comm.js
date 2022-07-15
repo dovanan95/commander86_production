@@ -130,6 +130,7 @@ router.post('/forwardMessage', authenticateAccessToken, async function(req, res)
     {
         console.log(req.body);
         res.send({'data':'ok'});
+        //require('../socketIO').sendMessMultiSocket(777,'incoming_mess', {'data':'ok hehe'});
     }
     catch(error)
     {

@@ -102,8 +102,6 @@ const socketIo = require("socket.io")(server, {
        origin: "*",
    }
  });
-//const socketIo = require("socket.io")(server);
-
 
 async function saveGroupMessage(data)
 {
@@ -953,8 +951,8 @@ app.post('/sendFile', authenticateAccessToken, async function(req, res){
                     'originalFilename': req.file.originalname
                 }
                 await savePrivateMessage(privMessObj);
-                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(sender),'incoming_mess', privMessObj);
-                app_helper.sendMessMultiSocket(socketIo,online_account,parseInt(receiver),'incoming_mess', privMessObj);
+                socketIOFuntion.sendMessMultiSocket(parseInt(sender), 'incoming_mess', privMessObj);
+                socketIOFuntion.sendMessMultiSocket(parseInt(receiver),'incoming_mess', privMessObj);
             });
         }
         else if(docType=='group_message')
@@ -1140,7 +1138,7 @@ app.get('/call', function(req, res){
 
 })
 //--------------End Call----------------//
-
+//module.exports={socketIo, online_account};
 mongoUtil.connectToServer( function( err, client ) {
     if (err) console.log(err);
     // start the rest of your app here

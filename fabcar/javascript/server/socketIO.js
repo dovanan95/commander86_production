@@ -10,6 +10,7 @@ var users = {};
 var users_call={};
 var online_account = [];
 var sockets = [];
+var socketio;
 
 function socketCommunication(socketIo){
 
@@ -34,6 +35,7 @@ function socketCommunication(socketIo){
         console.log("New client connected ->" + socket.id);
         const ID = socket.id // id property on the socket Object
         socketIo.to(ID).emit("getId", socket.id);
+        socketio=socketIo;
         sockets.push(socket);
         socket.on('connected', function(data){
             users[data.userID]=socket.id;
@@ -220,4 +222,12 @@ function socketCommunication(socketIo){
 
 }
 
-module.exports={socketCommunication, users, online_account, users_call, sockets}
+function sendMessMultiSocket(receiverID, socket_event, socket_object){
+    for(let i=0;i<online_account.length;i++){
+        if(online_account[i].userID==receiverID){
+            socketio.to(online_account[i].socketID).emit(socket_event, socket_object);
+        }
+    }
+}
+
+module.exports={socketCommunication, sendMessMultiSocket, users, online_account, users_call, sockets}
