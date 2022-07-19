@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/user-chat-detail.css">
+    <link rel="stylesheet" href="./fontawesome-free-6.1.1-web/css/all.min.css">
+</head>
+
+<body>
+    <div class="user-details__container">
+        <div class="user-information__brief">
+            <div class="user-avatar__status">
+                <div class="user-dot__status"></div>
+            </div>
+            <div class="user-brief">
+                <div class="user-brief__name">Phung Minh Hieu</div>
+                <div class="user-brief__status">Dang hoat dong</div>
+            </div>
+        </div>
+        <hr>
+        <div class="user-information__details">
+            <div class="user-title">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>Thong tin</p>
+            </div>
+            <div class="profile-info">
+                <div id="rank">Cap bac:<div>Thieu uy</div>
+                </div>
+
+                <div id="position">Chuc vu:<div>Tro ly</div>
+                </div>
+
+                <div id="dept">Phong:<div>Cong cu trinh sat</div>
+                </div>
+
+                <div id="org">Don vi:<div>Vien 10</div>
+                </div>
+
+                <div id="Phone">So dien thoai:<div>0987122597</div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="shared-file">
+            <div class="user-title">
+                <i class="fa-brands fa-creative-commons-share"></i>
+                <p>Tep chia se</p>
+            </div>
+            <div class="shared-file__container">
+                <div class="shared-file__dropdown__button button-active" onclick="dropdownBtn()">
+                    <div>File phuong tien, anh va tep</div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    <i class="fa-solid fa-angle-up" style="display: none"></i>
+                </div>
+                <div class="shared-dropdown__menu" id="shared-dropdown__container">
+                    <a class="dropdown-item media-file">
+                        <i class="fa-solid fa-file-image"></i>
+                        File phuong tien
+                    </a>
+                    <a class="dropdown-item text-file">
+                        <i class="fa-solid fa-file-lines"></i>
+                        File
+                    </a>
+                    <a class="dropdown-item link-file">
+                        <i class="fa-solid fa-link"></i>
+                        Lien ket
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hien thi quan ly cac file media, file, link -->
+    <div id="modal-display" class="files files-media links"></div> 
+    <script type="text/javascript">
+        function dropdownBtn() {
+            document.getElementById("shared-dropdown__container").classList.toggle("actived-menu");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.shared-file__container')) {
+                var dropdowns = document.getElementsByClassName("shared-dropdown__menu");
+                if (dropdowns.classList.contains('actived-menu')) {
+                    dropdowns.classList.remove('actived-menu');
+                } else {
+                    dropdowns.classList.add('actived-menu');
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>

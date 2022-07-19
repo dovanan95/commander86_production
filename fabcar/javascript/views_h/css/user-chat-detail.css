@@ -1,0 +1,174 @@
+.user-details__container {
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f8f8;
+    color: black;
+    float: right;
+    height: 100vh;
+    width: 370px;
+    padding: 30px 20px;
+}
+
+.user-information__brief {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-avatar__status {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-image: url(../img/anh1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    z-index: 5;
+    margin-bottom: 15px;
+}
+
+.user-dot__status {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    position: absolute;
+    top: 72;
+    right: 8;
+    z-index: 10;
+    background-color: green;
+    border: 2px solid #f8f8f8;
+}
+
+.user-brief {
+    text-align: center;
+}
+
+.user-brief__name {
+    font-weight: bold;
+}
+
+.user-brief__status {
+    font-size: 14px;
+    color: #77797c;
+}
+
+hr {
+    padding: 0;
+}
+
+.user-information__details {
+    margin-bottom: 20px;
+}
+
+.user-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 8px
+}
+
+.user-title>p {
+    font-size: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.user-title i {
+    font-size: 25px;
+    color: #5759e8;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.profile-info>div {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #f2f2f2;
+    padding-bottom: 6px;
+}
+
+.shared-file__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shared-file__dropdown__button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background-color: #c7c9cc;
+    border-radius: 9px;
+    position: relative;
+    cursor: pointer;
+}
+
+.shared-file__dropdown__button.button-active .fa-angle-up {
+    display: block;
+}
+
+.shared-file__dropdown__button.button-active .fa-angle-up {
+    display: none;
+}
+
+.shared-file__dropdown__button > div {
+    padding-left: 8px;
+}
+
+.shared-file__dropdown__button i {
+    position: absolute;
+    top: 16;
+    right: 20;
+    font-size: 18px;
+}
+
+.shared-dropdown__menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+
+}
+
+.shared-dropdown__menu.actived-menu {
+    display: flex;
+}
+
+.shared-dropdown__menu.actived-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    border-radius: 9px;
+    gap: 8px
+}
+
+.dropdown-item:hover {
+    background-color: #c7c9cc;
+    cursor: pointer;
+}
+
+.modal-display {
+    display: none;
+    flex-direction: column;
+    background-color: #f8f8f8;
+    color: black;
+    float: right;
+    height: 100vh;
+    width: 370px;
+    padding: 30px 20px;
+}
+
+
+
+
+

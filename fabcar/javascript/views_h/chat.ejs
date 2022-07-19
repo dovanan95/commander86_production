@@ -13,6 +13,7 @@
     .chat-container {
         display: flex;
         margin-left: 80px;
+        margin-right: 370px;
         transition: all 0.4s ease;
         height: 100vh;  
     }
@@ -568,6 +569,7 @@
     </head>
     <body onload="checkLogin()">
         <%- include('./header')%>
+        <%- include('./user-chat-detail')%>
         <div class="chat-container">
             <div class="tab">
                 <div id='hist_tab'>
