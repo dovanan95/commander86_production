@@ -356,6 +356,10 @@ class FabCar extends Contract {
         console.log(carAsBytes.toString());
         return carAsBytes.toString();
     }
+    //luu du lieu quan nhan
+    async saveOfficerProfile(){
+
+    }
 
     async authentication(ctx, userID, password)
     {
