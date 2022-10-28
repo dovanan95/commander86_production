@@ -10,177 +10,6 @@ const { Contract } = require('fabric-contract-api');
 const {shim} = require('fabric-shim');
 
 class FabCar extends Contract {
-
-    /*async initLedger(ctx) {
-        console.info('============= START : Initialize Ledger ===========');
-        const user = [
-            {
-                userID: 'DVA',
-                name: 'Do Van An',
-                Phone: '0931910JQK',
-                certification: 'mau giao',
-                position: 'lao cong',
-                dept: 'BGD',
-                password: '6868',
-                command_history: [
-                    {'userID': 'LTA', 'username': 'Le Thi Anh', 'docType': 'private_message'},
-                ]
-            },
-            {
-                userID: 'LTA',
-                name: 'Le Thi Anh',
-                Phone: '0931910JQK',
-                certification: 'Tien Si Xau Xa',
-                position: 'Pho Phong',
-                dept: 'CCTC',
-                password: '6868',
-                command_recv_history: [
-                    {'userID': 'DVA', 'username': 'Do Van An', 'docType': 'private_message'},
-                ]
-            },
-            {
-                userID: 'TVT',
-                name: 'Tong Viet Trung',
-                Phone: '0931910JQK',
-                certification: 'Tien Si Xau Xa',
-                position: 'Pho Tu Lenh',
-                dept: 'BTL',
-                password: '6868',
-                command_recv_history: []
-            },
-            {
-                userID: 'DTC',
-                name: 'Dinh The Cuong',
-                Phone: '0931910JQK',
-                certification: 'Tien Si Xau Xa',
-                position: 'Tu Lenh',
-                dept: 'BTL',
-                password: '6868',
-                command_recv_history: []
-            },
-        ]
-
-        const message = [
-			{
-				messID: 001,
-				sender: 'DVA',
-				receiver: 'LTA',
-				content: 'OK',
-				timestamp: 1
-			},
-			{
-				messID: 002,
-				sender: 'LTA',
-				receiver: 'DVA',
-				content: 'NG',
-				timestamp: 2
-			},
-			{
-				messID: 003,
-				sender: 'TVT',
-				receiver: 'LTA',
-				content: 'hehe',
-				timestamp: 3
-			},
-			{
-				messID: 004,
-				sender: 'DVA',
-				receiver: 'LTA',
-				content: 'grzzz',
-				timestamp: 4
-			},
-			{
-				messID: 005,
-				sender: 'LTA',
-				receiver: 'DTC',
-				content: 'vcl',
-				timestamp: 5
-			},
-		]
-        const cars = [
-            {
-                color: 'blue',
-                make: 'Toyota',
-                model: 'Prius',
-                owner: 'Tomoko',
-            },
-            {
-                color: 'red',
-                make: 'Ford',
-                model: 'Mustang',
-                owner: 'Brad',
-            },
-            {
-                color: 'green',
-                make: 'Hyundai',
-                model: 'Tucson',
-                owner: 'Jin Soo',
-            },
-            {
-                color: 'yellow',
-                make: 'Volkswagen',
-                model: 'Passat',
-                owner: 'Max',
-            },
-            {
-                color: 'black',
-                make: 'Tesla',
-                model: 'S',
-                owner: 'Adriana',
-            },
-            {
-                color: 'purple',
-                make: 'Peugeot',
-                model: '205',
-                owner: 'Michel',
-            },
-            {
-                color: 'white',
-                make: 'Chery',
-                model: 'S22L',
-                owner: 'Aarav',
-            },
-            {
-                color: 'violet',
-                make: 'Fiat',
-                model: 'Punto',
-                owner: 'Pari',
-            },
-            {
-                color: 'indigo',
-                make: 'Tata',
-                model: 'Nano',
-                owner: 'Valeria',
-            },
-            {
-                color: 'brown',
-                make: 'Holden',
-                model: 'Barina',
-                owner: 'Shotaro',
-            },
-        ];
-
-        for(let i = 0; i < cars.length; i++) {
-            cars[i].docType = 'car';
-            await ctx.stub.putState('CAR' + i, Buffer.from(JSON.stringify(cars[i])));
-            console.info('Added <--> ', cars[i]);
-        }
-        
-        for(let j=0; j<message.length; j++)
-        {
-            message[j].docType = 'private_message';
-            await ctx.stub.putState(message[j]['messID'], Buffer.from(JSON.stringify(message[j])));
-            console.info('ADD:', message[j]);
-        }
-
-        for(let ii=0; ii<user.length; ii++)
-        {
-            user[ii].docType = 'user';
-            await ctx.stub.putState(user[ii]['userID'], Buffer.from(JSON.stringify(user[ii])));
-            console.info('ADD: ', user[ii]);
-        }
-        console.info('============= END : Initialize Ledger ===========');
-    }*/
     
     async initLedger(ctx)
     {
@@ -272,82 +101,6 @@ class FabCar extends Contract {
         }
     }
 
-    /*async initMess(ctx)
-    {
-        const message = [
-			{
-				messID: 001,
-				sender: 'DVA',
-                sender_name: 'Do Van An',
-                docType: 'private_message',
-				receiver: 'LTA',
-				content: 'OK',
-				timestamp: 1
-			},
-			{
-				messID: 002,
-				sender: 'LTA',
-                sender_name: 'Le Thi Anh',
-                docType: 'private_message',
-				receiver: 'DVA',
-				content: 'NG',
-				timestamp: 2
-			},
-			{
-				messID: 003,
-				sender: 'TVT',
-                sender_name: 'Tong Viet Trung',
-                docType: 'private_message',
-				receiver: 'LTA',
-				content: 'hehe',
-				timestamp: 3
-			},
-			{
-				messID: 004,
-				sender: 'DVA',
-                sender_name: 'Do Van An',
-                docType: 'private_message',
-				receiver: 'LTA',
-				content: 'grzzz',
-				timestamp: 4
-			},
-			{
-				messID: 005,
-				sender: 'LTA',
-                sender_name: 'Le Thi Anh',
-                docType: 'private_message',
-				receiver: 'DTC',
-				content: 'vcl',
-				timestamp: 5
-			},
-            {
-				messID: 006,
-				sender: 'DTC',
-                sender_name: 'Dinh The Cuong',
-                docType: 'private_message',
-				receiver: 'TVT',
-				content: 'ahihi',
-				timestamp: 6
-			},
-            {
-				messID: 007,
-				sender: 'BTC',
-                sender_name: 'Bitcoin',
-                docType: 'private_message',
-				receiver: 'DVA',
-				content: 'con ga',
-				timestamp: 7
-			},
-		];
-
-        for(let j=0; j<message.length; j++)
-        {
-            message[j].docType = 'private_message';
-            await ctx.stub.putState(message[j]['messID'], Buffer.from(JSON.stringify(message[j])));
-            console.info('ADD:', message[j]);
-        }
-    }*/
-
     async queryCar(ctx, carNumber) {
         const carAsBytes = await ctx.stub.getState(carNumber); // get the car from chaincode state
         if (!carAsBytes || carAsBytes.length === 0) {
@@ -357,8 +110,81 @@ class FabCar extends Contract {
         return carAsBytes.toString();
     }
     //luu du lieu quan nhan
-    async saveOfficerProfile(){
+    async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
+        , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
+        ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
+        try{
+            const quanNhan = {
+                'HoVaTen': HoVaTen, 'HoVaTenKhaiSinh': HoVaTenKhaiSinh, 'NgaySinh': NgaySinh,
+                'DanToc': DanToc, 'BiDanh': BiDanh, 'TonGiao': TonGiao, 'TenKhac': TenKhac, 'NgayNhapNgu': NgayNhapNgu,
+                'SoHieuQuanNhan': SoHieuQuanNhan, 'NgayXuatNgu': NgayXuatNgu, 'SoCMND': SoCMND, 'NgayTaiNgu': NgayTaiNgu,
+                'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
+                'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
+                'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
+                'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
+                'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
+            }
+            const lichSuCapNhatQuanNhan = {
+                'SoHieuQuanNhan': SoHieuQuanNhan,
+                'IDNguoiUpdate': IDNguoiUpdate,
+                'NgayThangUpdate': new Date.now(),
+                'docType': 'lichSuCapNhatQuanNhan'
+            }
+            const query_officer_check={
+                "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
+            };
+            let timestamp = new Date.now();
+            var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check));
+            if(JSON.parse(result.toString()).length>0){
+                return ('user already registered!');
+            }
+            else if(JSON.parse(result.toString()).length==0){
+                await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+                await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                return('finish');
+            }
+        }
+        catch(error){
+            return(error)
+        }
+    }
 
+    //cap nhat du lieu quan nhan
+    async updateOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
+        , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
+        ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate){
+            try
+            {
+                const quanNhan = {
+                    'HoVaTen': HoVaTen, 'HoVaTenKhaiSinh': HoVaTenKhaiSinh, 'NgaySinh': NgaySinh,
+                    'DanToc': DanToc, 'BiDanh': BiDanh, 'TonGiao': TonGiao, 'TenKhac': TenKhac, 'NgayNhapNgu': NgayNhapNgu,
+                    'SoHieuQuanNhan': SoHieuQuanNhan, 'NgayXuatNgu': NgayXuatNgu, 'SoCMND': SoCMND, 'NgayTaiNgu': NgayTaiNgu,
+                    'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
+                    'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
+                    'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
+                    'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
+                    'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
+                }
+                const lichSuCapNhatQuanNhan = {
+                    'SoHieuQuanNhan': SoHieuQuanNhan,
+                    'IDNguoiUpdate': IDNguoiUpdate,
+                    'NgayThangUpdate': new Date.now(),
+                    'docType': 'lichSuCapNhatQuanNhan'
+                }
+                let timestamp = new Date.now();
+                const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
+                const user_json = JSON.parse(userAsBytes.toString());
+                user_json = quanNhan;
+    
+                await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
+                await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                return('finish');
+            }
+            catch(error){
+                return(error)
+            }
     }
 
     async authentication(ctx, userID, password)
@@ -514,20 +340,6 @@ class FabCar extends Contract {
             //return('finish');
     }
 
-    async createCar(ctx, carNumber, make, model, color, owner) {
-        console.info('============= START : Create Car ===========');
-
-        const car = {
-            color,
-            docType: 'car',
-            make,
-            model,
-            owner,
-        };
-
-        await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
-        console.info('============= END : Create Car ===========');
-    }
     async savePrivateMessage(ctx, messID, sender, sender_name, receiver, content, timestamp, rawObj)
     {
         var message = {
