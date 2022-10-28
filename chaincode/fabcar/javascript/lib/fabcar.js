@@ -135,11 +135,11 @@ class FabCar extends Contract {
                 "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
             };
             let timestamp = new Date.now();
-            var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check));
-            if(JSON.parse(result.toString()).length>0){
+            var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
+            if(result || JSON.parse(result.toString()).length>0){
                 return ('user already registered!');
             }
-            else if(JSON.parse(result.toString()).length==0){
+            else if(!result || JSON.parse(result.toString()).length==0){
                 await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                 await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 return('finish');
@@ -194,7 +194,7 @@ class FabCar extends Contract {
             "selector":{"userID":userID, "password":password, "docType":"user"}
         };
         const result = await this.queryCustom(ctx, JSON.stringify(query_authen));
-        if(JSON.parse(result.toString()).length>0)
+        if(result || JSON.parse(result.toString()).length>0)
         {
             var user = JSON.parse(result.toString());
             var username = user[0].Record.name;
