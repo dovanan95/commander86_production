@@ -55,12 +55,12 @@ router.post('/saveOfficerProfile', async function(req, res, next){
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
-    return(res.status(200).json('ok'))
+    res.sendStatus(200).json({'message': 'ok'});
   }
   catch(error)
   {
     console.log(error);
-    return(error);
+    res.send(error);
   }
 })
 router.post('/updateOfficerProfile', async function(req, res, next){
@@ -105,11 +105,48 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
     ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
-    return(res.status(200).json('ok'))
+    res.sendStatus(200).json({'message': 'ok'});
   }
   catch(error){
     console.log(error);
-    return(error);
+    res.send(error);
+  }
+})
+
+router.post('/getOfficerProfileByID', async function(req, res, next){
+  try
+  {
+    const contract_ = await contract();
+    const queryString = {
+      "selector":{
+        'SoHieuQuanNhan': req.body.SoHieuQuanNhan,
+        'docType': 'QuanNhan'
+      }
+    }
+    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    res.sendStatus(200).json({'message': thongTinQuanNhan.toString()});
+  }
+  catch(error){
+    return error
+  }
+})
+
+router.post('/getOfficerUpdateHistoryByID', async function(req, res, next){
+  try
+  {
+    const contract_ = await contract();
+    const queryString = {
+      "selector":{
+        'SoHieuQuanNhan': req.body.SoHieuQuanNhan,
+        'docType': 'lichSuCapNhatQuanNhan'
+      }
+    }
+    const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    res.sendStatus(200).json({'message': lichSuthongTinQuanNhan.toString()});
+  }
+  catch(error)
+  {
+    res.send(error)
   }
 })
 
