@@ -100,7 +100,7 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
     let IDNguoiUpdate = req.body.IDNguoiUpdate;
 
-    const blockChainRep = contract_.submitTransaction('updateOfficerProfile', 
+    const blockChainRep = await contract_.submitTransaction('updateOfficerProfile', 
     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
