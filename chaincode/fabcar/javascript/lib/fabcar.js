@@ -143,14 +143,14 @@ class FabCar extends Contract {
             console.log(quanNhan1)
             
             return(quanNhan1);
-            /*if(!result || JSON.parse(result.toString()).length==0){
-                let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                return(quanNhan);
-            }
-            else if(result || JSON.parse(result.toString()).length>0){
-                return ('user already registered!');
-            }*/
+            //if(!result || JSON.parse(result.toString()).length==0){
+                //let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+                //let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                //return(quanNhan);
+            //}
+            //else if(result || JSON.parse(result.toString()).length>0){
+                //return ('user already registered!');
+            //}
         }
         catch(error){
             return(error)
