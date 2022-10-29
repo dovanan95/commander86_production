@@ -113,7 +113,7 @@ class FabCar extends Contract {
     async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
         try{
             const quanNhan = {
                 'HoVaTen': HoVaTen, 'HoVaTenKhaiSinh': HoVaTenKhaiSinh, 'NgaySinh': NgaySinh,
@@ -122,7 +122,8 @@ class FabCar extends Contract {
                 'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
                 'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
                 'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
-                'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
+                'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'TrinhDoVanHoa': TrinhDoVanHoa, 
+                'TrinhDoQuanLy': TrinhDoQuanLy, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
                 'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
             }
             console.log('quanNhan', quanNhan)
@@ -137,8 +138,8 @@ class FabCar extends Contract {
             };
             let timestamp = Date.now();
             //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            let quanNhan1 = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-            let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+            let quanNhan1 = await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
+            let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             console.log(quanNhan1)
             return(quanNhan1);
             /*if(!result || JSON.parse(result.toString()).length==0){
@@ -156,10 +157,10 @@ class FabCar extends Contract {
     }
 
     //cap nhat du lieu quan nhan
-    async updateOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
+    async updateOfficerProfile(ctx, ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate){
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate){
             try
             {
                 const quanNhan = {
@@ -169,7 +170,8 @@ class FabCar extends Contract {
                     'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
                     'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
                     'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
-                    'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
+                    'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'TrinhDoVanHoa': TrinhDoVanHoa, 
+                    'TrinhDoQuanLy': TrinhDoQuanLy, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
                     'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
                 }
                 const lichSuCapNhatQuanNhan = {

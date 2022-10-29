@@ -43,6 +43,8 @@ router.post('/saveOfficerProfile', async function(req, res, next){
     let NgayVaoDoan = req.body.NgayVaoDoan;
     let ChucVuDoan = req.body.ChucVuDoan;
     let ChucVuDang = req.body.ChucVuDang;
+    let TrinhDoVanHoa = req.body.TrinhDoVanHoa;
+    let TrinhDoQuanLy = req.body.TrinhDoQuanLy;
     let HocHam = req.body.HocHam;
     let TrinhDoLyLuanChinhTri = req.body.TrinhDoLyLuanChinhTri;
     let HocVi = req.body.HocVi;
@@ -54,7 +56,7 @@ router.post('/saveOfficerProfile', async function(req, res, next){
         HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-        ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+        ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
     res.sendStatus(200).json({'message': 'ok'});
   }
   catch(error)
@@ -94,6 +96,8 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     let NgayVaoDoan = req.body.NgayVaoDoan;
     let ChucVuDoan = req.body.ChucVuDoan;
     let ChucVuDang = req.body.ChucVuDang;
+    let TrinhDoVanHoa = req.body.TrinhDoVanHoa;
+    let TrinhDoQuanLy = req.body.TrinhDoQuanLy;
     let HocHam = req.body.HocHam;
     let TrinhDoLyLuanChinhTri = req.body.TrinhDoLyLuanChinhTri;
     let HocVi = req.body.HocVi;
@@ -104,7 +108,7 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-    ChucVuDoan, ChucVuDang, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+    ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
     res.sendStatus(200).json({'message': 'ok'});
   }
   catch(error){
