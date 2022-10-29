@@ -138,9 +138,10 @@ class FabCar extends Contract {
             };
             let timestamp = Date.now();
             //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            let quanNhan1 = await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
-            let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+            let quanNhan1 = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+            let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString() , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             console.log(quanNhan1)
+            
             return(quanNhan1);
             /*if(!result || JSON.parse(result.toString()).length==0){
                 let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
