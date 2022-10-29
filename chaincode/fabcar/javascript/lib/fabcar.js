@@ -125,21 +125,22 @@ class FabCar extends Contract {
                 'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
                 'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
             }
+            console.log('quanNhan', quanNhan)
             const lichSuCapNhatQuanNhan = {
                 'SoHieuQuanNhan': SoHieuQuanNhan,
                 'IDNguoiUpdate': IDNguoiUpdate,
-                'NgayThangUpdate': new Date.now(),
+                'NgayThangUpdate': Date.now(),
                 'docType': 'lichSuCapNhatQuanNhan'
             }
             const query_officer_check={
                 "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
             };
-            let timestamp = new Date.now();
+            let timestamp = Date.now();
             //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
             let quanNhan1 = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
             let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-
-            return(quanNhan1.toString());
+            console.log(quanNhan1)
+            return(quanNhan1);
             /*if(!result || JSON.parse(result.toString()).length==0){
                 let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                 let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
@@ -174,10 +175,10 @@ class FabCar extends Contract {
                 const lichSuCapNhatQuanNhan = {
                     'SoHieuQuanNhan': SoHieuQuanNhan,
                     'IDNguoiUpdate': IDNguoiUpdate,
-                    'NgayThangUpdate': new Date.now(),
+                    'NgayThangUpdate': Date.now(),
                     'docType': 'lichSuCapNhatQuanNhan'
                 }
-                let timestamp = new Date.now();
+                let timestamp = Date.now();
                 const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
                 const user_json = JSON.parse(userAsBytes.toString());
                 user_json = quanNhan;
