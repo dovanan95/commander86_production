@@ -78,13 +78,15 @@ router.post('/saveOfficerProfile', async function(req, res, next){
     let HocVi = req.body.HocVi;
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
     let IDNguoiUpdate = req.body.IDNguoiUpdate;
+    let updateTime = Date.now().toString();
 
     const contract_ = await contract();
     const blockChainRep = await contract_.submitTransaction('saveOfficerProfile', 
         HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-        ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+        ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
+        updateTime)
     
     console.log(JSON.parse(blockChainRep.toString()))
     let responseBlock = JSON.parse(blockChainRep.toString());
@@ -140,12 +142,14 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     let HocVi = req.body.HocVi;
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
     let IDNguoiUpdate = req.body.IDNguoiUpdate;
+    let updateTime = Date.now().toString();
 
     const blockChainRep = await contract_.submitTransaction('updateOfficerProfile', 
     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-    ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+    ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
+    updateTime)
     let responseBlock = JSON.parse(blockChainRep.toString());
     if(responseBlock.message=='ok'){
       res.send({'message': 'ok'});

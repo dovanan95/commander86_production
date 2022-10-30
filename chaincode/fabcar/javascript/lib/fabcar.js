@@ -119,7 +119,8 @@ class FabCar extends Contract {
     async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate )
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate, 
+        updateTime )
         {
             try
             {
@@ -136,19 +137,18 @@ class FabCar extends Contract {
                 const lichSuCapNhatQuanNhan = {
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
-                    NgayThangUpdate: Date.now().toString(),
+                    updateTime,
                     docType: 'updateHistory'
                 }
                 const query_officer_check={
                     "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
                 };
-                let timestamp = Date.now();
                 var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
                 if(!result || JSON.parse(result.toString()).length==0){
                     let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                     //await this.sleep(5000);
                     if(block){
-                        await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                        await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                     }
                     
                     return({'message': 'ok'});
@@ -167,7 +167,8 @@ class FabCar extends Contract {
     async updateOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
+        updateTime)
         {
             try
             {
@@ -182,17 +183,17 @@ class FabCar extends Contract {
                 const lichSuCapNhatQuanNhan = {
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
-                    NgayThangUpdate: Date.now().toString(),
+                    updateTime,
                     docType: 'lichSuCapNhatQuanNhan'
                 }
-                let timestamp = Date.now();
+                
                 const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
                 const user_json = JSON.parse(userAsBytes.toString());
                 user_json = quanNhan;
     
                 let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
                 if(saveProfle){
-                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 }
                 
                 return({'message': 'ok', 'saveprofile': saveProfle});
