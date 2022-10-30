@@ -86,7 +86,7 @@ router.post('/saveOfficerProfile', async function(req, res, next){
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
     
-    console.log(blockChainRep.toString())
+    console.log(JSON.parse(blockChainRep.toString()))
     res.send({'message': 'ok'});
   }
   catch(error)
