@@ -125,12 +125,12 @@ class FabCar extends Contract {
                  HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
             }
       
-            //const lichSuCapNhatQuanNhan = {
-                //SoHieuQuanNhan,
-                //IDNguoiUpdate,
-                //NgayThangUpdate: Date.now().toString(),
-                //docType: 'lichSuCapNhatQuanNhan'
-            //}
+            const lichSuCapNhatQuanNhan = {
+                SoHieuQuanNhan,
+                IDNguoiUpdate,
+                NgayThangUpdate: Date.now().toString(),
+                docType: 'lichSuCapNhatQuanNhan'
+            }
             //const query_officer_check={
                 //"selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
             //};
