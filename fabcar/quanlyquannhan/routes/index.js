@@ -44,6 +44,7 @@ router.post('/createUser', async function(req, res){
 router.post('/saveOfficerProfile', async function(req, res, next){
   try
   {
+    let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
     let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
     let NgaySinh = req.body.NgaySinh;
@@ -82,7 +83,7 @@ router.post('/saveOfficerProfile', async function(req, res, next){
 
     const contract_ = await contract();
     const blockChainRep = await contract_.submitTransaction('saveOfficerProfile', 
-        HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+        user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
@@ -108,6 +109,7 @@ router.post('/updateOfficerProfile', async function(req, res, next){
   try
   {
     const contract_ = await contract();
+    let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
     let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
     let NgaySinh = req.body.NgaySinh;
@@ -145,7 +147,7 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     let updateTime = Date.now().toString();
 
     const blockChainRep = await contract_.submitTransaction('updateOfficerProfile', 
-    HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+    user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
     ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
