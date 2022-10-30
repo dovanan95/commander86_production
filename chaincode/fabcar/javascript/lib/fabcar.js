@@ -152,7 +152,7 @@ class FabCar extends Contract {
                     let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                     //await this.sleep(5000);
                     if(block){
-                        await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                        await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                     }
                     
                     return({'message': 'ok'});
