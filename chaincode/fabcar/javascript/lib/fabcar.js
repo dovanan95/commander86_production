@@ -115,40 +115,45 @@ class FabCar extends Contract {
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate )
         {
+            try
+            {
+                const quanNhan = {
+                    HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  
+                    NgayXuatNgu, SoCMND,  NgayTaiNgu,
+                    GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
+                    NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
+                    ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
+                    TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
+                    HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
+                }
+          
+                const lichSuCapNhatQuanNhan = {
+                    SoHieuQuanNhan,
+                    IDNguoiUpdate,
+                    //NgayThangUpdate: Date.now().toString(),
+                    docType: 'lichSuCapNhatQuanNhan'
+                }
+                const query_officer_check={
+                    "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
+                };
+                let timestamp = Date.now();
+                var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
+                //await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
+                //await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                
+                
+                if(!result || JSON.parse(result.toString()).length==0){
+                    await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    return({'message': 'ok'});
+                }
+                else if(result || JSON.parse(result.toString()).length>0){
+                    return ({'message': 'ng', 'status': 'user already registered'});
+                }
+            }catch(error){
+                return({'message': error});
+            }
             
-            const quanNhan = {
-                HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  
-                NgayXuatNgu, SoCMND,  NgayTaiNgu,
-                GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
-                NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-                ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
-                TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
-                HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
-            }
-      
-            const lichSuCapNhatQuanNhan = {
-                SoHieuQuanNhan,
-                IDNguoiUpdate,
-                //NgayThangUpdate: Date.now().toString(),
-                docType: 'lichSuCapNhatQuanNhan'
-            }
-            const query_officer_check={
-                "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
-            };
-            let timestamp = Date.now();
-            var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            //await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
-            //await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-            
-            
-            if(!result || JSON.parse(result.toString()).length==0){
-                await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                return('ok');
-            }
-            else if(result || JSON.parse(result.toString()).length>0){
-                return ('ng');
-            }
  
     }
 
@@ -156,8 +161,10 @@ class FabCar extends Contract {
     async updateOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate){
-            
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
+        {
+            try
+            {
                 const quanNhan = {
                     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  NgayXuatNgu, SoCMND,  NgayTaiNgu,
                     GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
@@ -179,7 +186,13 @@ class FabCar extends Contract {
     
                 await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
                 await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-
+                return({'message': 'ok'});
+            }   
+            catch(error)
+            {
+                return({'message': error})
+            } 
+                
     }
 
     async authentication(ctx, userID, password)

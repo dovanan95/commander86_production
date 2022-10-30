@@ -86,12 +86,13 @@ router.post('/saveOfficerProfile', async function(req, res, next){
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
     
-    res.sendStatus(200).json({'message': 'ok'});
+    console.log(blockChainRep.toString())
+    res.send({'message': 'ok'});
   }
   catch(error)
   {
     console.log(error);
-    res.send(error);
+    res.send({'message': error});
   }
 })
 router.post('/updateOfficerProfile', async function(req, res, next){
@@ -138,11 +139,11 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
     ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
-    res.sendStatus(200).json({'message': 'ok'});
+    res.send({'message': 'ok'});
   }
   catch(error){
     console.log(error);
-    res.send(error);
+    res.send({'message': error});
   }
 })
 
