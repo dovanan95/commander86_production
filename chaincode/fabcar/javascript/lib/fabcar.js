@@ -115,22 +115,19 @@ class FabCar extends Contract {
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
             const quanNhan = {
-                'HoVaTen': HoVaTen, 'HoVaTenKhaiSinh': HoVaTenKhaiSinh, 'NgaySinh': NgaySinh,
-                'DanToc': DanToc, 'BiDanh': BiDanh, 'TonGiao': TonGiao, 'TenKhac': TenKhac, 'NgayNhapNgu': NgayNhapNgu,
-                'SoHieuQuanNhan': SoHieuQuanNhan, 'NgayXuatNgu': NgayXuatNgu, 'SoCMND': SoCMND, 'NgayTaiNgu': NgayTaiNgu,
-                'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
-                'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
-                'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
-                'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'TrinhDoVanHoa': TrinhDoVanHoa, 
-                'TrinhDoQuanLy': TrinhDoQuanLy, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
-                'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
+                HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  NgayXuatNgu, SoCMND,  NgayTaiNgu,
+                GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
+                NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
+                 ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
+                 TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
+                 HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
             }
             console.log('quanNhan', quanNhan)
             const lichSuCapNhatQuanNhan = {
-                'SoHieuQuanNhan': SoHieuQuanNhan,
-                'IDNguoiUpdate': IDNguoiUpdate,
-                'NgayThangUpdate': Date.now().toString(),
-                'docType': 'lichSuCapNhatQuanNhan'
+                SoHieuQuanNhan,
+                IDNguoiUpdate,
+                NgayThangUpdate: Date.now().toString(),
+                docType: 'lichSuCapNhatQuanNhan'
             }
             const query_officer_check={
                 "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
@@ -159,21 +156,18 @@ class FabCar extends Contract {
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate){
             
                 const quanNhan = {
-                    'HoVaTen': HoVaTen, 'HoVaTenKhaiSinh': HoVaTenKhaiSinh, 'NgaySinh': NgaySinh,
-                    'DanToc': DanToc, 'BiDanh': BiDanh, 'TonGiao': TonGiao, 'TenKhac': TenKhac, 'NgayNhapNgu': NgayNhapNgu,
-                    'SoHieuQuanNhan': SoHieuQuanNhan, 'NgayXuatNgu': NgayXuatNgu, 'SoCMND': SoCMND, 'NgayTaiNgu': NgayTaiNgu,
-                    'GioiTinh':GioiTinh, 'NguyenQuan':NguyenQuan, 'CapBac':CapBac, 'NgayNhanCapBac': NgayNhanCapBac,
-                    'ThuongTru': ThuongTru, 'ChucVu': ChucVu, 'NgayNhanChucVu': NgayNhanChucVu, 'TPGiaDinh': TPGiaDinh, 'TPBanThan': TPBanThan,
-                    'NgayVaoDang': NgayVaoDang, 'NoiVaoDang':NoiVaoDang,'NgayVaoDangChinhThuc': NgayVaoDangChinhThuc, 'NgayVaoDoan': NgayVaoDoan,
-                    'ChucVuDoan': ChucVuDoan, 'ChucVuDang': ChucVuDang, 'TrinhDoVanHoa': TrinhDoVanHoa, 
-                    'TrinhDoQuanLy': TrinhDoQuanLy, 'HocHam': HocHam, 'TrinhDoLyLuanChinhTri': TrinhDoLyLuanChinhTri,
-                    'HocVi': HocVi, 'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
+                    HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  NgayXuatNgu, SoCMND,  NgayTaiNgu,
+                    GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
+                    NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
+                     ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
+                     TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
+                     HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
                 }
                 const lichSuCapNhatQuanNhan = {
-                    'SoHieuQuanNhan': SoHieuQuanNhan,
-                    'IDNguoiUpdate': IDNguoiUpdate,
-                    'NgayThangUpdate': Date.now(),
-                    'docType': 'lichSuCapNhatQuanNhan'
+                    SoHieuQuanNhan,
+                    IDNguoiUpdate,
+                    NgayThangUpdate: Date.now(),
+                    docType: 'lichSuCapNhatQuanNhan'
                 }
                 let timestamp = Date.now();
                 const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
