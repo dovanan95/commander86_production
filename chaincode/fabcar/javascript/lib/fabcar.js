@@ -114,6 +114,7 @@ class FabCar extends Contract {
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
+            
             const quanNhan = {
                 HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  NgayXuatNgu, SoCMND,  NgayTaiNgu,
                 GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
@@ -122,22 +123,22 @@ class FabCar extends Contract {
                  TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
                  HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
             }
-            console.log('quanNhan', quanNhan)
+      
             const lichSuCapNhatQuanNhan = {
                 SoHieuQuanNhan,
                 IDNguoiUpdate,
                 NgayThangUpdate: Date.now().toString(),
                 docType: 'lichSuCapNhatQuanNhan'
             }
-            const query_officer_check={
-                "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
-            };
+            //const query_officer_check={
+                //"selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
+            //};
             let timestamp = Date.now();
             //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
             await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
             await ctx.stub.putState('lichSu'+ SoHieuQuanNhan , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             
-            return('OK');
+            
             //if(!result || JSON.parse(result.toString()).length==0){
                 //let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                 //let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
@@ -176,7 +177,7 @@ class FabCar extends Contract {
     
                 await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
                 await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                return('finish');
+
     }
 
     async authentication(ctx, userID, password)
