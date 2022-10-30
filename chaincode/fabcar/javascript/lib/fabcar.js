@@ -110,25 +110,26 @@ class FabCar extends Contract {
         return carAsBytes.toString();
     }
     //luu du lieu quan nhan
-    async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
-        , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
+    async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+        SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate ){
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate )
+        {
             
             const quanNhan = {
                 HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  
                 NgayXuatNgu, SoCMND,  NgayTaiNgu,
                 GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
                 NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
-                 ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
-                 TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
-                 HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
+                ChucVuDoan, ChucVuDang, TrinhDoVanHoa, 
+                TrinhDoQuanLy, HocHam,  TrinhDoLyLuanChinhTri,
+                HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
             }
       
             const lichSuCapNhatQuanNhan = {
                 SoHieuQuanNhan,
                 IDNguoiUpdate,
-                NgayThangUpdate: Date.now().toString(),
+                //NgayThangUpdate: Date.now().toString(),
                 docType: 'lichSuCapNhatQuanNhan'
             }
             //const query_officer_check={
@@ -137,7 +138,7 @@ class FabCar extends Contract {
             //let timestamp = Date.now();
             //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
             await ctx.stub.putState('quannhan', Buffer.from(JSON.stringify(quanNhan)));
-            await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+            //await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             
             
             //if(!result || JSON.parse(result.toString()).length==0){
