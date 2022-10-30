@@ -192,11 +192,11 @@ class FabCar extends Contract {
                 user_json = quanNhan;
     
                 let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
-                if(saveProfle){
+                /*if(saveProfle){
                     await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                }
+                }*/
                 
-                return({'message': 'ok'});
+                return({'message': 'ok', 'saveprofile': saveProfle});
             }   
             catch(error)
             {
