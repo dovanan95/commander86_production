@@ -197,7 +197,7 @@ router.post('/getOfficerUpdateHistoryByID', async function(req, res, next){
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.sendStatus(200).json({'message': lichSuthongTinQuanNhan.toString()});
+    res.send({'message': lichSuthongTinQuanNhan.toString()});
   }
   catch(error)
   {
