@@ -192,7 +192,7 @@ router.post('/getOfficerUpdateHistoryByID', async function(req, res, next){
     const queryString = {
       "selector":{
         'SoHieuQuanNhan': req.body.SoHieuQuanNhan,
-        'docType': 'lichSuCapNhatQuanNhan'
+        'docType': 'updateHistory'
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
