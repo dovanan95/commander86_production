@@ -16,13 +16,20 @@ router.get('/', function(req, res, next) {
 router.post('/createUser', async function(req, res){
   try
   {
-    let userID = '123456';
+    /*let userID = '123456';
     let name = 'Do Van An';
     let Phone = '0904039946';
     let certification = 'Cao Hoc';
     let position = 'developer';
     let password = 'ahihi';
-    let dept = 'IT';
+    let dept = 'IT';*/
+    let userID = req. body.userID;
+    let name = req.body.name
+    let Phone = req.body.Phone;
+    let certification = req.body.certification;
+    let position = req.body.position;
+    let password = req.body.password;
+    let dept = req.body.dept;
     const contract_ = await contract();
     const block = await contract_.submitTransaction('createUser', userID, name, Phone, certification, position, dept, password);
     console.log(block);
