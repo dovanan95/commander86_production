@@ -137,17 +137,13 @@ class FabCar extends Contract {
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
                     NgayThangUpdate: Date.now().toString(),
-                    docType: 'lichSuCapNhatQuanNhan'
+                    docType: 'updateHistory'
                 }
                 const query_officer_check={
                     "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
                 };
                 let timestamp = Date.now();
                 var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-                //await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
-                //await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                
-                
                 if(!result || JSON.parse(result.toString()).length==0){
                     let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                     //await this.sleep(5000);
