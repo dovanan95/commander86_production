@@ -109,6 +109,12 @@ class FabCar extends Contract {
         console.log(carAsBytes.toString());
         return carAsBytes.toString();
     }
+
+    async sleep(milliseconds) {
+        await new Promise(resolve => {
+            return setTimeout(resolve, milliseconds)
+        });
+    };
     //luu du lieu quan nhan
     async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
@@ -144,7 +150,8 @@ class FabCar extends Contract {
                 
                 if(!result || JSON.parse(result.toString()).length==0){
                     await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                    //await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    await this.sleep(5000);
+                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                     return({'message': 'ok'});
                 }
                 else if(result || JSON.parse(result.toString()).length>0){
@@ -185,6 +192,7 @@ class FabCar extends Contract {
                 user_json = quanNhan;
     
                 await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
+                await this.sleep(5000);
                 await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 return({'message': 'ok'});
             }   
