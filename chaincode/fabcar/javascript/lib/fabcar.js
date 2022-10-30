@@ -116,7 +116,7 @@ class FabCar extends Contract {
         });
     };
     //luu du lieu quan nhan
-    async saveOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+    async saveOfficerProfile(ctx, user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate, 
@@ -125,6 +125,7 @@ class FabCar extends Contract {
             try
             {
                 const quanNhan = {
+                    user_id,
                     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  
                     NgayXuatNgu, SoCMND,  NgayTaiNgu,
                     GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
@@ -135,6 +136,7 @@ class FabCar extends Contract {
                 }
           
                 const lichSuCapNhatQuanNhan = {
+                    user_id,
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
                     updateTime,
@@ -164,7 +166,7 @@ class FabCar extends Contract {
     }
 
     //cap nhat du lieu quan nhan
-    async updateOfficerProfile(ctx, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
+    async updateOfficerProfile(ctx, user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu
         , SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
@@ -173,6 +175,7 @@ class FabCar extends Contract {
             try
             {
                 const quanNhan = {
+                    user_id,
                     HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc,  BiDanh,  TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,  NgayXuatNgu, SoCMND,  NgayTaiNgu,
                     GioiTinh, NguyenQuan, CapBac,  NgayNhanCapBac, ThuongTru,  ChucVu,  NgayNhanChucVu,  TPGiaDinh,  TPBanThan,
                     NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
@@ -181,10 +184,11 @@ class FabCar extends Contract {
                      HocVi,  TrinhDoCMKT, docType: 'QuanNhan'
                 }
                 const lichSuCapNhatQuanNhan = {
+                    user_id,
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
                     updateTime,
-                    docType: 'lichSuCapNhatQuanNhan'
+                    docType: 'updateHistory'
                 }
                 
                 const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
