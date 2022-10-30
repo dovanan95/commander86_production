@@ -158,7 +158,7 @@ router.post('/getOfficerProfileByID', async function(req, res, next){
       }
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.sendStatus(200).json({'message': thongTinQuanNhan.toString()});
+    res.send({'message': thongTinQuanNhan.toString()})
   }
   catch(error){
     return error
