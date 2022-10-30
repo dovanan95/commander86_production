@@ -130,7 +130,7 @@ class FabCar extends Contract {
                 const lichSuCapNhatQuanNhan = {
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
-                    //NgayThangUpdate: Date.now().toString(),
+                    NgayThangUpdate: Date.now().toString(),
                     docType: 'lichSuCapNhatQuanNhan'
                 }
                 const query_officer_check={
@@ -176,7 +176,7 @@ class FabCar extends Contract {
                 const lichSuCapNhatQuanNhan = {
                     SoHieuQuanNhan,
                     IDNguoiUpdate,
-                    NgayThangUpdate: Date.now(),
+                    NgayThangUpdate: Date.now().toString(),
                     docType: 'lichSuCapNhatQuanNhan'
                 }
                 let timestamp = Date.now();
