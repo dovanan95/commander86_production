@@ -132,23 +132,23 @@ class FabCar extends Contract {
                 //NgayThangUpdate: Date.now().toString(),
                 docType: 'lichSuCapNhatQuanNhan'
             }
-            //const query_officer_check={
-                //"selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
-            //};
-            //let timestamp = Date.now();
-            //var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            await ctx.stub.putState('quannhan', Buffer.from(JSON.stringify(quanNhan)));
+            const query_officer_check={
+                "selector":{"SoHieuQuanNhan": SoHieuQuanNhan, "docType":'QuanNhan'}
+            };
+            let timestamp = Date.now();
+            var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
+            //await ctx.stub.putState(SoHieuQuanNhan, Buffer.from(JSON.stringify(quanNhan)));
             //await ctx.stub.putState('lichSu' , Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             
             
-            //if(!result || JSON.parse(result.toString()).length==0){
-                //let quanNhan = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                //let lichSu = await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                //return(quanNhan);
-            //}
-            //else if(result || JSON.parse(result.toString()).length>0){
-                //return ('user already registered!');
-            //}
+            if(!result || JSON.parse(result.toString()).length==0){
+                await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+                await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                return('ok');
+            }
+            else if(result || JSON.parse(result.toString()).length>0){
+                return ('ng');
+            }
  
     }
 

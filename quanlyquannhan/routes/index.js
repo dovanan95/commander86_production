@@ -32,7 +32,7 @@ router.post('/createUser', async function(req, res){
     let dept = req.body.dept;
     const contract_ = await contract();
     const block = await contract_.submitTransaction('createUser', userID, name, Phone, certification, position, dept, password);
-    console.log(block);
+    console.log(block.toString());
     res.send('ok')
   }
   catch(err)
