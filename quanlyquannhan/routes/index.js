@@ -13,6 +13,27 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.post('/createUser', async function(req, res){
+  try
+  {
+    let userID = '123456';
+    let name = 'Do Van An';
+    let Phone = '0904039946';
+    let certification = 'Cao Hoc';
+    let position = 'developer';
+    let password = 'ahihi';
+    let dept = 'IT';
+    const contract_ = await contract();
+    const block = await contract_.submitTransaction('createUser', userID, name, Phone, certification, position, dept, password);
+    console.log(block);
+    res.send('ok')
+  }
+  catch(err)
+  {
+    res.send(err)
+  }
+})
+
 router.post('/saveOfficerProfile', async function(req, res, next){
   try
   {
