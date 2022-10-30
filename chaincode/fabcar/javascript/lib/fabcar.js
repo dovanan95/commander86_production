@@ -191,9 +191,11 @@ class FabCar extends Contract {
                 const user_json = JSON.parse(userAsBytes.toString());
                 user_json = quanNhan;
     
-                await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
-                await this.sleep(5000);
-                await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
+                if(saveProfle){
+                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                }
+                
                 return({'message': 'ok'});
             }   
             catch(error)
