@@ -200,7 +200,7 @@ class FabCar extends Contract {
                     await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 }
                 
-                return({'message': 'ok', 'saveprofile': saveProfle});
+                return({'message': 'ok'});
             }   
             catch(error)
             {
