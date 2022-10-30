@@ -153,6 +153,7 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
     updateTime)
     let responseBlock = JSON.parse(blockChainRep.toString());
+    console.log(responseBlock);
     if(responseBlock.message=='ok'){
       res.send({'message': 'ok'});
     }
@@ -192,7 +193,7 @@ router.post('/getOfficerUpdateHistoryByID', async function(req, res, next){
     const queryString = {
       "selector":{
         'SoHieuQuanNhan': req.body.SoHieuQuanNhan,
-        'docType': 'lichSuCapNhatQuanNhan'
+        'docType': 'updateHistory'
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
