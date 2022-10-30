@@ -193,7 +193,41 @@ class FabCar extends Contract {
                 
                 const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
                 const user_json = JSON.parse(userAsBytes.toString());
-                user_json = quanNhan;
+                user_json.user_id = user_id;
+                user_json.HoVaTen = HoVaTen;
+                user_json.HoVaTenKhaiSinh = HoVaTenKhaiSinh;
+                user_json.NgaySinh = NgaySinh;
+                user_json.DanToc = DanToc;
+                user_json.BiDanh = BiDanh;
+                user_json.TonGiao = TonGiao;
+                user_json.TenKhac = TenKhac;
+                user_json.NgayNhapNgu = NgayNhapNgu;
+                user_json.SoHieuQuanNhan = SoHieuQuanNhan;
+                user_json.NgayXuatNgu = NgayXuatNgu;
+                user_json.SoCMND = SoCMND;
+                user_json.NgayTaiNgu = NgayTaiNgu;
+                user_json.GioiTinh = GioiTinh;
+                user_json.NguyenQuan = NguyenQuan;
+                user_json.CapBac = CapBac;
+                user_json.NgayNhanCapBac = NgayNhanCapBac;
+                user_json.ThuongTru = ThuongTru;
+                user_json.ChucVu = ChucVu;
+                user_json.NgayNhanChucVu = NgayNhanChucVu;
+                user_json.TPGiaDinh = TPGiaDinh;
+                user_json.TPBanThan = TPBanThan;
+                user_json.NgayVaoDang = NgayVaoDang;
+                user_json.NoiVaoDang = NoiVaoDang;
+                user_json.NgayVaoDangChinhThuc = NgayVaoDangChinhThuc;
+                user_json.NgayVaoDoan = NgayVaoDoan;
+                user_json.ChucVuDoan = ChucVuDoan;
+                user_json.ChucVuDang = ChucVuDang;
+                user_json.TrinhDoVanHoa = TrinhDoVanHoa;
+                user_json.TrinhDoQuanLy = TrinhDoQuanLy;
+                user_json.HocHam = HocHam;
+                user_json.TrinhDoLyLuanChinhTri = TrinhDoLyLuanChinhTri;
+                user_json.HocVi = HocVi;
+                user_json.TrinhDoCMKT = TrinhDoCMKT;
+                user_json.docType = quanNhan.docType;
     
                 let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
                 if(saveProfle){
