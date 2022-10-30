@@ -149,9 +149,12 @@ class FabCar extends Contract {
                 
                 
                 if(!result || JSON.parse(result.toString()).length==0){
-                    await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                    await this.sleep(5000);
-                    await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+                    //await this.sleep(5000);
+                    if(block){
+                        await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    }
+                    
                     return({'message': 'ok'});
                 }
                 else if(result || JSON.parse(result.toString()).length>0){
@@ -192,9 +195,9 @@ class FabCar extends Contract {
                 user_json = quanNhan;
     
                 let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
-                /*if(saveProfle){
+                if(saveProfle){
                     await ctx.stub.putState('lichSu'+ SoHieuQuanNhan.toString()+ timestamp.toString(), Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-                }*/
+                }
                 
                 return({'message': 'ok', 'saveprofile': saveProfle});
             }   
