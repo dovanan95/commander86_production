@@ -146,7 +146,14 @@ router.post('/updateOfficerProfile', async function(req, res, next){
     SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
     ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
     ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy,  HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate)
-    res.send({'message': 'ok'});
+    let responseBlock = JSON.parse(blockChainRep.toString());
+    if(responseBlock.message=='ok'){
+      res.send({'message': 'ok'});
+    }
+    else
+    {
+      res.send({'message': 'ng'});
+    }
   }
   catch(error){
     console.log(error);
