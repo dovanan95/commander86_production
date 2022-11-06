@@ -89,16 +89,16 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     console.log(JSON.parse(blockChainRep.toString()))
     let responseBlock = JSON.parse(blockChainRep.toString());
     if (responseBlock.message == 'ok') {
-      res.statusCode(200).send({ 'message': 'ok' });
+      res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ok' });
     }
     else if (responseBlock.message == 'ng') {
-      res.statusCode(400).send({ 'message': 'ng', 'status': responseBlock.status });
+      res.status(400).send({ 'statusCode': res.statusCode, 'message': 'ng', 'status': responseBlock.status });
     }
 
   }
   catch (error) {
     console.log(error);
-    res.statusCode(400).send({ 'message': error });
+    res.status(400).send({ 'message': error });
   }
 })
 router.post('/updateOfficerProfile', async function (req, res, next) {
@@ -150,15 +150,15 @@ router.post('/updateOfficerProfile', async function (req, res, next) {
     let responseBlock = JSON.parse(blockChainRep.toString());
     console.log(responseBlock);
     if (responseBlock.message == 'ok') {
-      res.statusCode(200).send({ 'message': 'ok' });
+      res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ok' });
     }
     else {
-      res.statusCode(200).send({ 'message': 'ng' });
+      res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ng' });
     }
   }
   catch (error) {
     console.log(error);
-    res.statusCode(400).send({ 'message': error });
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
@@ -172,10 +172,10 @@ router.post('/getOfficerProfileByID', async function (req, res, next) {
       }
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'message': JSON.parse(thongTinQuanNhan.toString()) })
+    res.statusCode(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
   }
   catch (error) {
-    res.statusCode(400).send({ 'message': error });
+    res.statusCode(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
@@ -189,10 +189,10 @@ router.post('/getOfficerUpdateHistoryByID', async function (req, res, next) {
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
+    res.statusCode(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
   }
   catch (error) {
-    res.statusCode(400).send({ 'message': error });
+    res.statusCode(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
@@ -206,10 +206,10 @@ router.post('/getOfficerProfileByUserID', async function (req, res, next) {
       }
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'message': JSON.parse(thongTinQuanNhan.toString()) })
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
   }
   catch (error) {
-    res.statusCode(400).send({ 'message': error });
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
@@ -223,10 +223,10 @@ router.post('/getOfficerUpdateHistoryByUserID', async function (req, res, next) 
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
   }
   catch (error) {
-    res.statusCode(400).send({ 'message': error });
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
