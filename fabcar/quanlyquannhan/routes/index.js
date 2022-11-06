@@ -189,10 +189,10 @@ router.post('/getOfficerUpdateHistoryByID', async function (req, res, next) {
       }
     }
     const lichSuthongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
   }
   catch (error) {
-    res.statusCode(400).send({ 'statusCode': res.statusCode, 'message': error });
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
