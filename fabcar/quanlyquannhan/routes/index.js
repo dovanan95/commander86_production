@@ -40,6 +40,18 @@ router.post('/createUser', async function (req, res) {
 })
 
 router.post('/saveOfficerProfile', async function (req, res, next) {
+  /*
+    "CapToChucDaoTao":"ABCD",
+    "CoSoDaoTao":"ABCD",
+    "ChungChiDaoTao":"ABCD",
+    "NoiDungDaoTao":"ABCD",
+    "SucKhoe":"Loai 1",
+    "BacLuong":"ABCCD",
+    "NhomMau":"A",
+    "HeSoLuong":"4,6",
+    "SoBHXH":"ABCCD",
+    "TinhTrangHonNhan":"ABCCD",
+    "NganhQuanLy":"ABCCD"*/
   try {
     let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
