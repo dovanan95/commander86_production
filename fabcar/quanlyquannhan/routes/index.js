@@ -116,9 +116,10 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     }
 
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    console.log(thongTinQuanNhan.toString());
+    console.log('TTQN', thongTinQuanNhan.toString());
 
     let blockChainRep;
+    console.log('b');
     if (thongTinQuanNhan.length == 0) {
       blockChainRep = await contract_.submitTransaction('saveOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
@@ -140,7 +141,6 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         NganhQuanLy,
         updateTime)
     }
-
 
 
     console.log('blockChainRep', JSON.parse(blockChainRep.toString()))
