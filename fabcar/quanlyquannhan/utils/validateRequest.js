@@ -96,7 +96,7 @@ async function saveOfficerProfileValidation(req) {
     }
     let missArr = [];
     for (let item in fullData) {
-        if (!fullData[item]) {
+        if (fullData[item] == undefined) {
             missArr.push(item);
         }
     }

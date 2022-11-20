@@ -103,7 +103,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
-      res.status(200).send({ 'statusCode': res.statusCode, 'message': missItem });
+      res.status(200).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
       next();
     }
     const contract_ = await contract();
