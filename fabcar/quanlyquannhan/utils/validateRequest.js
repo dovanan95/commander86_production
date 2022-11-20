@@ -95,7 +95,7 @@ async function saveOfficerProfileValidation(req) {
         NganhQuanLy
     }
     let missArr = [];
-    for (let item of fullData) {
+    for (let item in fullData) {
         if (!fullData[item] || fullData[item] == null || fullData[item] == undefined) {
             missArr.push(item);
         }
