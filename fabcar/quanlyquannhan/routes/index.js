@@ -2,7 +2,7 @@ const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 var blockChain = require('../utils/blockchain')
-
+var validateInput = require('../utils/validateRequest');
 /* GET home page. */
 
 async function contract() {
@@ -101,6 +101,11 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let TinhTrangHonNhan = req.body.TinhTrangHonNhan;
     let NganhQuanLy = req.body.NganhQuanLy;
 
+    let missItem = await validateInput.saveOfficerProfileValidation(req);
+    if (missItem.length > 0) {
+      res.status(200).send({ 'statusCode': res.statusCode, 'message': missItem });
+      next();
+    }
     const contract_ = await contract();
 
     const queryString = {
