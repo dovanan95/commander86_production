@@ -89,6 +89,17 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
     let IDNguoiUpdate = req.body.IDNguoiUpdate;
     let updateTime = Date.now().toString();
+    let CapToChucDaoTao = req.body.CapToChucDaoTao;
+    let CoSoDaoTao = req.body.CoSoDaoTao;
+    let ChungChiDaoTao = req.body.ChungChiDaoTao;
+    let NoiDungDaoTao = req.body.NoiDungDaoTao;
+    let SucKhoe = req.body.SucKhoe;
+    let BacLuong = req.body.BacLuong;
+    let NhomMau = req.body.NhomMau;
+    let HeSoLuong = req.body.HeSoLuong;
+    let SoBHXH = req.body.SoBHXH;
+    let TinhTrangHonNhan = req.body.TinhTrangHonNhan;
+    let NganhQuanLy = req.body.NganhQuanLy;
 
     const contract_ = await contract();
 
@@ -107,6 +118,8 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
+        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
+        NganhQuanLy,
         updateTime);
 
     }
@@ -116,6 +129,8 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
         ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
+        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
+        NganhQuanLy,
         updateTime)
     }
 
