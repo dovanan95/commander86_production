@@ -103,8 +103,8 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
-      res.status(200).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
-      next();
+      //res.status(200).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
+      //next();
     }
     const contract_ = await contract();
 
@@ -114,7 +114,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         'docType': 'QuanNhan'
       }
     }
-    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString)); console.log('TTQN', thongTinQuanNhan.toString());
 
     let blockChainRep;
     if (thongTinQuanNhan.length == 0) {
