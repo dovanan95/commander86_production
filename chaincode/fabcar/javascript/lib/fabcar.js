@@ -159,7 +159,7 @@ class FabCar extends Contract {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
             }
         } catch (error) {
-            return ({ 'message': error });
+            return ({ 'error': error });
         }
 
 
@@ -260,7 +260,7 @@ class FabCar extends Contract {
 
         }
         catch (error) {
-            return ({ 'message': error })
+            return ({ 'error': error })
         }
 
     }
