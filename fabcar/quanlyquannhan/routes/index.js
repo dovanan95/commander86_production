@@ -195,10 +195,10 @@ router.post('/getOfficerProfileByID', async function (req, res, next) {
       }
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    res.statusCode(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
   }
   catch (error) {
-    res.statusCode(400).send({ 'statusCode': res.statusCode, 'message': error });
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
 
