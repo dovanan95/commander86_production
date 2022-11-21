@@ -148,9 +148,9 @@ class FabCar extends Contract {
                 "selector": { "SoHieuQuanNhan": SoHieuQuanNhan, "docType": 'QuanNhan' }
             };
             var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            if (!result || JSON.parse(result.toString()).length == 0) {
+            /*if (!result || JSON.parse(result.toString()).length == 0) {
                 let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
-                //await this.sleep(5000);
+                
                 if (block) {
                     await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 }
@@ -159,7 +159,12 @@ class FabCar extends Contract {
             }
             else if (result || JSON.parse(result.toString()).length > 0) {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
+            }*/
+            let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+            if (block) {
+                await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             }
+            return ({ 'message': 'ok' })
         } catch (error) {
             return ({ 'error': error, 'message': 'ng' });
         }
