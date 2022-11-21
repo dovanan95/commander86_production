@@ -114,12 +114,14 @@ class FabCar extends Contract {
         });
     };
     //luu du lieu quan nhan
-    async saveOfficerProfile(ctx, user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+    async saveOfficerProfile(ctx,
+        user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi, TrinhDoCMKT, IDNguoiUpdate,
-        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
-        NganhQuanLy,
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi,
+        TrinhDoCMKT, IDNguoiUpdate,
+        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
+        SoBHXH, TinhTrangHonNhan, NganhQuanLy,
         updateTime) {
         try {
             const quanNhan = {
@@ -130,8 +132,8 @@ class FabCar extends Contract {
                 NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc, NgayVaoDoan,
                 ChucVuDoan, ChucVuDang, TrinhDoVanHoa,
                 TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
-                CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
-                NganhQuanLy,
+                CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
+                SoBHXH, TinhTrangHonNhan, NganhQuanLy,
                 HocVi, TrinhDoCMKT, docType: 'QuanNhan'
             }
 
@@ -159,7 +161,7 @@ class FabCar extends Contract {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
             }
         } catch (error) {
-            return ({ 'error': error });
+            return ({ 'error': error, 'message': 'ng' });
         }
 
 
@@ -169,9 +171,11 @@ class FabCar extends Contract {
     async updateOfficerProfile(ctx, user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi,
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
+        HocVi,
         TrinhDoCMKT, IDNguoiUpdate,
-        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
+        CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
+        SoBHXH, TinhTrangHonNhan,
         NganhQuanLy, updateTime) {
         try {
             const quanNhan = {
@@ -260,7 +264,7 @@ class FabCar extends Contract {
 
         }
         catch (error) {
-            return ({ 'error': error })
+            return ({ 'error': error, 'message': 'ng' })
         }
 
     }
