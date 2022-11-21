@@ -114,17 +114,18 @@ class FabCar extends Contract {
         });
     };
     //luu du lieu quan nhan
-    async saveOfficerProfile(ctx,
-        user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
+    async saveOfficerProfile(ctx, user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao,
+        TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
-        ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
-        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri, HocVi,
-        TrinhDoCMKT, IDNguoiUpdate,
+        ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang,
+        NgayVaoDangChinhThuc,
+        NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
+        HocVi, TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
         updateTime) {
         try {
-            /*const quanNhan = {
+            const quanNhan = {
                 user_id,
                 HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,
                 NgayXuatNgu, SoCMND, NgayTaiNgu,
@@ -143,7 +144,7 @@ class FabCar extends Contract {
                 IDNguoiUpdate,
                 updateTime,
                 docType: 'updateHistory'
-            }*/
+            }
 
             /*const query_officer_check = {
                 "selector": { "SoHieuQuanNhan": SoHieuQuanNhan, "docType": 'QuanNhan' }
@@ -162,11 +163,11 @@ class FabCar extends Contract {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
             }*/
 
-            /*let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+            let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
             if (block) {
                 await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-            }*/
-            await ctx.stub.putState('a', Buffer.from(JSON.stringify({ 'key': 'value' })))
+            }
+            //await ctx.stub.putState('a', Buffer.from(JSON.stringify({ 'key': 'value' })))
             return ({ 'message': 'ok' })
         } catch (error) {
             return ({ 'error': error, 'message': 'ng' });
