@@ -120,6 +120,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let blockChainRep;
     console.log('b');
     if (thongTinQuanNhan.length == 0) {
+      console.log('no data');
       /*blockChainRep = await contract_.submitTransaction('saveOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
@@ -134,6 +135,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     }
     else if (thongTinQuanNhan.length > 0) {
+      console.log('available data');
       blockChainRep = await contract_.submitTransaction('updateOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
