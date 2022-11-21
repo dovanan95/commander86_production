@@ -119,9 +119,9 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     let blockChainRep;
     console.log('b');
-    if (thongTinQuanNhan.length == 0) {
+    if (JSON.parse(thongTinQuanNhan).length == 0) {
       console.log('no data');
-      /*blockChainRep = await contract_.submitTransaction('saveOfficerProfile',
+      blockChainRep = await contract_.submitTransaction('saveOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
         ThuongTru, ChucVu, NgayNhanChucVu, TPGiaDinh, TPBanThan, NgayVaoDang, NoiVaoDang, NgayVaoDangChinhThuc,
@@ -130,11 +130,11 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
-        updateTime);*/
-      blockChainRep = await contract_.submitTransaction('savePrivateMessage', '1', '2', '3', '4', '5', '6', '7')
+        updateTime);
+      //blockChainRep = await contract_.submitTransaction('savePrivateMessage', '1', '2', '3', '4', '5', '6', '7')
 
     }
-    else if (thongTinQuanNhan.length > 0) {
+    else if (JSON.parse(thongTinQuanNhan).length > 0) {
       console.log('available data');
       blockChainRep = await contract_.submitTransaction('updateOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
