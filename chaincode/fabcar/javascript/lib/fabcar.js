@@ -124,7 +124,7 @@ class FabCar extends Contract {
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
         updateTime) {
         try {
-            const quanNhan = {
+            /*const quanNhan = {
                 user_id,
                 HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu, SoHieuQuanNhan,
                 NgayXuatNgu, SoCMND, NgayTaiNgu,
@@ -143,12 +143,13 @@ class FabCar extends Contract {
                 IDNguoiUpdate,
                 updateTime,
                 docType: 'updateHistory'
-            }
-            const query_officer_check = {
+            }*/
+
+            /*const query_officer_check = {
                 "selector": { "SoHieuQuanNhan": SoHieuQuanNhan, "docType": 'QuanNhan' }
             };
             var result = await this.queryCustom(ctx, JSON.stringify(query_officer_check)); console.log(result);
-            /*if (!result || JSON.parse(result.toString()).length == 0) {
+            if (!result || JSON.parse(result.toString()).length == 0) {
                 let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
                 
                 if (block) {
@@ -160,10 +161,12 @@ class FabCar extends Contract {
             else if (result || JSON.parse(result.toString()).length > 0) {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
             }*/
-            let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+
+            /*let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
             if (block) {
                 await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
-            }
+            }*/
+            await ctx.stub.putState('a', Buffer.from(JSON.stringify({ 'key': 'value' })))
             return ({ 'message': 'ok' })
         } catch (error) {
             return ({ 'error': error, 'message': 'ng' });
