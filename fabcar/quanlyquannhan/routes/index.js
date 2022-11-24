@@ -120,7 +120,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let blockChainRep;
     console.log('b');
     if (JSON.parse(thongTinQuanNhan).length == 0) {
-      console.log('no data');
+      console.log('no data', JSON.parse(thongTinQuanNhan).length);
       blockChainRep = await contract_.submitTransaction('saveOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
@@ -135,7 +135,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     }
     else if (JSON.parse(thongTinQuanNhan).length > 0) {
-      console.log('available data');
+      console.log('available data', JSON.parse(thongTinQuanNhan).length);
       blockChainRep = await contract_.submitTransaction('updateOfficerProfile',
         user_id, HoVaTen, HoVaTenKhaiSinh, NgaySinh, DanToc, BiDanh, TonGiao, TenKhac, NgayNhapNgu,
         SoHieuQuanNhan, NgayXuatNgu, SoCMND, NgayTaiNgu, GioiTinh, NguyenQuan, CapBac, NgayNhanCapBac,
@@ -241,6 +241,7 @@ router.post('/getOfficerProfileByID', async function (req, res, next) {
     res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })
+
 
 router.post('/getOfficerUpdateHistoryByID', async function (req, res, next) {
   try {
