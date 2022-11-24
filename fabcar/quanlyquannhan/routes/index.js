@@ -110,7 +110,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     const queryString = {
       "selector": {
-        'user_id': req.body.user_id,
+        'SoHieuQuanNhan': req.body.SoHieuQuanNhan,
         'docType': 'QuanNhan'
       }
     }
