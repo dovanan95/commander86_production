@@ -190,6 +190,7 @@ router.get('/timkiem', async function (req, res, next) {
         queryParam[param] = decodeURIComponent(queryParam[param])
       }
     }
+    queryParam.docType = "QuanNhan";
     let queryString = {
       "selector": queryParam
     }
