@@ -178,7 +178,7 @@ router.get('/timkiem', async function (req, res, next) {
 
     let query = req.query;
     let DonVi = query.DonVi;
-    let HoTen = decodeURIComponent(query.HoTen);
+    let HoTen = decodeURIComponent(query.HoTen); console.log('HoTen', HoTen);
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
     let NguyenQuan = query.NguyenQuan;
     let queryParam = { DonVi, HoTen, NganhNgheDaoTao, NguyenQuan };
