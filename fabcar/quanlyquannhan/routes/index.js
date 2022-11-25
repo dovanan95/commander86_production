@@ -328,15 +328,4 @@ router.post('/getOfficerUpdateHistoryByUserID', async function (req, res, next) 
   }
 })
 
-router.get('timkiem', async function (req, res, next) {
-  try {
-    let HoVaTen = req.query.ten;
-    let NganhQuanLy = req.query.chuyennganh;
-
-  }
-  catch (err) {
-    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
-  }
-})
-
 module.exports = router;
