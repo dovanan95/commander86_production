@@ -178,13 +178,16 @@ router.get('/timkiem', async function (req, res, next) {
 
     let query = req.query;
     let DonVi = query.DonVi;
-    let HoVaTen = decodeURIComponent(query.HoVaTen);
+    let HoVaTen = query.HoVaTen;
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
     let NguyenQuan = query.NguyenQuan;
     let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
     for (let param in queryParam) {
       if (queryParam[param] == undefined) {
         delete queryParam[param]
+      }
+      else if (queryParam[param] != undefined) {
+        queryParam[param] = decodeURIComponent(queryParam[param])
       }
     }
     let queryString = {
