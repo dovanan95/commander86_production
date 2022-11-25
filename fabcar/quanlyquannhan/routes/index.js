@@ -192,7 +192,7 @@ router.get('/timkiem', async function (req, res, next) {
     //let result = JSON.parse(thongTinQuanNhan.toString());
     res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
   }
-  catch (err) {
+  catch (error) {
     console.log(error);
     res.status(400).send({ 'message': error });
   }
