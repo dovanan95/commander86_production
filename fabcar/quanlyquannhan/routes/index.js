@@ -186,10 +186,10 @@ router.get('/timkiem', async function (req, res, next) {
         delete queryParam[param]
       }
     }
-    queryString = {
+    let queryString = {
       "selector": queryParam
     }
-
+    console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
     //let result = JSON.parse(thongTinQuanNhan.toString());
     res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
