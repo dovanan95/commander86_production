@@ -174,6 +174,8 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
 router.get('/timkiem', async function (req, res, next) {
   try {
+    const contract_ = await contract();
+
     let query = req.query;
     let DonVi = query.DonVi;
     let HoTen = query.HoTen;
