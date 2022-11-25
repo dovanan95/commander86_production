@@ -186,7 +186,7 @@ router.get('/timkiem', async function (req, res, next) {
       if (queryParam[param] == undefined) {
         delete queryParam[param]
       }
-      else if (queryParam[param] != undefined) {
+      else if (queryParam[param] != undefined || queryParam[param] == "") {
         queryParam[param] = decodeURIComponent(queryParam[param])
       }
     }
