@@ -122,7 +122,7 @@ class FabCar extends Contract {
         NgayVaoDoan, ChucVuDoan, ChucVuDang, TrinhDoVanHoa, TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
         HocVi, TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
-        SoBHXH, TinhTrangHonNhan, NganhQuanLy,
+        SoBHXH, TinhTrangHonNhan, NganhQuanLy, DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
         updateTime) {
         try {
             const quanNhan = {
@@ -134,7 +134,7 @@ class FabCar extends Contract {
                 ChucVuDoan, ChucVuDang, TrinhDoVanHoa,
                 TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
                 CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
-                SoBHXH, TinhTrangHonNhan, NganhQuanLy,
+                SoBHXH, TinhTrangHonNhan, NganhQuanLy, DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
                 HocVi, TrinhDoCMKT, docType: 'QuanNhan'
             }
 
@@ -185,7 +185,8 @@ class FabCar extends Contract {
         TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
         SoBHXH, TinhTrangHonNhan,
-        NganhQuanLy, updateTime) {
+        NganhQuanLy, DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
+        updateTime) {
         try {
             const quanNhan = {
                 user_id,
@@ -196,7 +197,7 @@ class FabCar extends Contract {
                 ChucVuDoan, ChucVuDang, TrinhDoVanHoa,
                 TrinhDoQuanLy, HocHam, TrinhDoLyLuanChinhTri,
                 CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong, SoBHXH, TinhTrangHonNhan,
-                NganhQuanLy,
+                NganhQuanLy, DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
                 HocVi, TrinhDoCMKT, docType: 'QuanNhan'
             }
             const lichSuCapNhatQuanNhan = {
@@ -255,6 +256,10 @@ class FabCar extends Contract {
                 user_json.NganhQuanLy = NganhQuanLy;
                 user_json.HocVi = HocVi;
                 user_json.TrinhDoCMKT = TrinhDoCMKT;
+                user_json.DonVi = DonVi;
+                user_json.NganhNgheDaoTao = NganhNgheDaoTao;
+                user_json.LoaiHinhDaoTao = LoaiHinhDaoTao;
+                user_json.TrinhDoNgoaiNgu = TrinhDoNgoaiNgu;
                 user_json.docType = quanNhan.docType;
 
                 let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
