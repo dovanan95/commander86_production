@@ -100,6 +100,10 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let SoBHXH = req.body.SoBHXH;
     let TinhTrangHonNhan = req.body.TinhTrangHonNhan;
     let NganhQuanLy = req.body.NganhQuanLy;
+    let DonVi = req.body.DonVi;
+    let NganhNgheDaoTao = req.body.NganhNgheDaoTao;
+    let LoaiHinhDaoTao = req.body.LoaiHinhDaoTao;
+    let TrinhDoNgoaiNgu = req.body.TrinhDoNgoaiNgu
 
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
@@ -130,6 +134,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
+        DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
         updateTime);
       //blockChainRep = await contract_.submitTransaction('savePrivateMessage', '1', '2', '3', '4', '5', '6', '7')
 
@@ -145,6 +150,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         TrinhDoCMKT, IDNguoiUpdate,
         CapToChucDaoTao, CoSoDaoTao, ChungChiDaoTao, NoiDungDaoTao, SucKhoe, BacLuong, NhomMau, HeSoLuong,
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
+        DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
         updateTime)
     }
 
@@ -160,6 +166,33 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
   }
   catch (error) {
+    console.log(error);
+    res.status(400).send({ 'message': error });
+  }
+});
+
+router.get('timkiem', async function (req, res, next) {
+  try {
+    let query = req.query;
+    let DonVi = query.DonVi;
+    let HoTen = query.HoTen;
+    let NganhNgheDaoTao = query.NganhNgheDaoTao;
+    let NguyenQuan = query.NguyenQuan;
+    let queryParam = { DonVi, HoTen, NganhNgheDaoTao, NguyenQuan };
+    for (let param in queryParam) {
+      if (queryParam[param] == undefined) {
+        delete queryParam[param]
+      }
+    }
+    queryString = {
+      "selector": queryParam
+    }
+
+    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    //let result = JSON.parse(thongTinQuanNhan.toString());
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
+  }
+  catch (err) {
     console.log(error);
     res.status(400).send({ 'message': error });
   }
@@ -290,6 +323,17 @@ router.post('/getOfficerUpdateHistoryByUserID', async function (req, res, next) 
     res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(lichSuthongTinQuanNhan.toString()) });
   }
   catch (error) {
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
+  }
+})
+
+router.get('timkiem', async function (req, res, next) {
+  try {
+    let HoVaTen = req.query.ten;
+    let NganhQuanLy = req.query.chuyennganh;
+
+  }
+  catch (err) {
     res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
   }
 })

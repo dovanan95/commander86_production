@@ -45,6 +45,10 @@ async function saveOfficerProfileValidation(req) {
     let SoBHXH = req.body.SoBHXH;
     let TinhTrangHonNhan = req.body.TinhTrangHonNhan;
     let NganhQuanLy = req.body.NganhQuanLy;
+    let DonVi = req.body.DonVi;
+    let NganhNgheDaoTao = req.body.NganhNgheDaoTao;
+    let LoaiHinhDaoTao = req.body.LoaiHinhDaoTao;
+    let TrinhDoNgoaiNgu = req.body.TrinhDoNgoaiNgu
     let fullData =
     {
         user_id,
@@ -92,7 +96,11 @@ async function saveOfficerProfileValidation(req) {
         HeSoLuong,
         SoBHXH,
         TinhTrangHonNhan,
-        NganhQuanLy
+        NganhQuanLy,
+        DonVi,
+        NganhNgheDaoTao,
+        LoaiHinhDaoTao,
+        TrinhDoNgoaiNgu
     }
     let missArr = [];
     for (let item in fullData) {
