@@ -183,7 +183,7 @@ router.get('/timkiem', async function (req, res, next) {
     let NguyenQuan = query.NguyenQuan;
     let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
     for (let param in queryParam) {
-      if (queryParam[param] == undefined || decodeURIComponent(queryParam[param]) == "") {
+      if (queryParam[param] == undefined || queryParam[param] == '""') {
         delete queryParam[param]
       }
       else if (queryParam[param] != undefined) {
