@@ -171,7 +171,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
   }
 });
 
-router.get('timkiem', async function (req, res, next) {
+router.get('/timkiem', async function (req, res, next) {
   try {
     let query = req.query;
     let DonVi = query.DonVi;
