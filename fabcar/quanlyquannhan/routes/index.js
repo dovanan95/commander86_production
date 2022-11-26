@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var blockChain = require('../utils/blockchain')
 var validateInput = require('../utils/validateRequest');
+var backInTime = require('../utils/backInTime');
 /* GET home page. */
 
 async function contract() {
@@ -197,6 +198,321 @@ router.get('/timkiem', async function (req, res, next) {
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
     //let result = JSON.parse(thongTinQuanNhan.toString());
     res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
+  }
+  catch (error) {
+    console.log(error);
+    res.status(400).send({ 'message': error });
+  }
+});
+
+router('/thongke', async function (req, res, next) {
+  try {
+
+    const contract_ = await contract();
+    let query = req.query;
+    let DonVi = decodeURIComponent(query.DonVi);
+    let ChucVu = decodeURIComponent(query.ChucVu);
+    let CapBac = decodeURIComponent(query.CapBac);
+    let TrinhDoNgoaiNgu = decodeURIComponent(query.TrinhDoNgoaiNgu);
+
+    let KhuVucDiaLy = decodeURIComponent(query.KhuVucDiaLy);
+    let ChungChiDaoTao = decodeURIComponent(query.ChungChiDaoTao);
+    let TrinhDoCMKT = decodeURIComponent(query.TrinhDoCMKT);
+    let LoaiHinhDaoTao = decodeURIComponent(query.LoaiHinhDaoTao);
+    let CoSoDaoTao = decodeURIComponent(query.CoSoDaoTao);
+
+    let SoNamNhapNgu = decodeURIComponent(query.SoNamNhapNgu);
+    let SoTuoi = decodeURIComponent(query.SoTuoi);
+
+    let queryDonVi = {
+      'selector': { 'DonVi': DonVi, 'docType': 'QuanNhan' }
+    }
+    let _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
+    let countDonVi = JSON.parse(_DonVi.toString()).length;
+
+    let queryChucVu = {
+      'selector': { 'ChucVu': ChucVu, 'docType': 'QuanNhan' }
+    }
+    let _ChucVu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChucVu));
+    let countChucVu = JSON.parse(_ChucVu.toString()).length;
+
+    let queryCapBac = {
+      'selector': { 'CapBac': CapBac, 'docType': 'QuanNhan' }
+    }
+    let _CapBac = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCapBac));
+    let countCapBac = JSON.parse(_CapBac.toString()).length;
+
+    let queryTrinhDoNgoaiNgu = {
+      'selector': { 'TrinhDoNgoaiNgu': TrinhDoNgoaiNgu, 'docType': 'QuanNhan' }
+    }
+    let _TrinhDoNgoaiNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoNgoaiNgu));
+    let countTrinhDoNgoaiNgu = JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
+
+    let queryKhuVucDiaLy;
+    if (KhuVucDiaLy = 'Hà Nội') {
+      queryKhuVucDiaLy = {
+        'selector': {
+          'ThuongTru': KhuVucDiaLy, 'docType': 'QuanNhan'
+        }
+      }
+    }
+    else if (KhuVucDiaLy != 'Hà Nội') {
+      queryKhuVucDiaLy = {
+        'selector': {
+          '$not': {
+            'ThuongTru': KhuVucDiaLy
+          },
+          'docType': 'QuanNhan'
+        }
+      }
+    }
+    let _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
+    let countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
+
+    let queryCoSoDaoTao;
+    if (CoSoDaoTao == 'Hà Nội') {
+      queryCoSoDaoTao = {
+        'selector': {
+          'CoSoDaoTao': CoSoDaoTao
+        }
+      }
+    }
+    else if (CoSoDaoTao != 'Hà Nội') {
+      queryCoSoDaoTao = {
+        'selector': {
+          '$not': {
+            'CoSoDaoTao': CoSoDaoTao
+          }
+        }
+      }
+    }
+
+    let _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
+    let countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
+
+    let queryChungChiDaoTao = {
+      'selector': {
+        'ChungChiDaoTao': ChungChiDaoTao, 'docType': 'QuanNhan'
+      }
+    }
+    let _ChungChiDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChungChiDaoTao));
+    let countChungChiDaoTao = JSON.parse(_ChungChiDaoTao.toString()).length;
+
+    let queryTrinhDoCMKT = {
+      'selector': {
+        'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
+      }
+    }
+    let _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustome', JSON.stringify(queryTrinhDoCMKT));
+    let countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
+
+    let queryLoaiHinhDaoTao = {
+      'selector': {
+        'LoaiHinhDaoTao': LoaiHinhDaoTao, 'docType': 'QuanNhan'
+      }
+    }
+
+    let _LoaiHinhDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryLoaiHinhDaoTao));
+    let countLoaiHinhDaoTao = JSON.parse(_LoaiHinhDaoTao.toString()).length;
+
+    let Today = new Date().getTime();
+
+    let querySoNamNhapNgu;
+    if (SoNamNhapNgu == '0-5') {
+      querySoNamNhapNgu = {
+        'selector': {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(0) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(5) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoNamNhapNgu == '5-10') {
+      querySoNamNhapNgu = {
+        'selector': {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(5) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(10) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoNamNhapNgu == '10-15') {
+      querySoNamNhapNgu = {
+        'selector': {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(10) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(15) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoNamNhapNgu == '15-20') {
+      querySoNamNhapNgu = {
+        'selector': {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(15) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(20) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoNamNhapNgu == '20-25') {
+      querySoNamNhapNgu = {
+        'selector': {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(20) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(25) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoNamNhapNgu == '25') {
+      querySoNamNhapNgu = {
+        'selector': {
+          'NgayNhapNgu': { '$lt': backInTime.backInTime(25) }
+        }
+      }
+    }
+    querySoNamNhapNgu.docType = 'QuanNhan';
+
+    let _SoNamNhapNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
+    let countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
+
+    let querySoTuoi;
+    if (SoTuoi == '30') {
+      querySoTuoi = {
+        'selector': {
+          'NgaySinh': { '$gte': backInTime.backInTime(30) }
+        }
+      }
+    }
+    else if (SoTuoi == '30-35') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(30) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(35) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoTuoi == '35-40') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(35) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(40) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoTuoi == '40-45') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(40) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(45) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoTuoi == '45-50') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(45) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(50) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoTuoi == '50-55') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(50) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(55) }
+            }
+          ]
+        }
+      }
+    }
+    else if (SoTuoi == '55-60') {
+      querySoTuoi = {
+        'selector': {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(55) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(60) }
+            }
+          ]
+        }
+      }
+    }
+    querySoTuoi.docType = 'QuanNhan';
+
+    let _SoTuoi = await contract_.evaluateTransaction('queryCustome', JSON.stringify(querySoTuoi));
+    let countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
+
+    let finalResult = {
+      countSoNamNhapNgu,
+      countLoaiHinhDaoTao,
+      countChungChiDaoTao,
+      countCapBac,
+      countChucVu,
+      countCoSoDaoTao,
+      countDonVi,
+      countSoTuoi,
+      countKhuVucDiaLy,
+      countTrinhDoNgoaiNgu,
+      countTrinhDoCMKT
+    }
+
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': finalResult })
+
   }
   catch (error) {
     console.log(error);
