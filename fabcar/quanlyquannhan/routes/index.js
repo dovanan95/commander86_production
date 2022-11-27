@@ -282,8 +282,9 @@ router.get('/thongke', async function (req, res, next) {
       queryCoSoDaoTao = {
         'selector': {
           '$not': {
-            'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
-          }
+            'CoSoDaoTao': CoSoDaoTao
+          },
+          'docType': 'QuanNhan'
         }
       }
     }
