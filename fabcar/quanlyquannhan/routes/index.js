@@ -304,7 +304,7 @@ router.get('/thongke', async function (req, res, next) {
         'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
       }
     }
-    let _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustome', JSON.stringify(queryTrinhDoCMKT));
+    let _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
     let countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
 
     let queryLoaiHinhDaoTao = {
@@ -495,7 +495,7 @@ router.get('/thongke', async function (req, res, next) {
     }
     querySoTuoi.docType = 'QuanNhan';
 
-    let _SoTuoi = await contract_.evaluateTransaction('queryCustome', JSON.stringify(querySoTuoi));
+    let _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
     let countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
 
     let finalResult = {
