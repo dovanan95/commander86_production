@@ -249,7 +249,7 @@ router.get('/thongke', async function (req, res, next) {
     let _TrinhDoNgoaiNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoNgoaiNgu));
     let countTrinhDoNgoaiNgu = JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
 
-    let queryKhuVucDiaLy;
+    let queryKhuVucDiaLy = {};
     if (KhuVucDiaLy = 'Hà Nội') {
       queryKhuVucDiaLy = {
         'selector': {
@@ -274,7 +274,7 @@ router.get('/thongke', async function (req, res, next) {
     if (CoSoDaoTao == 'Hà Nội') {
       queryCoSoDaoTao = {
         'selector': {
-          'CoSoDaoTao': CoSoDaoTao
+          'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
         }
       }
     }
@@ -282,7 +282,7 @@ router.get('/thongke', async function (req, res, next) {
       queryCoSoDaoTao = {
         'selector': {
           '$not': {
-            'CoSoDaoTao': CoSoDaoTao
+            'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
           }
         }
       }
