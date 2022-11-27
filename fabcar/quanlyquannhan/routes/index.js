@@ -119,6 +119,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         'docType': 'QuanNhan'
       }
     }
+
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
     console.log('TTQN', thongTinQuanNhan.toString());
 
