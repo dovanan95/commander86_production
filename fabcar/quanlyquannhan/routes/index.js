@@ -206,7 +206,7 @@ router.get('/timkiem', async function (req, res, next) {
   }
 });
 
-router('/thongke', async function (req, res, next) {
+router.get('/thongke', async function (req, res, next) {
   try {
 
     const contract_ = await contract();
