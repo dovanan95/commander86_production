@@ -317,7 +317,7 @@ router.get('/thongke', async function (req, res, next) {
 
     let Today = new Date().getTime();
 
-    let querySoNamNhapNgu;
+    let querySoNamNhapNgu = {};
     if (SoNamNhapNgu == '0-5') {
       querySoNamNhapNgu = {
         'selector': {
@@ -400,7 +400,7 @@ router.get('/thongke', async function (req, res, next) {
     let _SoNamNhapNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
     let countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
 
-    let querySoTuoi;
+    let querySoTuoi = {};
     if (SoTuoi == '30') {
       querySoTuoi = {
         'selector': {
