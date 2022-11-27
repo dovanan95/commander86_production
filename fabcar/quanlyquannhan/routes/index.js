@@ -223,7 +223,7 @@ router.get('/thongke', async function (req, res, next) {
     let CoSoDaoTao = decodeURIComponent(query.CoSoDaoTao);
 
     let SoNamNhapNgu = query.SoNamNhapNgu ? decodeURIComponent(query.SoNamNhapNgu) : 25;
-    let SoTuoi = query.SoTUoi ? decodeURIComponent(query.SoTUoi) : 30;
+    let SoTuoi = query.SoTuoi ? decodeURIComponent(query.SoTuoi) : 30;
 
     let queryDonVi = {
       'selector': { 'DonVi': DonVi, 'docType': 'QuanNhan' }
