@@ -282,7 +282,7 @@ router.get('/thongke', async function (req, res, next) {
       queryKhuVucDiaLy = {
         'selector': {
           '$not': {
-            'ThuongTru': KhuVucDiaLy
+            'ThuongTru': 'TP Hà Nội'
           },
           'docType': 'QuanNhan'
         }
@@ -300,18 +300,18 @@ router.get('/thongke', async function (req, res, next) {
 
 
     let queryCoSoDaoTao;
-    if (CoSoDaoTao == 'Hà Nội') {
+    if (CoSoDaoTao == 'TP Hà Nội') {
       queryCoSoDaoTao = {
         'selector': {
           'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
         }
       }
     }
-    else if (CoSoDaoTao != 'Hà Nội') {
+    else if (CoSoDaoTao != 'TP Hà Nội') {
       queryCoSoDaoTao = {
         'selector': {
           '$not': {
-            'CoSoDaoTao': CoSoDaoTao
+            'CoSoDaoTao': 'TP Hà Nội'
           },
           'docType': 'QuanNhan'
         }
