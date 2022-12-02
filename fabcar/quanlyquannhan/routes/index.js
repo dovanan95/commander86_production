@@ -228,8 +228,14 @@ router.get('/thongke', async function (req, res, next) {
     let queryDonVi = {
       'selector': { 'DonVi': DonVi, 'docType': 'QuanNhan' }
     }
-    let _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
-    let countDonVi = JSON.parse(_DonVi.toString()).length;
+
+    let _DonVi;
+    let countDonVi
+
+    if (DonVi) {
+      _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
+      countDonVi = JSON.parse(_DonVi.toString()).length;
+    }
 
     let queryChucVu = {
       'selector': { 'ChucVu': ChucVu, 'docType': 'QuanNhan' }
