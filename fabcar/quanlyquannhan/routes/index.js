@@ -367,194 +367,191 @@ router.get('/thongke', async function (req, res, next) {
     let Today = new Date().getTime();
 
     let querySoNamNhapNgu = {};
-    if (SoNamNhapNgu == '0-5') {
-      querySoNamNhapNgu = {
-        'selector': {
-          '$and': [
-            {
-              'NgayNhapNgu': { '$lt': backInTime.backInTime(0) }
-            },
-            {
-              'NgayNhapNgu': { '$gte': backInTime.backInTime(5) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoNamNhapNgu == '5-10') {
-      querySoNamNhapNgu = {
-        'selector': {
-          '$and': [
-            {
-              'NgayNhapNgu': { '$lt': backInTime.backInTime(5) }
-            },
-            {
-              'NgayNhapNgu': { '$gte': backInTime.backInTime(10) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoNamNhapNgu == '10-15') {
-      querySoNamNhapNgu = {
-        'selector': {
-          '$and': [
-            {
-              'NgayNhapNgu': { '$lt': backInTime.backInTime(10) }
-            },
-            {
-              'NgayNhapNgu': { '$gte': backInTime.backInTime(15) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoNamNhapNgu == '15-20') {
-      querySoNamNhapNgu = {
-        'selector': {
-          '$and': [
-            {
-              'NgayNhapNgu': { '$lt': backInTime.backInTime(15) }
-            },
-            {
-              'NgayNhapNgu': { '$gte': backInTime.backInTime(20) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoNamNhapNgu == '20-25') {
-      querySoNamNhapNgu = {
-        'selector': {
-          '$and': [
-            {
-              'NgayNhapNgu': { '$lt': backInTime.backInTime(20) }
-            },
-            {
-              'NgayNhapNgu': { '$gte': backInTime.backInTime(25) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoNamNhapNgu == '25') {
-      querySoNamNhapNgu = {
-        'selector': {
-          'NgayNhapNgu': { '$lt': backInTime.backInTime(25) }
-        }
-      }
-    }
-
-
     let _SoNamNhapNgu // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
     let countSoNamNhapNgu // = await JSON.parse(_SoNamNhapNgu).length;
 
     if (SoNamNhapNgu) {
-      // querySoNamNhapNgu.selector.docType = 'QuanNhan';
+      if (SoNamNhapNgu == '0-5') {
+        querySoNamNhapNgu = {
+          'selector': {
+            '$and': [
+              {
+                'NgayNhapNgu': { '$lt': backInTime.backInTime(0) }
+              },
+              {
+                'NgayNhapNgu': { '$gte': backInTime.backInTime(5) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoNamNhapNgu == '5-10') {
+        querySoNamNhapNgu = {
+          'selector': {
+            '$and': [
+              {
+                'NgayNhapNgu': { '$lt': backInTime.backInTime(5) }
+              },
+              {
+                'NgayNhapNgu': { '$gte': backInTime.backInTime(10) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoNamNhapNgu == '10-15') {
+        querySoNamNhapNgu = {
+          'selector': {
+            '$and': [
+              {
+                'NgayNhapNgu': { '$lt': backInTime.backInTime(10) }
+              },
+              {
+                'NgayNhapNgu': { '$gte': backInTime.backInTime(15) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoNamNhapNgu == '15-20') {
+        querySoNamNhapNgu = {
+          'selector': {
+            '$and': [
+              {
+                'NgayNhapNgu': { '$lt': backInTime.backInTime(15) }
+              },
+              {
+                'NgayNhapNgu': { '$gte': backInTime.backInTime(20) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoNamNhapNgu == '20-25') {
+        querySoNamNhapNgu = {
+          'selector': {
+            '$and': [
+              {
+                'NgayNhapNgu': { '$lt': backInTime.backInTime(20) }
+              },
+              {
+                'NgayNhapNgu': { '$gte': backInTime.backInTime(25) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoNamNhapNgu == '25') {
+        querySoNamNhapNgu = {
+          'selector': {
+            'NgayNhapNgu': { '$lt': backInTime.backInTime(25) }
+          }
+        }
+      }
+      querySoNamNhapNgu.selector.docType = 'QuanNhan';
       _SoNamNhapNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
       countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
 
     }
 
     let querySoTuoi = {};
-    if (SoTuoi == '30') {
-      querySoTuoi = {
-        'selector': {
-          'NgaySinh': { '$gte': backInTime.backInTime(30) }
-        }
-      }
-    }
-    else if (SoTuoi == '30-35') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(30) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(35) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoTuoi == '35-40') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(35) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(40) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoTuoi == '40-45') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(40) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(45) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoTuoi == '45-50') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(45) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(50) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoTuoi == '50-55') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(50) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(55) }
-            }
-          ]
-        }
-      }
-    }
-    else if (SoTuoi == '55-60') {
-      querySoTuoi = {
-        'selector': {
-          '$and': [
-            {
-              'NgaySinh': { '$lt': backInTime.backInTime(55) }
-            },
-            {
-              'NgaySinh': { '$gte': backInTime.backInTime(60) }
-            }
-          ]
-        }
-      }
-    }
-
 
     let _SoTuoi // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
     let countSoTuoi // = JSON.parse(_SoTuoi.toString()).length;
 
     if (SoTuoi) {
-      // querySoTuoi.selector.docType = 'QuanNhan';
+      if (SoTuoi == '30') {
+        querySoTuoi = {
+          'selector': {
+            'NgaySinh': { '$gte': backInTime.backInTime(30) }
+          }
+        }
+      }
+      else if (SoTuoi == '30-35') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(30) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(35) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoTuoi == '35-40') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(35) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(40) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoTuoi == '40-45') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(40) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(45) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoTuoi == '45-50') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(45) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(50) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoTuoi == '50-55') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(50) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(55) }
+              }
+            ]
+          }
+        }
+      }
+      else if (SoTuoi == '55-60') {
+        querySoTuoi = {
+          'selector': {
+            '$and': [
+              {
+                'NgaySinh': { '$lt': backInTime.backInTime(55) }
+              },
+              {
+                'NgaySinh': { '$gte': backInTime.backInTime(60) }
+              }
+            ]
+          }
+        }
+      }
+      querySoTuoi.selector.docType = 'QuanNhan';
       _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
       countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
     }
