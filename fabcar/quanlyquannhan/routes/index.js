@@ -294,6 +294,7 @@ router.get('/thongke', async function (req, res, next) {
     if (KhuVucDiaLy) {
       _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
       countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
+      console.log('khuVucDiaLy', JSON.parse(_KhuVucDiaLy.toString()));
 
     }
 
