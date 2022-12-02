@@ -370,7 +370,7 @@ router.get('/thongke', async function (req, res, next) {
     let _SoNamNhapNgu // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
     let countSoNamNhapNgu // = await JSON.parse(_SoNamNhapNgu).length;
 
-    if (SoNamNhapNgu != undefined || SoNamNhapNgu != 'undefined') {
+    if (query.SoNamNhapNgu != undefined) {
       console.log('soNamNhapNgu', SoNamNhapNgu)
       if (SoNamNhapNgu == '0-5') {
         querySoNamNhapNgu = {
@@ -454,7 +454,7 @@ router.get('/thongke', async function (req, res, next) {
       countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
 
     }
-    else if (SoNamNhapNgu == undefined || SoNamNhapNgu == 'undefined') {
+    else if (query.SoNamNhapNgu == undefined) {
       console.log('snnn');
     }
 
@@ -463,7 +463,8 @@ router.get('/thongke', async function (req, res, next) {
     let _SoTuoi // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
     let countSoTuoi // = JSON.parse(_SoTuoi.toString()).length;
 
-    if (SoTuoi != undefined || SoTuoi != 'undefined') {
+    if (query.SoTuoi != undefined) {
+      console.log('sotuoi', SoTuoi);
       if (SoTuoi == '30') {
         querySoTuoi = {
           'selector': {
@@ -559,7 +560,7 @@ router.get('/thongke', async function (req, res, next) {
       _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
       countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
     }
-    else if (SoTuoi == undefined || SoTuoi == 'undefined') {
+    else if (query.SoTuoi == undefined) {
       console.log('st')
     }
     let finalResult = {
