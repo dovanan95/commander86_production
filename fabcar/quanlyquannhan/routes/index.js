@@ -230,7 +230,7 @@ router.get('/thongke', async function (req, res, next) {
     }
 
     let _DonVi;
-    let countDonVi
+    let countDonVi;
 
     if (DonVi) {
       _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
@@ -240,20 +240,35 @@ router.get('/thongke', async function (req, res, next) {
     let queryChucVu = {
       'selector': { 'ChucVu': ChucVu, 'docType': 'QuanNhan' }
     }
-    let _ChucVu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChucVu));
-    let countChucVu = JSON.parse(_ChucVu.toString()).length;
+    let _ChucVu;
+    let countChucVu;
+
+    if (ChucVu) {
+      _ChucVu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChucVu));
+      countChucVu = JSON.parse(_ChucVu.toString()).length;
+    }
 
     let queryCapBac = {
       'selector': { 'CapBac': CapBac, 'docType': 'QuanNhan' }
     }
-    let _CapBac = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCapBac));
-    let countCapBac = JSON.parse(_CapBac.toString()).length;
+    let _CapBac;
+    let countCapBac;
+
+    if (CapBac) {
+      _CapBac = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCapBac));
+      countCapBac = JSON.parse(_CapBac.toString()).length;
+    }
 
     let queryTrinhDoNgoaiNgu = {
       'selector': { 'TrinhDoNgoaiNgu': TrinhDoNgoaiNgu, 'docType': 'QuanNhan' }
     }
-    let _TrinhDoNgoaiNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoNgoaiNgu));
-    let countTrinhDoNgoaiNgu = JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
+    let _TrinhDoNgoaiNgu //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoNgoaiNgu));
+    let countTrinhDoNgoaiNgu //= JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
+
+    if (TrinhDoNgoaiNgu) {
+      _TrinhDoNgoaiNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoNgoaiNgu));
+      countTrinhDoNgoaiNgu = JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
+    }
 
     let queryKhuVucDiaLy = {};
     if (KhuVucDiaLy = 'TP Hà Nội') {
@@ -273,8 +288,15 @@ router.get('/thongke', async function (req, res, next) {
         }
       }
     }
-    let _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
-    let countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
+    let _KhuVucDiaLy //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
+    let countKhuVucDiaLy //= JSON.parse(_KhuVucDiaLy.toString()).length;
+
+    if (KhuVucDiaLy) {
+      _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
+      countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
+
+    }
+
 
     let queryCoSoDaoTao;
     if (CoSoDaoTao == 'Hà Nội') {
@@ -295,24 +317,38 @@ router.get('/thongke', async function (req, res, next) {
       }
     }
 
-    let _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
-    let countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
+    let _CoSoDaoTao //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
+    let countCoSoDaoTao //= JSON.parse(_CoSoDaoTao.toString()).length;
+
+    if (CoSoDaoTao) {
+      _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
+      countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
+    }
 
     let queryChungChiDaoTao = {
       'selector': {
         'ChungChiDaoTao': ChungChiDaoTao, 'docType': 'QuanNhan'
       }
     }
-    let _ChungChiDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChungChiDaoTao));
-    let countChungChiDaoTao = JSON.parse(_ChungChiDaoTao.toString()).length;
+    let _ChungChiDaoTao // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChungChiDaoTao));
+    let countChungChiDaoTao // = JSON.parse(_ChungChiDaoTao.toString()).length;
+    if (ChungChiDaoTao) {
+      _ChungChiDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryChungChiDaoTao));
+      countChungChiDaoTao = JSON.parse(_ChungChiDaoTao.toString()).length;
+    }
 
     let queryTrinhDoCMKT = {
       'selector': {
         'TrinhDoCMKT': TrinhDoCMKT, 'docType': 'QuanNhan'
       }
     }
-    let _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
-    let countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
+    let _TrinhDoCMKT // =  await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
+    let countTrinhDoCMKT // =  JSON.parse(_TrinhDoCMKT.toString()).length;
+
+    if (TrinhDoCMKT) {
+      _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
+      countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
+    }
 
     let queryLoaiHinhDaoTao = {
       'selector': {
@@ -320,9 +356,13 @@ router.get('/thongke', async function (req, res, next) {
       }
     }
 
-    let _LoaiHinhDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryLoaiHinhDaoTao));
-    let countLoaiHinhDaoTao = JSON.parse(_LoaiHinhDaoTao.toString()).length;
+    let _LoaiHinhDaoTao // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryLoaiHinhDaoTao));
+    let countLoaiHinhDaoTao // = JSON.parse(_LoaiHinhDaoTao.toString()).length;
 
+    if (LoaiHinhDaoTao) {
+      _LoaiHinhDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryLoaiHinhDaoTao));
+      countLoaiHinhDaoTao = JSON.parse(_LoaiHinhDaoTao.toString()).length;
+    }
     let Today = new Date().getTime();
 
     let querySoNamNhapNgu = {};
@@ -405,8 +445,14 @@ router.get('/thongke', async function (req, res, next) {
     }
     querySoNamNhapNgu.selector.docType = 'QuanNhan';
 
-    let _SoNamNhapNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
-    let countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
+    let _SoNamNhapNgu // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
+    let countSoNamNhapNgu // = await JSON.parse(_SoNamNhapNgu).length;
+
+    if (SoNamNhapNgu) {
+      _SoNamNhapNgu = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoNamNhapNgu));
+      countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
+
+    }
 
     let querySoTuoi = {};
     if (SoTuoi == '30') {
@@ -502,9 +548,13 @@ router.get('/thongke', async function (req, res, next) {
     }
     querySoTuoi.selector.docType = 'QuanNhan';
 
-    let _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
-    let countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
+    let _SoTuoi // = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
+    let countSoTuoi // = JSON.parse(_SoTuoi.toString()).length;
 
+    if (SoTuoi) {
+      _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
+      countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
+    }
     let finalResult = {
       countSoNamNhapNgu,
       countLoaiHinhDaoTao,
