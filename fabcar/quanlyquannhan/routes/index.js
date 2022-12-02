@@ -198,7 +198,7 @@ router.get('/timkiem', async function (req, res, next) {
     }
     queryParam.docType = "QuanNhan";
     let queryString = {
-      "selector": queryParam, 'limit': parseInt(limit), 'skip': parseInt(skip)
+      "selector": queryParam, 'limit': parseInt(limit), 'skip': parseInt(skip), "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
     }
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
