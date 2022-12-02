@@ -250,14 +250,14 @@ router.get('/thongke', async function (req, res, next) {
     let countTrinhDoNgoaiNgu = JSON.parse(_TrinhDoNgoaiNgu.toString()).length;
 
     let queryKhuVucDiaLy = {};
-    if (KhuVucDiaLy = 'Hà Nội') {
+    if (KhuVucDiaLy = 'TP Hà Nội') {
       queryKhuVucDiaLy = {
         'selector': {
           'ThuongTru': KhuVucDiaLy, 'docType': 'QuanNhan'
         }
       }
     }
-    else if (KhuVucDiaLy != 'Hà Nội') {
+    else if (KhuVucDiaLy != 'TP Hà Nội') {
       queryKhuVucDiaLy = {
         'selector': {
           '$not': {

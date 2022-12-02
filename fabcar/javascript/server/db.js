@@ -1,18 +1,18 @@
-const MongoClient = require( 'mongodb' ).MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 const url = "mongodb://localhost:27017";
 
 var _db;
 
 module.exports = {
 
-  connectToServer: function( callback ) {
-    MongoClient.connect( url,  { useNewUrlParser: true }, function( err, client ) {
-      _db  = client.db('httcddh_2022');
-      return callback( err );
-    } );
+  connectToServer: function (callback) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
+      _db = client.db('httcddh_2022');
+      return callback(err);
+    });
   },
 
-  getDb: function() {
+  getDb: function () {
     return _db;
   }
 };
