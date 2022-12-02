@@ -454,6 +454,9 @@ router.get('/thongke', async function (req, res, next) {
       countSoNamNhapNgu = await JSON.parse(_SoNamNhapNgu).length;
 
     }
+    else if (SoNamNhapNgu == undefined) {
+      console.log('snnn');
+    }
 
     let querySoTuoi = {};
 
@@ -555,6 +558,9 @@ router.get('/thongke', async function (req, res, next) {
       // querySoTuoi.selector.docType = 'QuanNhan';
       _SoTuoi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(querySoTuoi));
       countSoTuoi = JSON.parse(_SoTuoi.toString()).length;
+    }
+    else if (SoTuoi == undefined) {
+      console.log('st')
     }
     let finalResult = {
       countSoNamNhapNgu,
