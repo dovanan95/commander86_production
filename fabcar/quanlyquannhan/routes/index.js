@@ -271,7 +271,7 @@ router.get('/thongke', async function (req, res, next) {
     }
 
     let queryKhuVucDiaLy = {};
-    if (KhuVucDiaLy = 'TP Hà Nội') {
+    if (KhuVucDiaLy == 'TP Hà Nội') {
       queryKhuVucDiaLy = {
         'selector': {
           'ThuongTru': KhuVucDiaLy, 'docType': 'QuanNhan'
