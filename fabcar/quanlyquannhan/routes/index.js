@@ -182,6 +182,11 @@ router.get('/timkiem', async function (req, res, next) {
     let HoVaTen = query.HoVaTen;
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
     let NguyenQuan = query.NguyenQuan;
+
+    let sort = query.sort;
+    let limit = query.limit;
+    let skip = query.skip;
+
     let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
     for (let param in queryParam) {
       if (queryParam[param] == undefined || queryParam[param] == '""') {
@@ -193,7 +198,7 @@ router.get('/timkiem', async function (req, res, next) {
     }
     queryParam.docType = "QuanNhan";
     let queryString = {
-      "selector": queryParam
+      "selector": queryParam, 'limit': limit, 'skip': skip
     }
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
