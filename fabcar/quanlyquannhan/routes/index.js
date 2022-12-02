@@ -371,6 +371,7 @@ router.get('/thongke', async function (req, res, next) {
     let countSoNamNhapNgu // = await JSON.parse(_SoNamNhapNgu).length;
 
     if (SoNamNhapNgu) {
+      console.log('soNamNhapNgu', SoNamNhapNgu)
       if (SoNamNhapNgu == '0-5') {
         querySoNamNhapNgu = {
           'selector': {
