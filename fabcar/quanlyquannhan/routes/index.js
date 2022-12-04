@@ -196,7 +196,7 @@ router.get('/timkiem', async function (req, res, next) {
         queryParam[param] = decodeURIComponent(queryParam[param])
       }
     }
-    queryParam["HoVaTen"] = { "$gt": null }
+    //queryParam["HoVaTen"] = { "$gt": null }
     queryParam.docType = "QuanNhan";
     let queryString = {
       "selector": queryParam,
