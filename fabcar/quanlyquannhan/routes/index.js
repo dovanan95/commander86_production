@@ -217,8 +217,9 @@ router.get('/timkiem', async function (req, res, next) {
     }
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    //let result = JSON.parse(thongTinQuanNhan.toString());
-    res.status(200).send({ 'statusCode': res.statusCode, 'message': JSON.parse(thongTinQuanNhan.toString()) })
+    let result = JSON.parse(thongTinQuanNhan.toString());
+    result = result.slice(0, limit);
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': result })
   }
   catch (error) {
     console.log(error);
