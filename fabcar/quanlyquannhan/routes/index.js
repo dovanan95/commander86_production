@@ -185,7 +185,16 @@ router.get('/timkiem', async function (req, res, next) {
 
     let sort = query.sort;
     let limit = query.limit;
-    let skip = query.skip;
+
+    let skip;
+    let page = query.page;
+
+    if (page == 1) {
+      skip = 0
+    }
+    else {
+      skip = (page - 1) * limit;
+    }
 
     let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
     for (let param in queryParam) {
@@ -200,10 +209,10 @@ router.get('/timkiem', async function (req, res, next) {
     queryParam.docType = "QuanNhan";
     let queryString = {
       "selector": queryParam,
-      //"sort": [{ "HoVaTen": "asc" }],
-      "limit": parseInt(limit),
+      "sort": [{ "HoVaTen": "asc" }],
+      //"limit": parseInt(limit),
       "skip": parseInt(skip),
-      //"use_index": ["indexQuanNhanDoc", "indexQuanNhan"],
+      "use_index": ["indexQuanNhanDoc", "indexQuanNhan"],
       "execution_stats": true
     }
     console.log('queryString', queryString)
