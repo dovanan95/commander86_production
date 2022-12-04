@@ -201,8 +201,8 @@ router.get('/timkiem', async function (req, res, next) {
     let queryString = {
       "selector": queryParam,
       "sort": [{ "HoVaTen": "asc" }],
-      'limit': parseInt(limit),
-      'skip': parseInt(skip),
+      "limit": parseInt(limit),
+      "skip": parseInt(skip),
       "use_index": ["_design/indexQuanhNhanDoc", "indexQuanNhan"]
     }
     console.log('queryString', queryString)
