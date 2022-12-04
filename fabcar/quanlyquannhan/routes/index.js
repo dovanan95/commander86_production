@@ -200,7 +200,7 @@ router.get('/timkiem', async function (req, res, next) {
     queryParam.docType = "QuanNhan";
     let queryString = {
       "selector": queryParam,
-      //"sort": [{ "HoVaTen": "desc" }],
+      "sort": [{ "HoVaTen": "desc" }],
       'limit': parseInt(limit),
       'skip': parseInt(skip),
       "use_index": ["_design/indexQuanhNhanDoc", "indexQuanNhan"]
