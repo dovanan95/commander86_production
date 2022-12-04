@@ -203,7 +203,7 @@ router.get('/timkiem', async function (req, res, next) {
       //"sort": [{ "HoVaTen": "desc" }],
       'limit': parseInt(limit),
       'skip': parseInt(skip),
-      "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"]
+      "use_index": ["_design/indexQuanhNhanDoc", "indexQuanNhan"]
     }
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));

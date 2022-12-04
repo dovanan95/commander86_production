@@ -1,0 +1,10 @@
+{
+    "index": {
+        "fields": [
+            "HoVaTen"
+        ]
+    },
+    "ddoc": "indexQuanNhanDoc",
+    "name": "indexQuanNhan",
+    "type": "json"
+}
