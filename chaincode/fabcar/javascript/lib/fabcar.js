@@ -477,7 +477,6 @@ class FabCar extends Contract {
                 "limit": parseInt(limit),
                 "skip": parseInt(skip),
                 "use_index": ["_design/indexPrivMessDoc", "indexPrivMess"],
-                "execution_stats": true
             }
             var result = await this.queryCustom(ctx, JSON.stringify(query_private_message));
             return (result);
