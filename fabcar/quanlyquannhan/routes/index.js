@@ -218,6 +218,7 @@ router.get('/timkiem', async function (req, res, next) {
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
     let result = JSON.parse(thongTinQuanNhan.toString());
+    let total = result.length;
     let _result = result.slice(0, limit);
     res.status(200).send(
       {
@@ -225,7 +226,7 @@ router.get('/timkiem', async function (req, res, next) {
         'message': _result,
         'page': parseInt(page),
         'limit': parseInt(limit),
-        'total': result.length
+        'total': total
       })
   }
   catch (error) {
