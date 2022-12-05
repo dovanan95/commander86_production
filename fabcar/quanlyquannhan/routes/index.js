@@ -217,8 +217,12 @@ router.get('/timkiem', async function (req, res, next) {
     }
     console.log('queryString', queryString)
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    let queryCount = {
+      "selector": queryParam
+    }
+    const countTTQN = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCount));
     let result = JSON.parse(thongTinQuanNhan.toString());
-    let total = result.length;
+    let total = JSON.parse(countTTQN.toString()).length;
     let _result = result.slice(0, limit);
     res.status(200).send(
       {
