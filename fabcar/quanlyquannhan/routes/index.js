@@ -57,9 +57,10 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
+      console.log('miss items', missItem)
       if ('user_id' in missItem) {
         //res.status(400).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
-        res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id unavailable', missItem });
+        res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id unavailable' });
         next();
       }
       for (let item of missItem) {
