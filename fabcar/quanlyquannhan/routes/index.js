@@ -54,6 +54,19 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     "TinhTrangHonNhan":"ABCCD",
     "NganhQuanLy":"ABCCD"*/
   try {
+
+    let missItem = await validateInput.saveOfficerProfileValidation(req);
+    if (missItem.length > 0) {
+      if ('user_id' in missItem) {
+        //res.status(400).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
+        res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id unavailable' });
+        next();
+      }
+      for (let item of missItem) {
+        req.body[item.toString()] = "";
+      }
+
+    }
     let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
     let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
@@ -106,11 +119,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let LoaiHinhDaoTao = req.body.LoaiHinhDaoTao;
     let TrinhDoNgoaiNgu = req.body.TrinhDoNgoaiNgu
 
-    let missItem = await validateInput.saveOfficerProfileValidation(req);
-    if (missItem.length > 0) {
-      res.status(200).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
-      next();
-    }
+
     const contract_ = await contract();
 
     const queryString = {
