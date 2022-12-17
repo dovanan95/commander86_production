@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const uns = require("underscore");
+const __ = require("recursive-diff")
 
 
 async function saveOfficerProfileValidation(req) {
@@ -134,7 +134,7 @@ async function verifyBlockchainData(ObjA, ObjB) {
         return ({ 'result': true })
     }
     else if (!_.isEqual(ObjA, ObjB)) {
-        return ({ 'result': false })
+        return ({ 'result': false, 'diff': __.getDiff(ObjA, ObjB) })
     }
 }
 module.exports.saveOfficerProfileValidation = saveOfficerProfileValidation;
