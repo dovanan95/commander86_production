@@ -59,7 +59,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     if (missItem.length > 0) {
       if ('user_id' in missItem) {
         //res.status(400).send({ 'statusCode': res.statusCode, 'miss Item': missItem });
-        res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id unavailable' });
+        res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id unavailable', missItem });
         next();
       }
       for (let item of missItem) {
