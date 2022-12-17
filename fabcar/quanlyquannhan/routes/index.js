@@ -775,13 +775,12 @@ router.post('/blockchain-verify', async function (req, res, next) {
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
     let beforeVerify = await JSON.parse(thongTinQuanNhan.toString())[0];
-    let key = beforeVerify.Key.toString(); console.log('Key', key);
+    let key = beforeVerify.Key.toString();
     let afterResult = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
     let afterVerify = await JSON.parse(afterResult.toString());
     let ObjA = beforeVerify.Record;
     let ObjB = afterVerify;
     let diff = await validateInput.verifyBlockchainData(ObjA, ObjB);
-    console.log('diff', diff)
     res.status(200).send({ 'statusCode': res.statusCode, 'message': diff });
 
   }
