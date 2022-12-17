@@ -774,8 +774,8 @@ router.post('/blockchain-verify', async function (req, res, next) {
       }
     }
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
-    let beforeVerify = JSON.parse(thongTinQuanNhan.toString())[0];
-    let key = TTQN.Key;
+    let beforeVerify = await JSON.parse(thongTinQuanNhan.toString())[0];
+    let key = TTQN.Key.toString(); console.log('Key', key);
     let afterVerify = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
     console.log('before', beforeVerify);
     console.log('after', afterVerify);
