@@ -779,6 +779,7 @@ router.post('/blockchain-verify', async function (req, res, next) {
     let afterVerify = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
     console.log('before', beforeVerify);
     console.log('after', afterVerify);
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ok' });
 
   }
   catch (error) {
