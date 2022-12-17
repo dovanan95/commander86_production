@@ -116,16 +116,16 @@ async function saveOfficerProfileValidation(req) {
 }
 
 async function verifyBlockchainData(ObjA, ObjB) {
-    if (ObjA.hasOwnProperty(verify_count)) {
+    if (ObjA.hasOwnProperty('verify_count')) {
         delete ObjA.verify_count
     }
-    if (ObjA.hasOwnProperty(verify_time)) {
+    if (ObjA.hasOwnProperty('verify_time')) {
         delete ObjA.verify_time
     }
-    if (ObjB.hasOwnProperty(verify_count)) {
+    if (ObjB.hasOwnProperty('verify_count')) {
         delete ObjB.verify_count
     }
-    if (ObjB.hasOwnProperty(verify_time)) {
+    if (ObjB.hasOwnProperty('verify_time')) {
         delete ObjB.verify_time
     }
     if (_.isEqual(ObjA, ObjB)) {
