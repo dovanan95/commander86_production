@@ -128,12 +128,13 @@ async function verifyBlockchainData(ObjA, ObjB) {
     if (ObjB.hasOwnProperty('verify_time')) {
         delete ObjB.verify_time
     }
+    console.log('A', ObjA);
+    console.log('B', ObjB)
     if (_.isEqual(ObjA, ObjB)) {
         return ({ 'result': true })
     }
     else if (!_.isEqual(ObjA, ObjB)) {
-        let diff = uns.omit(ObjA, ObjB)
-        return ({ 'result': false, diff })
+        return ({ 'result': false })
     }
 }
 module.exports.saveOfficerProfileValidation = saveOfficerProfileValidation;
