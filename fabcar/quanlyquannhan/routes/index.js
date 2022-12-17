@@ -758,4 +758,32 @@ router.post('/getOfficerUpdateHistoryByUserID', async function (req, res, next) 
   }
 })
 
+router.post('/blockchain-verify', async function (req, res, next) {
+  try {
+    let body = req.body;
+    if (!body.user_id) {
+      res.status(400).send({ 'statusCode': res.statusCode, 'message': 'user_id or SoHieuQuanNhan unavailable' });
+      next();
+    }
+    const contract_ = await contract();
+
+    const queryString = {
+      "selector": {
+        'user_id': body.user_id,
+        'docType': 'QuanNhan'
+      }
+    }
+    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    let beforeVerify = JSON.parse(thongTinQuanNhan.toString())[0];
+    let key = TTQN.Key;
+    let afterVerify = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
+    console.log('before', beforeVerify);
+    console.log('after', afterVerify);
+
+  }
+  catch (error) {
+    res.status(400).send({ 'statusCode': res.statusCode, 'message': error });
+  }
+})
+
 module.exports = router;
