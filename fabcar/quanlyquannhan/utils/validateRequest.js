@@ -1,3 +1,7 @@
+const _ = require("lodash");
+const uns = require("underscore");
+
+
 async function saveOfficerProfileValidation(req) {
     let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
@@ -110,4 +114,27 @@ async function saveOfficerProfileValidation(req) {
     }
     return missArr;
 }
+
+async function verifyBlockchainData(ObjA, ObjB) {
+    if (ObjA.hasOwnProperty(verify_count)) {
+        delete ObjA.verify_count
+    }
+    if (ObjA.hasOwnProperty(verify_time)) {
+        delete ObjA.verify_time
+    }
+    if (ObjB.hasOwnProperty(verify_count)) {
+        delete ObjB.verify_count
+    }
+    if (ObjB.hasOwnProperty(verify_time)) {
+        delete ObjB.verify_time
+    }
+    if (_.isEqual(ObjA, ObjB)) {
+        return ({ 'result': true })
+    }
+    else if (!_.isEqual(ObjA, ObjB)) {
+        let diff = uns.omit(ObjA, ObjB)
+        return ({ 'result': false, diff })
+    }
+}
 module.exports.saveOfficerProfileValidation = saveOfficerProfileValidation;
+module.exports.verifyBlockchainData = verifyBlockchainData; 

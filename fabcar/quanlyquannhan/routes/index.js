@@ -778,9 +778,13 @@ router.post('/blockchain-verify', async function (req, res, next) {
     let key = beforeVerify.Key.toString(); console.log('Key', key);
     let afterResult = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
     let afterVerify = await JSON.parse(afterResult.toString());
+    let ObjA = beforeVerify.Record;
+    let ObjB = afterResult;
+    let diff = validateInput.verifyBlockchainData(ObjA, ObjB);
     console.log('before', beforeVerify);
     console.log('after', afterVerify);
-    res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ok' });
+    console.log('diff', diff)
+    res.status(200).send({ 'statusCode': res.statusCode, 'message': diff });
 
   }
   catch (error) {
