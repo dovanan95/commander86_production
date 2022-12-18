@@ -163,9 +163,9 @@ class FabCar extends Contract {
                 return ({ 'message': 'ng', 'status': 'user already registered' });
             }*/
 
-            let block = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(quanNhan)));
+            let block = await ctx.stub.putState(user_id.toString(), Buffer.from(JSON.stringify(quanNhan)));
             if (block) {
-                await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                await ctx.stub.putState('lichSu' + user_id.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
             }
             //await ctx.stub.putState('a', Buffer.from(JSON.stringify({ 'key': 'value' })))
             return ({ 'message': 'ok' })
@@ -262,9 +262,9 @@ class FabCar extends Contract {
                 user_json.TrinhDoNgoaiNgu = TrinhDoNgoaiNgu;
                 user_json.docType = quanNhan.docType;
 
-                let saveProfle = await ctx.stub.putState(SoHieuQuanNhan.toString(), Buffer.from(JSON.stringify(user_json)));
+                let saveProfle = await ctx.stub.putState(user_id.toString(), Buffer.from(JSON.stringify(user_json)));
                 if (saveProfle) {
-                    await ctx.stub.putState('lichSu' + SoHieuQuanNhan.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
+                    await ctx.stub.putState('lichSu' + user_id.toString() + updateTime, Buffer.from(JSON.stringify(lichSuCapNhatQuanNhan)))
                 }
 
                 return ({ 'message': 'ok' });
