@@ -775,7 +775,8 @@ router.post('/blockchain-verify', async function (req, res, next) {
     const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', queryString);
     let beforeVerify = await JSON.parse(thongTinQuanNhan.toString())[0];
     let key = body.user_id;
-    let afterResult = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime())
+    let afterResult = await contract_.submitTransaction('verifyMessBlockchain', key, new Date().getTime());
+    console.log('bf', beforeVerify); console.log('af', afterResult);
     let afterVerify = await JSON.parse(afterResult.toString());
     let ObjA = beforeVerify.Record;
     let ObjB = afterVerify;
