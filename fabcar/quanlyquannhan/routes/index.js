@@ -780,6 +780,7 @@ router.post('/blockchain-verify', async function (req, res, next) {
     let afterVerify = await JSON.parse(afterResult.toString());
     let ObjA = beforeVerify.Record;
     let ObjB = afterVerify;
+    console.log(afterVerify)
     let diff = await validateInput.verifyBlockchainData(ObjA, ObjB);
     res.status(200).send({ 'statusCode': res.statusCode, 'message': diff });
 
