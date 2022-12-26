@@ -187,10 +187,12 @@ router.get('/timkiem', async function (req, res, next) {
     const contract_ = await contract();
 
     let query = req.query;
-    let DonVi = query.DonVi;
+    /*let DonVi = query.DonVi;
     let HoVaTen = query.HoVaTen;
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
-    let NguyenQuan = query.NguyenQuan;
+    let NguyenQuan = query.NguyenQuan;*/
+
+    let metric = decodeURIComponent(query.metric);
 
     let sort = query.sort;
     let limit = query.limit;
@@ -205,15 +207,23 @@ router.get('/timkiem', async function (req, res, next) {
       skip = (page - 1) * limit;
     }
 
-    let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
-    for (let param in queryParam) {
+    //let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
+    let queryParam = {
+      '$or': [
+        { 'DonVi': metric },
+        { 'HoVaTen': metric },
+        { 'NganhNgheDaoTao': metric },
+        { 'NguyenQuan': metric }
+      ]
+    }
+    /*for (let param in queryParam) {
       if (queryParam[param] == undefined || queryParam[param] == '""') {
         delete queryParam[param]
       }
       else if (queryParam[param] != undefined) {
         queryParam[param] = decodeURIComponent(queryParam[param])
       }
-    }
+    }*/
     //queryParam["HoVaTen"] = { "$gt": null }
     queryParam.docType = "QuanNhan";
     let queryString = {
