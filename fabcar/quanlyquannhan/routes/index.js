@@ -192,7 +192,7 @@ router.get('/timkiem', async function (req, res, next) {
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
     let NguyenQuan = query.NguyenQuan;*/
 
-    let metric = decodeURIComponent(query.metric);
+
 
     let sort = query.sort;
     let limit = query.limit;
@@ -208,14 +208,22 @@ router.get('/timkiem', async function (req, res, next) {
     }
 
     //let queryParam = { DonVi, HoVaTen, NganhNgheDaoTao, NguyenQuan };
-    let queryParam = {
-      '$or': [
-        { 'DonVi': metric },
-        { 'HoVaTen': metric },
-        { 'NganhNgheDaoTao': metric },
-        { 'NguyenQuan': metric }
-      ]
+    let queryParam;
+    if (!query.metric) {
+      queryParam = {}
     }
+    else if (query.metric) {
+      let metric = decodeURIComponent(query.metric);
+      queryParam = {
+        '$or': [
+          { 'DonVi': metric },
+          { 'HoVaTen': metric },
+          { 'NganhNgheDaoTao': metric },
+          { 'NguyenQuan': metric }
+        ]
+      }
+    }
+
     /*for (let param in queryParam) {
       if (queryParam[param] == undefined || queryParam[param] == '""') {
         delete queryParam[param]
