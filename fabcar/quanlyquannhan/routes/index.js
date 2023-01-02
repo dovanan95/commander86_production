@@ -192,8 +192,6 @@ router.get('/timkiem', async function (req, res, next) {
     let NganhNgheDaoTao = query.NganhNgheDaoTao;
     let NguyenQuan = query.NguyenQuan;*/
 
-
-
     let sort = query.sort;
     let limit = query.limit;
 
@@ -285,6 +283,58 @@ router.get('/timkiem', async function (req, res, next) {
     res.status(400).send({ 'message': error });
   }
 });
+router.get('/timkiemthongke', async function (req, res, next) {
+  try {
+    const contract_ = await contract();
+    let query = req.query;
+    let filter = query.filter;
+    let value = decodeURIComponent(query.value);
+    let limit = query.limit;
+
+    let skip;
+    let page = query.page;
+
+    if (page == 1) {
+      skip = 0
+    }
+    else {
+      skip = (page - 1) * limit;
+    }
+    let queryParam = {};
+    queryParam[filter] = value;
+    queryParam['docType'] = 'QuanNhan';
+    let queryString = {
+      "selector": queryParam,
+      "sort": [{ "HoVaTen": "asc" }],
+      //"limit": parseInt(limit),
+      "skip": parseInt(skip),
+      "use_index": ["indexQuanNhanDoc", "indexQuanNhan"],
+      "execution_stats": true
+    }
+    console.log('queryString', queryString)
+    const thongTinQuanNhan = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryString));
+    let queryCount = {
+      "selector": queryParam
+    }
+    const countTTQN = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCount));
+    let result = JSON.parse(thongTinQuanNhan.toString());
+    let total = JSON.parse(countTTQN.toString()).length;
+    let _result = result.slice(0, limit);
+    res.status(200).send(
+      {
+        'statusCode': res.statusCode,
+        'message': _result,
+        'page': parseInt(page),
+        'limit': parseInt(limit),
+        'total': total
+      })
+
+
+  } catch (err) {
+    console.log(error);
+    res.status(400).send({ 'message': error });
+  }
+})
 
 router.get('/thongke', async function (req, res, next) {
   try {
