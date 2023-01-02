@@ -212,14 +212,7 @@ router.get('/timkiem', async function (req, res, next) {
     }
     else if (query.metric) {
       let metric = decodeURIComponent(query.metric);
-      /* queryParam = {
-        '$or': [
-          { 'DonVi': metric },
-          { 'HoVaTen': metric },
-          { 'NganhNgheDaoTao': metric },
-          { 'NguyenQuan': metric }
-        ]
-      }*/
+
       queryParam = {
         '$or': [
           {
@@ -301,7 +294,66 @@ router.get('/timkiemthongke', async function (req, res, next) {
       skip = (page - 1) * limit;
     }
     let queryParam = {};
-    queryParam[filter] = value;
+    if (filter == 'KhuVucDiaLy') {
+      if (value == 'TP Hà Nội') {
+        queryParam = { 'ThuongTru': 'TP Hà Nội' }
+      }
+      else if (value != 'TP Hà Nội') {
+        queryParam = {
+          '$not': {
+            'ThuongTru': 'TP Hà Nội'
+          },
+        }
+      }
+    }
+    else if (filter == 'CoSoDaoTao') {
+      if (value == 'TP Hà Nội') {
+        queryParam = { 'CoSoDaoTao': 'TP Hà Nội' }
+      }
+      else if (value != 'TP Hà Nội') {
+        queryParam = { 'CoSoDaoTao': 'TP Hà Nội' }
+      }
+    }
+    else if (filter == 'SoNamNhapNgu') {
+      if (value == '25') {
+        queryParam = { 'NgayNhapNgu': { '$lt': backInTime.backInTime(25) } }
+      }
+      else {
+        queryParam = {
+          '$and': [
+            {
+              'NgayNhapNgu': { '$lt': backInTime.backInTime(value.split('-')[0]) }
+            },
+            {
+              'NgayNhapNgu': { '$gte': backInTime.backInTime(value.split('-')[1]) }
+            }
+          ]
+        }
+      }
+    }
+    else if (filter == 'SoTuoi') {
+      if (value == '30') {
+        queryParam = {
+          'NgaySinh': { '$gte': backInTime.backInTime(30) }
+        }
+      }
+      else {
+        queryParam = {
+          '$and': [
+            {
+              'NgaySinh': { '$lt': backInTime.backInTime(value.split('-')[0]) }
+            },
+            {
+              'NgaySinh': { '$gte': backInTime.backInTime(value.split('-')[1]) }
+            }
+          ]
+        }
+      }
+    }
+    else {
+      queryParam[filter] = value;
+    }
+
     queryParam['docType'] = 'QuanNhan';
     let queryString = {
       "selector": queryParam,
