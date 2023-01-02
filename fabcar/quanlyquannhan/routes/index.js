@@ -214,12 +214,32 @@ router.get('/timkiem', async function (req, res, next) {
     }
     else if (query.metric) {
       let metric = decodeURIComponent(query.metric);
-      queryParam = {
+      /* queryParam = {
         '$or': [
           { 'DonVi': metric },
           { 'HoVaTen': metric },
           { 'NganhNgheDaoTao': metric },
           { 'NguyenQuan': metric }
+        ]
+      }*/
+      queryParam = {
+        '$or': [
+          {
+            'DonVi':
+              { '$regex': metric }
+          },
+          {
+            'HoVaTen':
+              { '$regex': metric }
+          },
+          {
+            'NganhNgheDaoTao':
+              { '$regex': metric }
+          },
+          {
+            'NguyenQuan':
+              { '$regex': metric }
+          }
         ]
       }
     }
