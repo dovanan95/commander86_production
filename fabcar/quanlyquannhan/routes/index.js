@@ -58,7 +58,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
 
     }
     console.log('body', req.body);
-    console.log('nguoi update', req.body['IDNguoiUpdate']);
+    console.log('nguoi update', req.body['IDNguoiUpdate'], 'user_id', req.body.user_id);
     let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
     let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
