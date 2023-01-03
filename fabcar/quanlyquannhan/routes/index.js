@@ -102,7 +102,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let TrinhDoLyLuanChinhTri = req.body.TrinhDoLyLuanChinhTri;
     let HocVi = req.body.HocVi;
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
-    let IDNguoiUpdate = req.body.IDNguoiUpdate;
+    let IDNguoiUpdate = req.body.IDNguoiUpdate; console.log('id nguoi update', IDNguoiUpdate)
     let updateTime = parseInt(Date.now());
     let CapToChucDaoTao = req.body.CapToChucDaoTao;
     let CoSoDaoTao = req.body.CoSoDaoTao;
