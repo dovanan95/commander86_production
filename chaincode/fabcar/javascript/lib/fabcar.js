@@ -208,7 +208,7 @@ class FabCar extends Contract {
                 docType: 'updateHistory'
             }
 
-            const userAsBytes = await ctx.stub.getState(SoHieuQuanNhan);
+            const userAsBytes = await ctx.stub.getState(user_id);
             if (userAsBytes) {
                 const user_json = JSON.parse(userAsBytes.toString());
                 user_json.user_id = user_id;
