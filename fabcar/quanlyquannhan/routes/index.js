@@ -41,18 +41,7 @@ router.post('/createUser', async function (req, res) {
 })
 
 router.post('/saveOfficerProfile', async function (req, res, next) {
-  /*
-    "CapToChucDaoTao":"ABCD",
-    "CoSoDaoTao":"ABCD",
-    "ChungChiDaoTao":"ABCD",
-    "NoiDungDaoTao":"ABCD",
-    "SucKhoe":"Loai 1",
-    "BacLuong":"ABCCD",
-    "NhomMau":"A",
-    "HeSoLuong":"4,6",
-    "SoBHXH":"ABCCD",
-    "TinhTrangHonNhan":"ABCCD",
-    "NganhQuanLy":"ABCCD"*/
+
   try {
 
     let missItem = await validateInput.saveOfficerProfileValidation(req);
@@ -68,6 +57,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
       }
 
     }
+    console.log('body', req.body);
     let user_id = req.body.user_id;
     let HoVaTen = req.body.HoVaTen;
     let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
@@ -102,7 +92,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
     let TrinhDoLyLuanChinhTri = req.body.TrinhDoLyLuanChinhTri;
     let HocVi = req.body.HocVi;
     let TrinhDoCMKT = req.body.TrinhDoCMKT;
-    let IDNguoiUpdate = req.body.IDNguoiUpdate; console.log('id nguoi update', req.body.IDNguoiUpdate);
+    let IDNguoiUpdate = req.body.IDNguoiUpdate;
     let updateTime = parseInt(Date.now());
     let CapToChucDaoTao = req.body.CapToChucDaoTao;
     let CoSoDaoTao = req.body.CoSoDaoTao;
