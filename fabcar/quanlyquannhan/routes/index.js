@@ -4,6 +4,7 @@ var router = express.Router();
 var blockChain = require('../utils/blockchain')
 var validateInput = require('../utils/validateRequest');
 var backInTime = require('../utils/backInTime');
+const { clone } = require('lodash');
 /* GET home page. */
 
 async function contract() {
@@ -43,7 +44,7 @@ router.post('/createUser', async function (req, res) {
 router.post('/saveOfficerProfile', async function (req, res, next) {
 
   try {
-    let body = req.body;
+    let body = clone(req.body);
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
       console.log('miss items', missItem)
