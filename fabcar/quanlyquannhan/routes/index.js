@@ -54,7 +54,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         next();
       }
       for (let item of missItem) {
-        body[item.toString()] = "";
+        body[item.toString()] = "NaN";
       }
 
     }
