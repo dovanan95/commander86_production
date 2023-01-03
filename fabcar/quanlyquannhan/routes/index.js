@@ -142,7 +142,7 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
         updateTime);
       //blockChainRep = await contract_.submitTransaction('savePrivateMessage', '1', '2', '3', '4', '5', '6', '7')
-      // let verify = await contract_.submitTransaction('verifyMessBlockchain', user_id, new Date().getTime())
+      let verify = await contract_.submitTransaction('verifyMessBlockchain', user_id, new Date().getTime())
     }
     else if (JSON.parse(thongTinQuanNhan).length > 0) {
       console.log('available data', JSON.parse(thongTinQuanNhan).length);
