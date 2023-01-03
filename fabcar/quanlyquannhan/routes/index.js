@@ -155,10 +155,9 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         SoBHXH, TinhTrangHonNhan, NganhQuanLy,
         DonVi, NganhNgheDaoTao, LoaiHinhDaoTao, TrinhDoNgoaiNgu,
         updateTime)
+      console.log('blockChainRep', JSON.parse(blockChainRep.toString()));
     }
 
-
-    console.log('blockChainRep', JSON.parse(blockChainRep.toString()))
     let responseBlock = JSON.parse(blockChainRep.toString());
     if (responseBlock.message == 'ok') {
       res.status(200).send({ 'statusCode': res.statusCode, 'message': 'ok' });

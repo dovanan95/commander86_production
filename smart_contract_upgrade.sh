@@ -52,12 +52,12 @@ peer chaincode query -C mangblockchainquansu -n chatblockchain -c '{"Args":["que
 export PATH=${PWD}/../bin:$PATH
 export FABRIC_CFG_PATH=$PWD/../config/
 export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-export PACKAGE_NAME=chatblockchain_6.tar.gz
-export CHAINCODE_LABEL=chatblockchain_6.0
+export PACKAGE_NAME=chatblockchain_3.tar.gz
+export CHAINCODE_LABEL=chatblockchain_3.0
 export CHAINCODE_NAME=chatblockchain
 export CHANNEL_ID=mangblockchainquansu
-export version=6.0
-export sequence=6
+export version=3.0
+export sequence=3
 
 peer lifecycle chaincode package $PACKAGE_NAME --path ../chaincode/fabcar/javascript/ --lang node --label $CHAINCODE_LABEL
 
@@ -70,6 +70,7 @@ export CORE_PEER_ADDRESS=localhost:7051
 
 peer lifecycle chaincode install $PACKAGE_NAME #return chaincode_package_id
 
+##----!!!!IMPORTANT!!! READ LINE 75 BEFORE RUN COMMAND BELOW----#
 export NEW_CC_PACKAGE_ID=chatblockchain_2.0:b8e25f72c8c5516f707bd5db0c36fd19d38f0bd194094da3e4cc14f62e82e019 
 # 'b8e25f72c8c5516f707bd5db0c36fd19d38f0bd194094da3e4cc14f62e82e019' is chaincode_package_id returned from previous step (DO NOT COPY)
 
