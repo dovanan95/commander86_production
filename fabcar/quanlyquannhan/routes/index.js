@@ -43,7 +43,7 @@ router.post('/createUser', async function (req, res) {
 router.post('/saveOfficerProfile', async function (req, res, next) {
 
   try {
-
+    let body = req.body;
     let missItem = await validateInput.saveOfficerProfileValidation(req);
     if (missItem.length > 0) {
       console.log('miss items', missItem)
@@ -53,63 +53,63 @@ router.post('/saveOfficerProfile', async function (req, res, next) {
         next();
       }
       for (let item of missItem) {
-        req.body[item.toString()] = "";
+        body[item.toString()] = "";
       }
 
     }
-    console.log('body', req.body);
-    console.log('nguoi update', req.body['IDNguoiUpdate'], 'user_id', req.body.user_id);
-    let user_id = req.body.user_id;
-    let HoVaTen = req.body.HoVaTen;
-    let HoVaTenKhaiSinh = req.body.HoVaTenKhaiSinh;
-    let NgaySinh = parseInt(req.body.NgaySinh);
-    let DanToc = req.body.DanToc;
-    let BiDanh = req.body.BiDanh;
-    let TonGiao = req.body.TonGiao;
-    let TenKhac = req.body.TenKhac;
-    let NgayNhapNgu = parseInt(req.body.NgayNhapNgu);
-    let SoHieuQuanNhan = req.body.SoHieuQuanNhan;
-    let NgayXuatNgu = parseInt(req.body.NgayXuatNgu);
-    let SoCMND = req.body.SoCMND;
-    let NgayTaiNgu = parseInt(req.body.NgayTaiNgu);
-    let GioiTinh = req.body.GioiTinh;
-    let NguyenQuan = req.body.NguyenQuan;
-    let CapBac = req.body.CapBac;
-    let NgayNhanCapBac = parseInt(req.body.NgayNhanCapBac);
-    let ThuongTru = req.body.ThuongTru;
-    let ChucVu = req.body.ChucVu;
-    let NgayNhanChucVu = parseInt(req.body.NgayNhanChucVu);
-    let TPGiaDinh = req.body.TPGiaDinh;
-    let TPBanThan = req.body.TPBanThan;
-    let NgayVaoDang = parseInt(req.body.NgayVaoDang);
-    let NoiVaoDang = req.body.NoiVaoDang;
-    let NgayVaoDangChinhThuc = parseInt(req.body.NgayVaoDangChinhThuc);
-    let NgayVaoDoan = parseInt(req.body.NgayVaoDoan);
-    let ChucVuDoan = req.body.ChucVuDoan;
-    let ChucVuDang = req.body.ChucVuDang;
-    let TrinhDoVanHoa = req.body.TrinhDoVanHoa;
-    let TrinhDoQuanLy = req.body.TrinhDoQuanLy;
-    let HocHam = req.body.HocHam;
-    let TrinhDoLyLuanChinhTri = req.body.TrinhDoLyLuanChinhTri;
-    let HocVi = req.body.HocVi;
-    let TrinhDoCMKT = req.body.TrinhDoCMKT;
-    let IDNguoiUpdate = req.body.IDNguoiUpdate;
+    console.log('body', body);
+    console.log('nguoi update', body['IDNguoiUpdate']);
+    let user_id = body.user_id;
+    let HoVaTen = body.HoVaTen;
+    let HoVaTenKhaiSinh = body.HoVaTenKhaiSinh;
+    let NgaySinh = parseInt(body.NgaySinh);
+    let DanToc = body.DanToc;
+    let BiDanh = body.BiDanh;
+    let TonGiao = body.TonGiao;
+    let TenKhac = body.TenKhac;
+    let NgayNhapNgu = parseInt(body.NgayNhapNgu);
+    let SoHieuQuanNhan = body.SoHieuQuanNhan;
+    let NgayXuatNgu = parseInt(body.NgayXuatNgu);
+    let SoCMND = body.SoCMND;
+    let NgayTaiNgu = parseInt(body.NgayTaiNgu);
+    let GioiTinh = body.GioiTinh;
+    let NguyenQuan = body.NguyenQuan;
+    let CapBac = body.CapBac;
+    let NgayNhanCapBac = parseInt(body.NgayNhanCapBac);
+    let ThuongTru = body.ThuongTru;
+    let ChucVu = body.ChucVu;
+    let NgayNhanChucVu = parseInt(body.NgayNhanChucVu);
+    let TPGiaDinh = body.TPGiaDinh;
+    let TPBanThan = body.TPBanThan;
+    let NgayVaoDang = parseInt(body.NgayVaoDang);
+    let NoiVaoDang = body.NoiVaoDang;
+    let NgayVaoDangChinhThuc = parseInt(body.NgayVaoDangChinhThuc);
+    let NgayVaoDoan = parseInt(body.NgayVaoDoan);
+    let ChucVuDoan = body.ChucVuDoan;
+    let ChucVuDang = body.ChucVuDang;
+    let TrinhDoVanHoa = body.TrinhDoVanHoa;
+    let TrinhDoQuanLy = body.TrinhDoQuanLy;
+    let HocHam = body.HocHam;
+    let TrinhDoLyLuanChinhTri = body.TrinhDoLyLuanChinhTri;
+    let HocVi = body.HocVi;
+    let TrinhDoCMKT = body.TrinhDoCMKT;
+    let IDNguoiUpdate = body.IDNguoiUpdate;
     let updateTime = parseInt(Date.now());
-    let CapToChucDaoTao = req.body.CapToChucDaoTao;
-    let CoSoDaoTao = req.body.CoSoDaoTao;
-    let ChungChiDaoTao = req.body.ChungChiDaoTao;
-    let NoiDungDaoTao = req.body.NoiDungDaoTao;
-    let SucKhoe = req.body.SucKhoe;
-    let BacLuong = req.body.BacLuong;
-    let NhomMau = req.body.NhomMau;
-    let HeSoLuong = parseInt(req.body.HeSoLuong);
-    let SoBHXH = req.body.SoBHXH;
-    let TinhTrangHonNhan = req.body.TinhTrangHonNhan;
-    let NganhQuanLy = req.body.NganhQuanLy;
-    let DonVi = req.body.DonVi;
-    let NganhNgheDaoTao = req.body.NganhNgheDaoTao;
-    let LoaiHinhDaoTao = req.body.LoaiHinhDaoTao;
-    let TrinhDoNgoaiNgu = req.body.TrinhDoNgoaiNgu
+    let CapToChucDaoTao = body.CapToChucDaoTao;
+    let CoSoDaoTao = body.CoSoDaoTao;
+    let ChungChiDaoTao = body.ChungChiDaoTao;
+    let NoiDungDaoTao = body.NoiDungDaoTao;
+    let SucKhoe = body.SucKhoe;
+    let BacLuong = body.BacLuong;
+    let NhomMau = body.NhomMau;
+    let HeSoLuong = parseInt(body.HeSoLuong);
+    let SoBHXH = body.SoBHXH;
+    let TinhTrangHonNhan = body.TinhTrangHonNhan;
+    let NganhQuanLy = body.NganhQuanLy;
+    let DonVi = body.DonVi;
+    let NganhNgheDaoTao = body.NganhNgheDaoTao;
+    let LoaiHinhDaoTao = body.LoaiHinhDaoTao;
+    let TrinhDoNgoaiNgu = body.TrinhDoNgoaiNgu
 
 
     const contract_ = await contract();
