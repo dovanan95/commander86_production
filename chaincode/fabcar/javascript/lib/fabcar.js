@@ -278,7 +278,7 @@ class FabCar extends Contract {
 
         }
         catch (error) {
-            return ({ 'error': error, 'message': 'ng' })
+            return ({ 'error': error.toString(), 'message': 'ng' })
         }
 
     }
