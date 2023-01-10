@@ -751,6 +751,7 @@ router.get('/thongke', async function (req, res, next) {
     }
     let countTotal = 0;
     for (let i in finalResult) {
+      console.log('finalRes', finalResult[i])
       countTotal += finalResult[i]
     }
     finalResult.countTotal = countTotal;
