@@ -747,8 +747,13 @@ router.get('/thongke', async function (req, res, next) {
       countSoTuoi,
       countKhuVucDiaLy,
       countTrinhDoNgoaiNgu,
-      countTrinhDoCMKT
+      countTrinhDoCMKT,
     }
+    let countTotal = 0;
+    for (let i in finalResult) {
+      countTotal += finalResult[i]
+    }
+    finalResult.countTotal = countTotal;
 
     res.status(200).send({ 'statusCode': res.statusCode, 'message': finalResult })
 
