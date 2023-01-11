@@ -208,19 +208,19 @@ router.get('/timkiem', async function (req, res, next) {
         '$or': [
           {
             'DonVi':
-              { '$regex': metric }
+              { '$text': metric }
           },
           {
             'HoVaTen':
-              { '$regex': metric }
+              { '$text': metric }
           },
           {
             'NganhNgheDaoTao':
-              { '$regex': metric }
+              { '$text': metric }
           },
           {
             'NguyenQuan':
-              { '$regex': metric }
+              { '$text': metric }
           }
         ]
       }
