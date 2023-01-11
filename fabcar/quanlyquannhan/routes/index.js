@@ -273,7 +273,9 @@ router.get('/timkiemthongke', async function (req, res, next) {
     let query = req.query;
     let filter = query.filter;
     let value = decodeURIComponent(query.value); console.log('value', query.value, value);
-
+    if (value == '') {
+      console.log('abcdg')
+    }
     let limit = query.limit;
 
     let skip;
@@ -343,7 +345,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
       }
     }
     else {
-      queryParam[filter] = value.toString();
+      queryParam[filter] = value;
     }
 
     queryParam['docType'] = 'QuanNhan';
