@@ -272,7 +272,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
     const contract_ = await contract();
     let query = req.query;
     let filter = query.filter;
-    let value = decodeURIComponent(query.value);
+    let value = decodeURIComponent(query.value); console.log('value', query.value, value);
     let limit = query.limit;
 
     let skip;
