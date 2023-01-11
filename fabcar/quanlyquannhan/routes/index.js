@@ -276,6 +276,10 @@ router.get('/timkiemthongke', async function (req, res, next) {
     if (value == '') {
       console.log('abcdg')
     }
+    else if (value == "") {
+      console.log('12345')
+    }
+
     let limit = query.limit;
 
     let skip;
