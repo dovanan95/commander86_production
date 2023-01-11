@@ -342,12 +342,12 @@ router.get('/timkiemthongke', async function (req, res, next) {
       }
     }
     else {
-      if (queryParam[filter] !== undefined) {
-        queryParam[filter] = value;
-      }
+      queryParam[filter] = value;
     }
 
-    queryParam['docType'] = 'QuanNhan';
+    if (value !== undefined) {
+      queryParam['docType'] = 'QuanNhan';
+    }
     let queryString = {
       "selector": queryParam,
       "sort": [{ "HoVaTen": "asc" }],
