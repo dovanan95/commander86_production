@@ -532,11 +532,11 @@ router.get('/thongke', async function (req, res, next) {
     let _TrinhDoCMKT // =  await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
     let countTrinhDoCMKT // =  JSON.parse(_TrinhDoCMKT.toString()).length;
 
-    if (TrinhDoCMKT) {
-      console.log('cmkt', queryTrinhDoCMKT);
-      _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
-      countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
-    }
+
+    console.log('cmkt', queryTrinhDoCMKT);
+    _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
+    countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
+
 
     let queryLoaiHinhDaoTao = {
       'selector': {
