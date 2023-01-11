@@ -736,6 +736,9 @@ router.get('/thongke', async function (req, res, next) {
     else if (query.SoTuoi == undefined) {
       console.log('st')
     }
+
+    let queryTotal = await contract_.evaluateTransaction('queryCustom', JSON.stringify({ 'selector': { 'docType': 'QuanNhan' } }));
+    let countTotal = await JSON.parse(queryTotal.toString()).length;
     let finalResult = {
       countSoNamNhapNgu,
       countLoaiHinhDaoTao,
@@ -748,14 +751,8 @@ router.get('/thongke', async function (req, res, next) {
       countKhuVucDiaLy,
       countTrinhDoNgoaiNgu,
       countTrinhDoCMKT,
+      countTotal
     }
-    let countTotal = 0;
-    for (let i in finalResult) {
-      if (finalResult[i] !== undefined) {
-        countTotal += finalResult[i]
-      }
-    }
-    finalResult.countTotal = countTotal;
 
     res.status(200).send({ 'statusCode': res.statusCode, 'message': finalResult })
 
