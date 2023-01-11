@@ -396,6 +396,7 @@ router.get('/thongke', async function (req, res, next) {
         query[i] = '';
       }
     }
+
     let DonVi = decodeURIComponent(query.DonVi);
     let ChucVu = decodeURIComponent(query.ChucVu);
     let CapBac = decodeURIComponent(query.CapBac);
@@ -417,10 +418,10 @@ router.get('/thongke', async function (req, res, next) {
     let _DonVi;
     let countDonVi;
 
-    if (DonVi) {
-      _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
-      countDonVi = JSON.parse(_DonVi.toString()).length;
-    }
+
+    _DonVi = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryDonVi));
+    countDonVi = JSON.parse(_DonVi.toString()).length;
+
 
     let queryChucVu = {
       'selector': { 'ChucVu': ChucVu, 'docType': 'QuanNhan' }
