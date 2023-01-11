@@ -203,6 +203,9 @@ router.get('/timkiem', async function (req, res, next) {
     }
     else if (query.metric) {
       let metric = decodeURIComponent(query.metric);
+      if (metric == '""') {
+        metric = '';
+      }
 
       queryParam = {
         '$or': [
