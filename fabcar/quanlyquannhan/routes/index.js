@@ -345,7 +345,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
       queryParam[filter] = value;
     }
 
-    if (value !== undefined) {
+    if (value != undefined || value != "") {
       queryParam['docType'] = 'QuanNhan';
     }
     let queryString = {
