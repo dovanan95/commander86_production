@@ -276,7 +276,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
     if (value == '') {
       console.log('abcdg')
     }
-    else if (value == "") {
+    else if (value == '""') {
       console.log('12345')
     }
 
