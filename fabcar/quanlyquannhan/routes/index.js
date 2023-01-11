@@ -396,6 +396,7 @@ router.get('/thongke', async function (req, res, next) {
         query[i] = '';
       }
     }
+    console.log('thongke query', query)
 
     let DonVi = decodeURIComponent(query.DonVi);
     let ChucVu = decodeURIComponent(query.ChucVu);
