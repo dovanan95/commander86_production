@@ -390,6 +390,12 @@ router.get('/thongke', async function (req, res, next) {
 
     const contract_ = await contract();
     let query = req.query;
+
+    for (let i in query) {
+      if (query[i] == '""') {
+        query[i] = '';
+      }
+    }
     let DonVi = decodeURIComponent(query.DonVi);
     let ChucVu = decodeURIComponent(query.ChucVu);
     let CapBac = decodeURIComponent(query.CapBac);
