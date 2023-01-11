@@ -342,7 +342,9 @@ router.get('/timkiemthongke', async function (req, res, next) {
       }
     }
     else {
-      queryParam[filter] = value;
+      if (queryParam[filter] !== undefined) {
+        queryParam[filter] = value;
+      }
     }
 
     queryParam['docType'] = 'QuanNhan';
