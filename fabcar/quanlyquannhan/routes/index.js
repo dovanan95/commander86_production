@@ -394,11 +394,11 @@ router.get('/thongke', async function (req, res, next) {
     const contract_ = await contract();
     let query = req.query;
 
-    for (let i in query) {
+    /*for (let i in query) {
       if (query[i] == '""') {
         query[i] = '';
       }
-    }
+    }*/
     console.log('thongke query', query)
 
     let DonVi = decodeURIComponent(query.DonVi);
@@ -485,9 +485,6 @@ router.get('/thongke', async function (req, res, next) {
     _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
     countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
     // console.log('khuVucDiaLy', JSON.parse(_KhuVucDiaLy.toString()));
-
-
-
 
     let queryCoSoDaoTao;
     if (CoSoDaoTao == 'TP Hà Nội') {
