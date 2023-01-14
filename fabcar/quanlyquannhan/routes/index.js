@@ -293,7 +293,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
       skip = (page - 1) * limit;
     }
     let queryParam = {};
-    if (filter == 'KhuVucDiaLy') {
+    if (filter == 'KhuVucDiaLy' && value != '""') {
       if (value == 'TP Hà Nội') {
         queryParam = { 'ThuongTru': value }
       }
@@ -305,7 +305,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
         }
       }
     }
-    else if (filter == 'CoSoDaoTao') {
+    else if (filter == 'CoSoDaoTao' && value != '""') {
       if (value == 'TP Hà Nội') {
         queryParam = { 'CoSoDaoTao': value }
       }
