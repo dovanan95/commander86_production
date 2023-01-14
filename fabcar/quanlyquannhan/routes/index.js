@@ -295,24 +295,24 @@ router.get('/timkiemthongke', async function (req, res, next) {
     let queryParam = {};
     if (filter == 'KhuVucDiaLy') {
       if (value == 'TP Hà Nội') {
-        queryParam = { 'ThuongTru': 'TP Hà Nội' }
+        queryParam = { 'ThuongTru': value }
       }
-      else if (value != 'TP Hà Nội' || value == '""') {
+      else if (value != 'TP Hà Nội') {
         queryParam = {
           '$not': {
-            'ThuongTru': 'TP Hà Nội'
+            'ThuongTru': value
           },
         }
       }
     }
     else if (filter == 'CoSoDaoTao') {
       if (value == 'TP Hà Nội') {
-        queryParam = { 'CoSoDaoTao': 'TP Hà Nội' }
+        queryParam = { 'CoSoDaoTao': value }
       }
-      else if (value != 'TP Hà Nội' || value == '""') {
+      else if (value != 'TP Hà Nội') {
         queryParam = {
           '$not': {
-            'CoSoDaoTao': 'TP Hà Nội'
+            'CoSoDaoTao': value
           }
         }
       }
