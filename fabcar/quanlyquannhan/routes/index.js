@@ -297,7 +297,7 @@ router.get('/timkiemthongke', async function (req, res, next) {
       if (value == 'TP Hà Nội') {
         queryParam = { 'ThuongTru': 'TP Hà Nội' }
       }
-      else if (value != 'TP Hà Nội' && value != '') {
+      else if (value != 'TP Hà Nội') {
         queryParam = {
           '$not': {
             'ThuongTru': 'TP Hà Nội'
@@ -309,8 +309,12 @@ router.get('/timkiemthongke', async function (req, res, next) {
       if (value == 'TP Hà Nội') {
         queryParam = { 'CoSoDaoTao': 'TP Hà Nội' }
       }
-      else if (value != 'TP Hà Nội' && value != '') {
-        queryParam = { 'CoSoDaoTao': 'TP Hà Nội' }
+      else if (value != 'TP Hà Nội') {
+        queryParam = {
+          '$not': {
+            'CoSoDaoTao': 'TP Hà Nội'
+          }
+        }
       }
     }
     else if (filter == 'SoNamNhapNgu') {
