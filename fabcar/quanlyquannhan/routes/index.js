@@ -472,7 +472,7 @@ router.get('/thongke', async function (req, res, next) {
         }
       }
     }
-    else if (KhuVucDiaLy != 'TP Hà Nội' && KhuVucDiaLy != '') {
+    else if (KhuVucDiaLy != 'TP Hà Nội' && KhuVucDiaLy != '""') {
       queryKhuVucDiaLy = {
         'selector': {
           '$not': {
