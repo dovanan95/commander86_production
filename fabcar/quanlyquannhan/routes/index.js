@@ -472,7 +472,7 @@ router.get('/thongke', async function (req, res, next) {
         }
       }
     }
-    else if (KhuVucDiaLy != 'TP Hà Nội') {
+    else if (KhuVucDiaLy != 'TP Hà Nội' && KhuVucDiaLy != '') {
       queryKhuVucDiaLy = {
         'selector': {
           '$not': {
@@ -491,7 +491,7 @@ router.get('/thongke', async function (req, res, next) {
     // console.log('khuVucDiaLy', JSON.parse(_KhuVucDiaLy.toString()));
 
     let queryCoSoDaoTao;
-    if (CoSoDaoTao == 'TP Hà Nội') {
+    if (CoSoDaoTao == 'TP Hà Nội' && CoSoDaoTao != 'TP Hà Nội') {
       queryCoSoDaoTao = {
         'selector': {
           'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
