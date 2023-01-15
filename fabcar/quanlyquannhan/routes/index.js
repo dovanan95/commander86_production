@@ -484,7 +484,7 @@ router.get('/thongke', async function (req, res, next) {
     }
     let _KhuVucDiaLy //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
     let countKhuVucDiaLy //= JSON.parse(_KhuVucDiaLy.toString()).length;
-
+    console.log('kvdl', queryKhuVucDiaLy);
 
     _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
     countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
@@ -538,7 +538,6 @@ router.get('/thongke', async function (req, res, next) {
     let countTrinhDoCMKT // =  JSON.parse(_TrinhDoCMKT.toString()).length;
 
 
-    console.log('cmkt', queryTrinhDoCMKT);
     _TrinhDoCMKT = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryTrinhDoCMKT));
     countTrinhDoCMKT = JSON.parse(_TrinhDoCMKT.toString()).length;
 
