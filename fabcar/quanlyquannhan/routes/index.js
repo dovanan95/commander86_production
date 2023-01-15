@@ -485,7 +485,7 @@ router.get('/thongke', async function (req, res, next) {
     let _KhuVucDiaLy //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
     let countKhuVucDiaLy = 0; //= JSON.parse(_KhuVucDiaLy.toString()).length;
     console.log('kvdl', queryKhuVucDiaLy);
-    if (KhuVucDiaLy != '""') {
+    if (KhuVucDiaLy != '""' && KhuVucDiaLy != "") {
       _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
       countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
     }
