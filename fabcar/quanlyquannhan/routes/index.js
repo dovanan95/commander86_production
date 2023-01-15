@@ -472,7 +472,7 @@ router.get('/thongke', async function (req, res, next) {
         }
       }
     }
-    else if (KhuVucDiaLy != 'TP Hà Nội' && KhuVucDiaLy != '""') {
+    else if (KhuVucDiaLy != 'TP Hà Nội') {
       queryKhuVucDiaLy = {
         'selector': {
           '$not': {
@@ -483,15 +483,17 @@ router.get('/thongke', async function (req, res, next) {
       }
     }
     let _KhuVucDiaLy //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
-    let countKhuVucDiaLy //= JSON.parse(_KhuVucDiaLy.toString()).length;
+    let countKhuVucDiaLy = 0; //= JSON.parse(_KhuVucDiaLy.toString()).length;
     console.log('kvdl', queryKhuVucDiaLy);
+    if (KhuVucDiaLy != '""') {
+      _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
+      countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
+    }
 
-    _KhuVucDiaLy = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryKhuVucDiaLy));
-    countKhuVucDiaLy = JSON.parse(_KhuVucDiaLy.toString()).length;
     // console.log('khuVucDiaLy', JSON.parse(_KhuVucDiaLy.toString()));
 
     let queryCoSoDaoTao;
-    if (CoSoDaoTao == 'TP Hà Nội' && CoSoDaoTao != 'TP Hà Nội') {
+    if (CoSoDaoTao == 'TP Hà Nội') {
       queryCoSoDaoTao = {
         'selector': {
           'CoSoDaoTao': CoSoDaoTao, 'docType': 'QuanNhan'
@@ -510,12 +512,12 @@ router.get('/thongke', async function (req, res, next) {
     }
 
     let _CoSoDaoTao //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
-    let countCoSoDaoTao //= JSON.parse(_CoSoDaoTao.toString()).length;
+    let countCoSoDaoTao = 0 //= JSON.parse(_CoSoDaoTao.toString()).length;
 
-
-    _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
-    countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
-
+    if (CoSoDaoTao != '""') {
+      _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
+      countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
+    }
 
     let queryChungChiDaoTao = {
       'selector': {
