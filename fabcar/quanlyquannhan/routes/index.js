@@ -514,7 +514,7 @@ router.get('/thongke', async function (req, res, next) {
     let _CoSoDaoTao //= await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
     let countCoSoDaoTao = 0 //= JSON.parse(_CoSoDaoTao.toString()).length;
     console.log('csdt', CoSoDaoTao)
-    if (CoSoDaoTao != '""') {
+    if (CoSoDaoTao != '""' && CoSoDaoTao != "") {
       _CoSoDaoTao = await contract_.evaluateTransaction('queryCustom', JSON.stringify(queryCoSoDaoTao));
       countCoSoDaoTao = JSON.parse(_CoSoDaoTao.toString()).length;
     }
